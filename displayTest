@@ -1,7 +1,7 @@
 void showString(string str) //Method to display String
 {
   nxtDisplayString(3, "%s", str);
-  wait1Msec(50);
+  wait1Msec(51);
 }
 
 task main()
