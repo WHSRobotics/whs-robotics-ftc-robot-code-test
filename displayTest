@@ -1,0 +1,23 @@
+void showString(string str) //Method to display String
+{
+  nxtDisplayString(3, "%s", str);
+  wait1Msec(50);
+}
+
+task main()
+{
+  while(true)
+  {
+    //initialize random strings
+    string hi = "Hello, World!";
+    string str2 = "beans";
+    string str3 = "kjashdfja";
+    string str4 = "theory";
+    
+    //Display random strings. forever. Hooray
+    showString(hi);
+    showString(str2);
+    showString(str3);
+    showString(str4);
+  }
+}
