@@ -11,7 +11,9 @@ task main()
   {
    motor[motorA]=30;
    motor[motorC]=30;
-  }while(SensorValue[sensorTouch]==0);  //stops motors after touch sensor is pressed
-   motor[motorA]=0;
-   motor[motorC]=0;
+  }while(SensorValue[sensorTouch]==0)  //stops motors after touch sensor is pressed
+  {
+    motor[motorA]=0;
+    motor[motorC]=0;
+  }
 }
