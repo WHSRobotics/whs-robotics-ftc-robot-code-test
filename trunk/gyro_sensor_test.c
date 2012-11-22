@@ -15,6 +15,7 @@ float timeChange = 0.0;
 float currTotalMove = 0.0;
 float remainingTurn = 0.0;
 float error = 0.0;
+float gyroReading = 0.0;
 
 //--------------constants----------------
 const float BIAS = 604.0;
@@ -24,16 +25,17 @@ const float HIGH_TURK = 1.0;
 
 
 //--------------functions-----------------
-int getAngleChange()
+float getAngleChange()
 {
-	currentValue = HTGYROreadRot(3) - BIAS;
-	timeChange = time10[T1];
+	gyroReading = HTGYROreadCal(3);
+	currentValue = HTGYROreadRot(3);//gyroReading - BIAS;
+	timeChange = time1[T1]/1000;
 	ClearTimer(T1);
 	angleChange = currentValue * timeChange;
 	return angleChange;
 }
 
-int getCurrTotalMove()
+float getCurrTotalMove()
 {
 	currTotalMove += getAngleChange();
 	return currTotalMove;
@@ -49,6 +51,7 @@ void gyroCenterPivot(int turnDirection, int speedKonstant)
 		turn = error * speedKonstant;
 		motor[driveLeft] = -turn;
 		motor[driveRight] = turn;
+		wait10Msec(1);
 	}
 	motor[driveLeft] = 0;
 	motor[driveRight] = 0;
@@ -60,5 +63,5 @@ task main()
 {
 	HTGYROstartCal(3);
 	ClearTimer(T1);
-	gyroCenterPivot(90, MID_TURK);
+	gyroCenterPivot(90, HIGH_TURK);
 }
