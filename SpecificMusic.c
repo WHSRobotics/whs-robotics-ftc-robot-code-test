@@ -1,21 +1,21 @@
 //------------------notes--------------------
-const float As3 = 233.08
-const float A3 = 220.00
-const float B3 = 246.94
-const float Cs3 = 138.59
-const float Cs4 = 277.18
-const float C3 = 130.81
-const float C4 = 261.63
-const float D3 = 146.83
-const float D4 = 293.67
-const float E3 = 164.81
-const float E4 = 329.63
-const float Fs3 = 185.00
-const float Fs4 = 369.99
-const float F3 = 174.61
-const float F4 = 349.23
-const float G3 = 196.00
-const float G4 = 392.00
+const float As3 = 233.08;
+const float A3 = 220.00;
+const float B3 = 246.94;
+const float Cs3 = 138.59;
+const float Cs4 = 277.18;
+const float C3 = 130.81;
+const float C4 = 261.63;
+const float D3 = 146.83;
+const float D4 = 293.67;
+const float E3 = 164.81;
+const float E4 = 329.63;
+const float Fs3 = 185.00;
+const float Fs4 = 369.99;
+const float F3 = 174.61;
+const float F4 = 349.23;
+const float G3 = 196.00;
+const float G4 = 392.00;
 
 //-------------------time---------------------
 const int QUARTER = 36;
@@ -49,8 +49,8 @@ void first()
   playNote(B3, QUARTER);
   playNote(D4, EIGHTH);
 
-  playNote(E4, QUARTER);
   playNote(D4, EIGHTH);
+  playNote(E4, QUARTER);
   playNote(B3, QUARTER);
 
   playNote(D4, HALF);
@@ -77,8 +77,8 @@ void second()
   playNote(Fs3, QUARTER);
 
   playNote(A3, HALF);
-  playNote(C3, QUARTER);
   playNote(G3, EIGHTH);
+  playNote(C3, QUARTER);
 
   playNote(C3, QUARTER);
   playNote(Cs3, QUARTER);
@@ -121,7 +121,7 @@ void third()
   playNote(F4, QUARTER);
   playNote(B3, QUARTER);
 
-  playNote(F#4, QUARTER_DOT);
+  playNote(Fs4, QUARTER_DOT);
   playNote(F4, EIGHTH);
   playNote(E4, QUARTER);
 
