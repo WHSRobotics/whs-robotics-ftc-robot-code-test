@@ -1,8 +1,8 @@
 /*
-H-A3, H-G3, rest, H-G3
+Q-A3, Q-G3, rest, Q-G3
 H.-G3, H.-F3, H.-E3
-H-D3, H-E2, H-D2, H-E2
-H-C2*/
+Q-D3, Q-E2, Q-D2, Q-E2
+Q-C2*/
 
 const float C3 = 130.81;
 const float D3 = 146.83;
@@ -25,20 +25,20 @@ void playNote(float freq, int length)
 
 task main()
 {
-  playNote(A3, HALF);
-  playNote(G3, HALF);
-  wait10Msec(45);
-  playNote(G3, HALF);
+  playNote(A4, QUARTER);
+  playNote(G4, QUARTER);
+  wait10Msec(QUARTER);
+  playNote(G4, QUARTER);
 
-  playNote(G3, HALF_DOT);
-  playNote(F3, HALF_DOT);
-  playNote(E3, HALF_DOT);
+  playNote(G4, HALF_DOT);
+  playNote(F4, HALF_DOT);
+  playNote(E4, HALF_DOT);
 
-  playNote(D3, HALF_DOT);
-  playNote(E2, HALF_DOT);
-  playNote(D2, HALF_DOT);
-  playNote(E2, HALF_DOT);
+  playNote(D4, QUARTER);
+  playNote(E3, QUARTER);
+  playNote(D3, QUARTER);
+  playNote(E3, QUARTER);
 
-  playNote(C2, HALF);
+  playNote(C3, QUARTER);
 
 }
