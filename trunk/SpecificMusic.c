@@ -6,6 +6,7 @@ const float Cs3 = 138.59*2;
 const float Cs4 = 277.18*2;
 const float C3 = 130.81*2;
 const float C4 = 261.63*2;
+const float Ds3 = 155.56*2;
 const float D3 = 146.83*2;
 const float D4 = 293.67*2;
 const float E3 = 164.81*2;
@@ -56,7 +57,7 @@ void first()
 
   playNote(D4, HALF);
   playNote(C4, QUARTER);
-  playNote(F, EIGHTH);
+  playNote(F3, EIGHTH);
   wait10Msec(EIGHTH);
 
   playNote(D4, QUARTER);
