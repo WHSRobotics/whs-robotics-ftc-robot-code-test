@@ -1,6 +1,8 @@
 #ifndef AUTONOMOUS_FUNCTIONS1.H;
 #define AUTONOMOUS_FUNCTIONS1.H;
 
+#include "autonomous_constants_globVars.h" //Include header file with the constants and global variables for the autonomous
+#include "hitechnic-gyro.h" //Include driver for gyro
 
 
 ///////////////FUNCTIONS///////////////
@@ -66,10 +68,24 @@ void gyroCenterPivot(int turnDirection, int speedKonstant)
 }
 
 
-////Move forward a specified distance
-void moveForward(float distanceInches)
+////Move forward a specified distance at a specified power
+void moveForward(float distanceInches, int motPower)
 {
+	nMotorEncoder[driveLeft] = 0;                // reset the Motor Encoder of Motor B
+	nMotorEncoder[driveRight] = 0;
 
+	nMotorEncoderTarget[driveLeft] = distanceInches;        // set the  target for Motor Encoder of Motor B to 360
+	nMotorEncoderTarget[driveRight] = distanceInches;
+
+	motor[driveLeft] = motPower;
+	motor[driveRight]= motPower;
+
+	while(nMotorRunState[driveLeft] != runStateIdle && nMotorRunState[driveRight] != runStateIdle)  // while Motor B is still running (hasn't reached target yet):
+	{
+	  // do not continue
+	}
+
+	stopDriveTrain();
 }
 
 
