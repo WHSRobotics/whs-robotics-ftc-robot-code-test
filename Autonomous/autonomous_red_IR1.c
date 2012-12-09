@@ -22,7 +22,6 @@
 
 #include "JoystickDriver.c"  //Include file to "handle" the Bluetooth messages.
 #include "autonomous_functions1.h"  //Include header file with the autonomous functions
-#include "autonomous_constants_globVars.h" //Include header file with the constants and global variables for the autonomous
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
