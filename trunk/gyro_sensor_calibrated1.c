@@ -25,7 +25,7 @@ float adjustedTarget = 0.0;
 //--------------constants----------------
 const float LOW_TURK = 0.75;
 const float MID_TURK = 0.9;
-const float HIGH_TURK = 1.0;
+const float HIGH_TURK = 10.0;
 const float ADJUST_M = 1.0;//0.8905;
 const float ADJUST_B = 7.0;//4.7182;
 
