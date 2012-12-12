@@ -3,7 +3,7 @@
 
 #include "autonomous_constants_globVars.h" //Include header file with the constants and global variables for the autonomous
 #include "hitechnic-gyro.h" //Include driver for gyro
-const tSensors gyroPortNum = 3;
+
 
 ///////////////FUNCTIONS///////////////
 /////Resets the global variables to their initial values
@@ -39,6 +39,7 @@ float getAngleChange()
 	return angleChange;
 }
 
+
 ////gives a current running total of turn for the gyro
 float getCurrTotalMove()
 {
@@ -71,6 +72,8 @@ void gyroCenterPivot(int turnDirection, int speedKonstant)
 
 
 ////Move forward a specified distance at a specified power
+///Parameters: distanceInches - distance to move in inches
+///            pwr - motor power for drive train
 void moveStraight(float distanceInches, int pwr)
 {
 	float targetDistance = distanceInches * INCH_ENCODERVALUE;
@@ -94,41 +97,50 @@ void moveStraight(float distanceInches, int pwr)
 	stopDriveTrain();
 }
 
-////Move arm a specified distance at a specified power
+
+////Move arm by a specified angle at a specified power.
+////Moves motor in quick, small increments until angle is reached.
+///Parameters: angle - angle to move the arm
+///            pwr - power for arm motors
 void moveArm(float angle, int pwr)
 {
-	int numIncrements = 0;
-	int increment = 0;
-	if((angle%2) == 0)
+	int numIncrements = 0; //number of times to loop
+	int increment = 0; //increment per loop
+
+	//set # of increments and amt of increment based on odd or even angle
+	if((angle%2) == 0) //if angle is even
 	{
-		numIncrements = angle/2;
-		increment = 2;
+		numIncrements = angle/2; //loop half the number of degrees in angle
+		increment = 2; //increment by 2
 	}
-	else
+	else //if angle is odd
 	{
-		numIncrements = angle;
-		increment = 1;
+		numIncrements = angle; //loop by number of degrees
+		increment = 1; //increment by 1
 	}
-	int count = 0;
+
+	int count = 0; //keep count of the number of times looped so far
 
 	while(count < numIncrements)
 	{
-		nMotorEncoder[armLeft] = 0;
+		nMotorEncoder[armLeft] = 0; //reset encoder
 
-		nMotorEncoderTarget[armLeft] = increment;
+		nMotorEncoderTarget[armLeft] = increment; //set target to increment
 
+		//move arm at given power
 		motor[armLeft] = pwr;
 		motor[armRight] = pwr;
 
-		while(nMotorRunState[armLeft] != runStateIdle)  // while Motor B is still running (hasn't reached target yet):
+		while(nMotorRunState[armLeft] != runStateIdle)  // while armLeft is still moving
 		{
 		  // do not continue
 		}
+		//stop arm (is this necessary? o.0)
 		motor[armLeft] = 0;
 		motor[armRight] = 0;
 
-		count++;
-		wait10Msec(5);
+		count++; //add to the # of times this loop has been carried out
+		wait10Msec(5); //briefly wait
 	}
 }
 
