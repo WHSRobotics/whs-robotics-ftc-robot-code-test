@@ -3,7 +3,7 @@
 
 #include "autonomous_constants_globVars.h" //Include header file with the constants and global variables for the autonomous
 #include "hitechnic-gyro.h" //Include driver for gyro
-
+const tSensors gyroPortNum = 3;
 
 ///////////////FUNCTIONS///////////////
 /////Resets the global variables to their initial values
@@ -31,9 +31,9 @@ void stopDriveTrain()
 ////gives an updated change in angle
 float getAngleChange()
 {
-	gyroReading = HTGYROreadCal(3); //this isn't necessary
-	currentValue = HTGYROreadRot(3);
-	timeChange = time1[T1]/MILLISECOND;
+	gyroReading = HTGYROreadCal(3);
+	currentValue = HTGYROreadRot(3);//gyroReading - BIAS;
+	timeChange = time1[T1]/1000.0;
 	ClearTimer(T1);
 	angleChange = currentValue * timeChange;
 	return angleChange;
@@ -52,9 +52,11 @@ float getCurrTotalMove()
 //** should add a parameter to determine which way to pivot (left or right)
 void gyroCenterPivot(int turnDirection, int speedKonstant)
 {
-	adjustedTarget = ADJUST_M * turnDirection - ADJUST_B; //scale target using linear equation
-	float turn = DEFAULT_VAL; //initialize turn to a value greater than 1
-	while(abs(remainingTurn) > 1) //P controller while turning
+	HTGYROstartCal(3);
+	ClearTimer(T1);
+	adjustedTarget = ADJUST_M * turnDirection - ADJUST_B;
+	float turn = 100.0;
+	while(abs(remainingTurn) > 1)
 	{
 		remainingTurn = adjustedTarget - currTotalMove;
 		error = adjustedTarget - getCurrTotalMove();
@@ -69,25 +71,66 @@ void gyroCenterPivot(int turnDirection, int speedKonstant)
 
 
 ////Move forward a specified distance at a specified power
-void moveForward(float distanceInches, int motPower)
+void moveStraight(float distanceInches, int pwr)
 {
-	nMotorEncoder[driveLeft] = 0;                // reset the Motor Encoder of Motor B
+	float targetDistance = distanceInches * INCH_ENCODERVALUE;
+	float pwrDriveLeft = pwr + (PWR_ADJUST/2);
+	float pwrDriveRight = pwr - (PWR_ADJUST/2);
+
+	nMotorEncoder[driveLeft] = 0;
 	nMotorEncoder[driveRight] = 0;
 
-	nMotorEncoderTarget[driveLeft] = distanceInches;        // set the  target for Motor Encoder of Motor B to 360
-	nMotorEncoderTarget[driveRight] = distanceInches;
+	nMotorEncoderTarget[driveLeft] = targetDistance;
+	nMotorEncoderTarget[driveRight] = targetDistance;
 
-	motor[driveLeft] = motPower;
-	motor[driveRight]= motPower;
+	motor[driveLeft] = pwrDriveLeft;
+	motor[driveRight]= pwrDriveRight;
+
 
 	while(nMotorRunState[driveLeft] != runStateIdle && nMotorRunState[driveRight] != runStateIdle)  // while Motor B is still running (hasn't reached target yet):
-	{
-	  // do not continue
-	}
-
+		{
+		  // do not continue
+		}
 	stopDriveTrain();
 }
 
+////Move arm a specified distance at a specified power
+void moveArm(float angle, int pwr)
+{
+	int numIncrements = 0;
+	int increment = 0;
+	if((angle%2) == 0)
+	{
+		numIncrements = angle/2;
+		increment = 2;
+	}
+	else
+	{
+		numIncrements = angle;
+		increment = 1;
+	}
+	int count = 0;
+
+	while(count < numIncrements)
+	{
+		nMotorEncoder[armLeft] = 0;
+
+		nMotorEncoderTarget[armLeft] = increment;
+
+		motor[armLeft] = pwr;
+		motor[armRight] = pwr;
+
+		while(nMotorRunState[armLeft] != runStateIdle)  // while Motor B is still running (hasn't reached target yet):
+		{
+		  // do not continue
+		}
+		motor[armLeft] = 0;
+		motor[armRight] = 0;
+
+		count++;
+		wait10Msec(5);
+	}
+}
 
 
 #endif;
