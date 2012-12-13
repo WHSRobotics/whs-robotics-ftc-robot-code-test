@@ -102,46 +102,36 @@ void moveStraight(float distanceInches, int pwr)
 ////Moves motor in quick, small increments until angle is reached.
 ///Parameters: angle - angle to move the arm
 ///            pwr - power for arm motors
-void moveArm(float angle, int pwr)
+void moveArm(int pwr, int msec)
 {
-	int numIncrements = 0; //number of times to loop
-	int increment = 0; //increment per loop
+	float majorMsec = 0.8*msec;
+	float minorMsec = msec - majorMsec;
 
-	//set # of increments and amt of increment based on odd or even angle
-	if((angle%2) == 0) //if angle is even
+	float pwrRatio = 1.0;
+	float msecRatio = 0.0;
+	float newPwr = 0.0;
+	float newMsec = 0.0;
+	float ratioChange = 0.0;
+
+	motor[armLeft] = pwr;
+	motor[armRight] = pwr;
+
+	wait1Msec(majorMsec);
+
+	for(int count = 0; count <= 10; count++)
 	{
-		numIncrements = angle/2; //loop half the number of degrees in angle
-		increment = 2; //increment by 2
+		ratioChange = count/10.0;
+		pwrRatio -= ratioChange;
+		msecRatio += ratioChange;
+		newPwr = pwr*pwrRatio;
+		newMsec = minorMsec*msecRatio;
+		motor[armLeft] = newPwr;
+		motor[armLeft] = newPwr;
+		wait1Msec(newMsec);
 	}
-	else //if angle is odd
-	{
-		numIncrements = angle; //loop by number of degrees
-		increment = 1; //increment by 1
-	}
 
-	int count = 0; //keep count of the number of times looped so far
-
-	while(count < numIncrements)
-	{
-		nMotorEncoder[armLeft] = 0; //reset encoder
-
-		nMotorEncoderTarget[armLeft] = increment; //set target to increment
-
-		//move arm at given power
-		motor[armLeft] = pwr;
-		motor[armRight] = pwr;
-
-		while(nMotorRunState[armLeft] != runStateIdle)  // while armLeft is still moving
-		{
-		  // do not continue
-		}
-		//stop arm (is this necessary? o.0)
-		motor[armLeft] = 0;
-		motor[armRight] = 0;
-
-		count++; //add to the # of times this loop has been carried out
-		wait10Msec(5); //briefly wait
-	}
+	motor[armLeft] = 0;
+	motor[armRight] = 0;
 }
 
 
