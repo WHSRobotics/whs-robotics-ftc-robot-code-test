@@ -51,19 +51,20 @@ void initializeRobot()
   // Place code here to sinitialize servos to starting positions.
   // Sensors are automatically configured and setup by ROBOTC. They may need a brief time to stabilize.
 
-	motor[armLeft] = 25;
-	motor[armRight] = 25;
+	motor[armLeft] = 10;
+	motor[armRight] = 10;
 
-	wait10Msec(50);
+	wait10Msec(25);
 
 	motor[armLeft] = 0;
 	motor[armRight] = 0;
 
 	while(SensorValue[touchSensor] == false)
 	{
-		motor[armLeft] = -40;
-		motor[armRight] = -40;
+		motor[armLeft] = -5;
+		motor[armRight] = -5;
 	}
+	wait1Msec(100);
 	motor[armLeft] = 0;
 	motor[armRight] = 0;
 
@@ -110,7 +111,7 @@ task main()
   waitForStart(); // Wait for the beginning of autonomous phase.
 
   //raise arm to IR beacon level
-	moveArm(72, 15);
+	moveArm(15, 320);
 /*
 	//move to plywood
   moveStraight(28,50); //need to move less to make turning to right goal easier
@@ -120,12 +121,25 @@ task main()
 		if(SensorValue[IRSensor] >= 6)
 		{
 			//IR beacon is on the right
+			//back up about one floor tile (24 inches)
+			//turn 45 degrees to line up with beacon
+			//move straight to the right peg and score (raise arm to make sure it is at the hardstop)
+			//lower the arm a bit to back away
+			//back up
 			PlayTone(500, 100);
+
 		}
 		else if(SensorValue[IRSensor] <= 4)
 		{
 			//IR beacon is on the left
 			PlayTone(380, 100);
+			//move forward more than middle
+			//turn about the same amt
+			///SCORING
+			//raise arm
+			//move forward to goal
+			//lower arm 1/8 tsp
+			//move backwards
 
 		}
 		else if(SensorValue[IRSensor] == 5)
@@ -134,7 +148,11 @@ task main()
 			PlayTone(440, 100);
 			moveStraight(13, 50);
 			gyroCenterPivot(45, 10);
+			///SCORING
+			//raise the arm
 			moveStraight(14, 10);
+			//lower arm 1/8 tsp
+			//move backwards
 		}
 	}
 
