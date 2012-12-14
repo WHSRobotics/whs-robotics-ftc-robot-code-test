@@ -61,8 +61,8 @@ void initializeRobot()
 
 	while(SensorValue[touchSensor] == false)
 	{
-		motor[armLeft] = -5;
-		motor[armRight] = -5;
+		motor[armLeft] = -7;
+		motor[armRight] = -7;
 	}
 	wait1Msec(100);
 	motor[armLeft] = 0;
@@ -111,8 +111,8 @@ task main()
   waitForStart(); // Wait for the beginning of autonomous phase.
 
   //raise arm to IR beacon level
-	moveArm(15, 320);
-/*
+	moveArm(7, 800);
+
 	//move to plywood
   moveStraight(28,50); //need to move less to make turning to right goal easier
 
@@ -146,11 +146,11 @@ task main()
 		{
 			//IR beacon is in the middle
 			PlayTone(440, 100);
-			moveStraight(13, 50);
-			gyroCenterPivot(45, 10);
+			moveStraight(10, 50);
+			gyroCenterPivot(55, 10);
 			///SCORING
 			//raise the arm
-			moveStraight(14, 10);
+			moveStraight(17, 10);
 			//lower arm 1/8 tsp
 			//move backwards
 		}
@@ -161,5 +161,5 @@ task main()
   	//move forward
   	//take an IR reading
   	//move accordingly! =D
-  }*/
+  }
 }

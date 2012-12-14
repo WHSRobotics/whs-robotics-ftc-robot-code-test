@@ -12,7 +12,7 @@ const float ADJUST_B = 7.0; //y-intercept of linear equation to scale target ang
 
 const float INCH_ENCODERVALUE = 114.591559; //number of encoder values in one inch forward for a 4 inch wheel
 																						//(number of encoder valuesinone rotation[1440])/(wheel diameter[4]*pi[3.14...])
-const float PWR_ADJUST = 3.0;
+const float PWR_ADJUST = 3.9;
 
 const float MILLISECOND = 1000.0; //number of milliseconds in one second
 const float DEFAULT_VAL = 42.0; //generic value for initialization that's greater than 0
