@@ -104,20 +104,72 @@ void moveStraight(float distanceInches, int pwr)
 ///            pwr - power for arm motors
 void moveArm(int pwr, int msec)
 {
-	float majorMsec = 0.8*msec;
-	float minorMsec = msec - majorMsec;
+   float majorMsec = msec * 0.05;
+   float minorMsec = msec * 0.95;
 
-	float pwrRatio = 1.0;
-	float msecRatio = 0.0;
+        float newPwr = 0.0;
+        float newMsec = 0.0;
+
+        motor[armLeft] = pwr;
+        motor[armRight] = pwr;
+
+        wait1Msec(majorMsec);
+
+        while(newMsec <= minorMsec)
+        {
+        		nxtDisplayString(3, "%d", newPwr);
+						nxtDisplayString(4, "%d", newMsec);
+            newPwr = -(pwr/minorMsec)*newMsec + pwr;
+
+            motor[armLeft] = newPwr;
+            motor[armRight] = newPwr;
+            wait1Msec(1);
+            newMsec += 1.0;
+        }
+        motor[armLeft] = 0;
+        motor[armRight] = 0;
+        /*for(int count = 0; count <= 10; count++)
+        {
+            ratioChange = count/10.0;
+            pwrRatio -= ratioChange;
+            msecRatio += ratioChange;
+            newPwr = pwr*pwrRatio;
+            newMsec = minorMsec*msecRatio;
+            motor[armLeft] = newPwr;
+            motor[armLeft] = newPwr;
+            wait1Msec(newMsec);
+        }
+
+        motor[armLeft] = 0;
+        motor[armRight] = 0;*/
+    }
+/*void moveArm(int pwr, int msec)
+{
+	float majorMsec = msec * 0.3;
+	float minorMsec = msec * 0.7;
+
 	float newPwr = 0.0;
 	float newMsec = 0.0;
-	float ratioChange = 0.0;
+	float increment = (0.09 * pwr)/minorMsec;
+	//float ratioChange = 0.0;
+	//float pwrRatio = 1.0;
+	//float msecRatio = 0.0;
 
 	motor[armLeft] = pwr;
 	motor[armRight] = pwr;
 
 	wait1Msec(majorMsec);
 
+	while(newMsec < minorMsec)
+	{
+		newPwr = (0.09 * pwr) - (newMsec * increment);
+		motor[armLeft] = newPwr;
+		motor[armRight] = newPwr;
+		wait1Msec(1);
+		newMsec += 1.0;
+	}
+	motor[armLeft] = 0;
+	motor[armRight] = 0;
 	for(int count = 0; count <= 10; count++)
 	{
 		ratioChange = count/10.0;
@@ -132,7 +184,7 @@ void moveArm(int pwr, int msec)
 
 	motor[armLeft] = 0;
 	motor[armRight] = 0;
-}
+}*/
 
 
 #endif;
