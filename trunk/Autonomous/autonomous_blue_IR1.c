@@ -137,7 +137,10 @@ task main()
 			moveArm(-8, 600);
 			//back up
 			moveStraight(12, -15);
-			gyroCenterPivot(140, 50);
+			gyroCenterPivot(-140, 50);
+			moveStraight(30, 50);
+			gyroCenterPivot(80, 50);
+			moveStraight(40, 50);
 
 		}
 		else if(SensorValue[IRSensor] <= 4)
@@ -161,14 +164,9 @@ task main()
 			moveStraight(3, -10);
 			moveArm(-8, 430);
 			moveStraight(15, -10);
-			moveStraight(5, -50);
 			//move to dispenser
-			gyroCenterPivot(-30, 50);
-			moveStraight(30, -50);
-			gyroCenterPivot(95, 50);
-			moveStraight(32, 50);
-			gyroCenterPivot(95, 50);
-			moveStraight(10, 50);
+			gyroCenterPivot(-100, 50);
+			moveStraight(15, 50);
 		}
 		else if(SensorValue[IRSensor] == 5)
 		{
@@ -179,7 +177,7 @@ task main()
 			///SCORING
 			//raise the arm
 			moveStraight(13, 15);
-			moveArm(8, 700);
+			moveArm(9, 600);
 			moveStraight(7, 15);
 			//lower arm 1/8 tsp
 			//move backwards
@@ -188,11 +186,8 @@ task main()
 			moveArm(-7, 300);
 			moveStraight(12, -10);
 			//drive to dispenser CHANGE!!!!
-			moveStraight(30,-50);
-			gyroCenterPivot(40, 10);
-			moveStraight(40, 50);
-			gyroCenterPivot(95, 20);
-			moveStraight(12,50);
+			gyroCenterPivot(-95, 50);
+			moveStraight(30, 50);
 		}
 	}
 
