@@ -179,7 +179,7 @@ task main()
 			///SCORING
 			//raise the arm
 			moveStraight(13, 15);
-			moveArm(8, 700);
+			moveArm(11, 800);
 			moveStraight(7, 15);
 			//lower arm 1/8 tsp
 			//move backwards
