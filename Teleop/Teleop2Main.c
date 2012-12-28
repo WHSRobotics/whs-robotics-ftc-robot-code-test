@@ -1,5 +1,7 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  none,     none)
-#pragma config(Sensor, S1,     ,               sensorI2CMuxController)
+#pragma config(Sensor, S2,     HTSMUX,         sensorI2CCustom)
+#pragma config(Motor,  motorB,          flagLeft,      tmotorNXT, PIDControl, encoder)
+#pragma config(Motor,  motorC,          flagRight,     tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  mtr_S1_C1_1,     driveRight,    tmotorTetrix, openLoop, reversed, encoder)
 #pragma config(Motor,  mtr_S1_C1_2,     driveLeft,     tmotorTetrix, openLoop, encoder)
 #pragma config(Motor,  mtr_S1_C2_1,     armRight,      tmotorTetrix, openLoop)
@@ -38,6 +40,9 @@ int RJoy = 0;
 ////////////////////////INITIALIZATION/////////////////////////
 void initializeRobot()
 {
+  resetFlags(); //initialize flag positions and timer
+
+  PlayTone(400,30); //because it's Windsor
   return;
 }
 
@@ -72,6 +77,7 @@ task main()
 
   //Start all other tasks
 	StartTask(Arm);
+	StartTask(Flags);
 
 	//Control Drive Train
   while (true)
