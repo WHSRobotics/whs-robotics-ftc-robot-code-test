@@ -1,5 +1,7 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  none,     none)
-#pragma config(Sensor, S1,     ,               sensorI2CMuxController)
+#pragma config(Sensor, S2,     HTSMUX,         sensorI2CCustom)
+#pragma config(Motor,  motorB,          flagLeft,      tmotorNXT, PIDControl, encoder)
+#pragma config(Motor,  motorC,          flagRight,     tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  mtr_S1_C1_1,     driveRight,    tmotorTetrix, openLoop, reversed, encoder)
 #pragma config(Motor,  mtr_S1_C1_2,     driveLeft,     tmotorTetrix, openLoop, encoder)
 #pragma config(Motor,  mtr_S1_C2_1,     armRight,      tmotorTetrix, openLoop)
@@ -19,7 +21,10 @@
 
 //#include "JoystickDriver.c"  //Include file to "handle" the Bluetooth messages.
 #include "teleppppoooo.c"
-
+#include "common.h"
+#include "hitechnic-sensormux.h"
+#include "lego-touch.h"
+const tMUXSensor LEGOTOUCH = msensor_S2_4;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -74,6 +79,7 @@ task main()
 
   waitForStart();   // wait for start of tele-op phase
 	StartTask(Arm);
+	StartTask(weightedRing);
   while (true)
   {
 	  getJoystickSettings(joystick);
