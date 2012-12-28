@@ -18,6 +18,11 @@ void stopArm()
 	motor[armLeft] = 0;
 }
 
+void raiseFlags(float power)
+{
+	motor[motorB] = power;
+	motor[motorC] = power;
+}
 
 task Arm()
 {
@@ -37,6 +42,28 @@ task Arm()
    	{
    		stopArm();
    	}
+}
+
+task weightedRing()
+{
+	int eger = 0;
+	while (true)
+  {
+  	eger = HTSMUXreadAnalogue(LEGOTOUCH);
+    // Check if the sensor is pressed or not.
+		if (eger == -1 || eger > 500) //not pressed
+		{
+
+		}
+    else //pressed (>=500)
+    {
+    	raiseFlags(50);
+			wait10Msec(50);
+			raiseFlags(-50);
+			wait10Msec(50);
+    }
+    wait1Msec(5);
+	}
 }
 
 }
