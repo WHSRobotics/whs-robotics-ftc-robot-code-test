@@ -1,11 +1,10 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  none,     none)
-#pragma config(Sensor, S1,     ,               sensorI2CMuxController)
-#pragma config(Sensor, S2,     IRSensor,       sensorHiTechnicIRSeeker1200)
-#pragma config(Sensor, S3,     touchSensor,    sensorTouch)
+#pragma config(Sensor, S2,     SMUX,           sensorI2CCustom)
+#pragma config(Sensor, S3,     TUX,            sensorHiTechnicTouchMux)
 #pragma config(Sensor, S4,     gyroRobot,      sensorI2CHiTechnicGyro)
 #pragma config(Motor,  motorA,           ,             tmotorNXT, openLoop)
-#pragma config(Motor,  motorB,           ,             tmotorNXT, openLoop)
-#pragma config(Motor,  motorC,           ,             tmotorNXT, openLoop)
+#pragma config(Motor,  motorB,          flagLeft,      tmotorNXT, PIDControl, encoder)
+#pragma config(Motor,  motorC,          flagRight,     tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  mtr_S1_C1_1,     driveRight,    tmotorTetrix, PIDControl, reversed, encoder)
 #pragma config(Motor,  mtr_S1_C1_2,     driveLeft,     tmotorTetrix, PIDControl, encoder)
 #pragma config(Motor,  mtr_S1_C2_1,     armRight,      tmotorTetrix, PIDControl, reversed)
@@ -27,6 +26,7 @@
 #include "JoystickDriver.c"  //Include file to "handle" the Bluetooth messages.
 #include "autonomous_functions1.h"  //Include header file with the autonomous functions
 #include "autonomous_constants_globVars.h"  //Include header file with the autonomous KONSTANTS and global variables
+#include "autonomous_tasks1.h"
 
 
 
@@ -59,7 +59,7 @@ void initializeRobot()
 	motor[armLeft] = 0;
 	motor[armRight] = 0;
 
-	while(SensorValue[touchSensor] == false)
+	while(HTTMUXisActive(TUX, 1) == false)
 	{
 		motor[armLeft] = -7;
 		motor[armRight] = -7;
@@ -71,9 +71,15 @@ void initializeRobot()
 	nMotorEncoder[driveLeft] = 0;
 	nMotorEncoder[driveRight] = 0;
 	nMotorEncoder[armLeft] = 0;
-	HTGYROstartCal(3);
+	HTGYROstartCal(gyroRobot);
 	ClearTimer(T1);
 	ClearTimer(T2);
+
+	motor[flagLeft] = -50;
+  motor[flagRight] = -50;
+  wait10Msec(50);
+  motor[flagLeft] = 0;
+  motor[flagRight] = 0;
 
 	PlayTone(440, 30);
 	//Move arm down until touch sensor is pressed (Port 4 on multiplexer; multiplexer is port 2)
@@ -110,15 +116,16 @@ task main()
 
   waitForStart(); // Wait for the beginning of autonomous phase.
 
+
   //raise arm to IR beacon level
 	moveArm(3, 1250);
 
 	//move to plywood
   moveStraight(28,50);
 
-  if(SensorValue[IRSensor] != -1)
+  if(HTIRS2readACDir(IRSensor) != -1)
 	{
-		if(SensorValue[IRSensor] >= 6)
+		if(HTIRS2readACDir(IRSensor) >= 6)
 		{
 			//IR beacon is on the right
 			PlayTone(500, 100);
@@ -129,18 +136,20 @@ task main()
 			gyroCenterPivot(45, 20);
 			//move straight to the right peg and score (raise arm to make sure it is at the hardstop)
 			moveStraight(31, 20);
+			StartTask(ElevatorMusic);
 			moveArm(20, 1000);
 			moveStraight(10, 50);
 			//lower the arm a bit to back away
 			moveArm(-7, 600);
 			moveStraight(6, -15);
 			moveArm(-8, 600);
+			StartTask(Flags);
 			//back up
 			moveStraight(12, -15);
 			gyroCenterPivot(140, 50);
 
 		}
-		else if(SensorValue[IRSensor] <= 4)
+		else if(HTIRS2readACDir(IRSensor) <= 4)
 		{
 			//IR beacon is on the left
 			PlayTone(380, 100);
@@ -152,6 +161,7 @@ task main()
 			//turn about the same amt
 			///SCORING
 			moveStraight(16, 15);
+			StartTask(ElevatorMusic);
 			moveArm(8,1000);
 			moveStraight(13, 13);
 			//move forward to goal
@@ -160,6 +170,7 @@ task main()
 			moveArm(-7, 400);
 			moveStraight(3, -10);
 			moveArm(-8, 430);
+			StartTask(Flags);
 			moveStraight(15, -10);
 			moveStraight(5, -50);
 			//move to dispenser
@@ -170,7 +181,7 @@ task main()
 			gyroCenterPivot(95, 50);
 			moveStraight(10, 50);
 		}
-		else if(SensorValue[IRSensor] == 5)
+		else if(HTIRS2readACDir(IRSensor) == 5)
 		{
 			//IR beacon is in the middle
 			PlayTone(440, 100);
@@ -179,6 +190,7 @@ task main()
 			///SCORING
 			//raise the arm
 			moveStraight(13, 15);
+			StartTask(ElevatorMusic);
 			moveArm(11, 800);
 			moveStraight(7, 15);
 			//lower arm 1/8 tsp
@@ -187,6 +199,7 @@ task main()
 			moveStraight(3, -10);
 			moveArm(-7, 300);
 			moveStraight(12, -10);
+			StartTask(Flags);
 			//drive to dispenser CHANGE!!!!
 			moveStraight(30,-50);
 			gyroCenterPivot(40, 10);

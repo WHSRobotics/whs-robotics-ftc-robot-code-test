@@ -2,8 +2,9 @@
 #define AUTONOMOUS_FUNCTIONS1.H;
 
 #include "autonomous_constants_globVars.h" //Include header file with the constants and global variables for the autonomous
+#include "common.h"
 #include "hitechnic-gyro.h" //Include driver for gyro
-
+#include "hitechnic-touchmux.h"
 
 ///////////////FUNCTIONS///////////////
 /////Resets the global variables to their initial values
@@ -31,8 +32,8 @@ void stopDriveTrain()
 ////gives an updated change in angle
 float getAngleChange()
 {
-	gyroReading = HTGYROreadCal(3);
-	currentValue = HTGYROreadRot(3);//gyroReading - BIAS;
+	gyroReading = HTGYROreadCal(gyroRobot);
+	currentValue = HTGYROreadRot(gyroRobot);//gyroReading - BIAS;
 	timeChange = time1[T1]/1000.0;
 	ClearTimer(T1);
 	angleChange = currentValue * timeChange;
@@ -53,7 +54,7 @@ float getCurrTotalMove()
 //** should add a parameter to determine which way to pivot (left or right)
 void gyroCenterPivot(int turnDirection, int speedKonstant)
 {
-	HTGYROstartCal(3);
+	HTGYROstartCal(gyroRobot);
 	ClearTimer(T1);
 	adjustedTarget = ADJUST_M * turnDirection - ADJUST_B;
 	float turn = 100.0;
