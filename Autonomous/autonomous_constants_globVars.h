@@ -1,9 +1,12 @@
 #ifndef AUTONOMOUS_CONSTANTS_GLOBVARS.H;
 #define AUTONOMOUS_CONSTANTS_GLOBVARS.H;
 
+#include "hitechnic-sensormux.h"
+#include "hitechnic-irseeker-v2.h"
+
 
 ///////////////////KONSTANTS///////////////////
-
+const tMUXSensor IRSensor = msensor_S2_3;
 const float LOW_TURK = 0.75; //turn konstant for low power
 const float MID_TURK = 0.9; //turn konstant for mid power
 const float HIGH_TURK = 10.0; //turn konstant for high power
