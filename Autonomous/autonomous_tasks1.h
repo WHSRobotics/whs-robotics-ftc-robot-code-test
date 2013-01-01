@@ -1,7 +1,16 @@
 #ifndef AUTONOMOUS_TASKS1.H;
 #define AUTONOMOUS_TASKS1.H;
 
-//------------------notes--------------------
+/**********************************
+** WHS Robotics  |  FTC Team 542 **
+** Ring It Up! 2012-2013 Season  **
+** Autonomous Program 1.0        **
+** Tasks                         **
+***********************************/
+
+
+//////////////////ELEVATOR MUSIC//////////////////
+//--------------------notes-----------------------
 const float As3 = 233.08*2;
 const float A3 = 220.00*2;
 const float B3 = 246.94*2;
@@ -150,9 +159,11 @@ void third()
 }
 
 
-//----------------------tasks---------------------
+
+////////////////////////TASKS//////////////////////////
 task ElevatorMusic()
 {
+  //Play elevator music.
   bool flamingo = true;
   bool blownUp = true;
 
@@ -168,11 +179,14 @@ task ElevatorMusic()
 
 task Flags()
 {
+  //Triumphantly wave flags.
 	while(true)
 	{
+	  //Lift flags
 		motor[flagLeft] = 50;
 		motor[flagRight] = 50;
 		wait10Msec(21);
+		//Lower flags
 		motor[flagLeft] = -50;
 		motor[flagRight] = -50;
 		wait10Msec(21);
