@@ -1,34 +1,59 @@
 #ifndef AUTONOMOUS_CONSTANTS_GLOBVARS.H;
 #define AUTONOMOUS_CONSTANTS_GLOBVARS.H;
 
-#include "hitechnic-sensormux.h"
-#include "hitechnic-irseeker-v2.h"
+/**********************************
+** WHS Robotics  |  FTC Team 542 **
+** Ring It Up! 2012-2013 Season  **
+** Autonomous Program 1.0        **
+** Global Variables              **
+***********************************/
+
+
+
+///////////////////////////INCLUDES////////////////////////////
+#include "hitechnic-sensormux.h"  //header file for SMUX
+#include "hitechnic-irseeker-v2.h" //header file for IR seeker v2! :D
+
 
 
 ///////////////////KONSTANTS///////////////////
-const tMUXSensor IRSensor = msensor_S2_3;
+////General KONSTANTS////
+const float MILLISECOND = 1000.0; //number of milliseconds in one second
+const float DEFAULT_VAL = 42.0; //generic value for initialization that's greater than 0
+
+////Gyro KONSTANTS////
+//gyroCenterPivot
 const float LOW_TURK = 0.75; //turn konstant for low power
 const float MID_TURK = 0.9; //turn konstant for mid power
 const float HIGH_TURK = 10.0; //turn konstant for high power
 const float ADJUST_M = 1.0; //slope of linear equation to scale target angle
 const float ADJUST_B = 7.0; //y-intercept of linear equation to scale target angle
+const int TURN_THRESHOLD = 1; //stop turning when <1 degree left to turn
 
+////Drive Train KONSTANTS////
+//moveStraight
 const float INCH_ENCODERVALUE = 114.591559; //number of encoder values in one inch forward for a 4 inch wheel
-																						//(number of encoder valuesinone rotation[1440])/(wheel diameter[4]*pi[3.14...])
+																						//(number of encoder values in one rotation[1440])/(wheel diameter[4]*pi[3.14...])
 const float PWR_ADJUST = 3.9;
 
-const float MILLISECOND = 1000.0; //number of milliseconds in one second
-const float DEFAULT_VAL = 42.0; //generic value for initialization that's greater than 0
+////Arm KONSTANTS////
+//moveArm
+const float MAJOR_MSEC_PERCENT = 0.05; //percent of Msec to run arm at full pwr
+const float MINOR_MSEC_PERCENT = 0.95; //percent of Msec to gradually ramp arm pwr
+
+
 
 ///////////////GLOBAL VARIABLES////////////////
-
-float currentValue = 0.0;
-float angleChange = 0.0;
-float timeChange = 0.0;
-float currTotalMove = 0.0;
-float remainingTurn = 42.0;
+//Gyro variables
+float currentValue = 0.0; //current value of adjusted gyro reading (w/o BIAS)
+float angleChange = 0.0; //amt of change in angle turned
+float timeChange = 0.0; //amt of change in time (sec)
+float currTotalMove = 0.0; //amt turned already
+float remainingTurn = DEFAULT_VAL; //amt of turn remaining
 float error = 0.0;
-float gyroReading = 0.0;
-float adjustedTarget = 0.0;
+float gyroReading = 0.0; //gyro reading WHAT IS THIS VARIABLE FOR
+float adjustedTarget = 0.0; //adjusted amt of turn remaining
+
+
 
 #endif;

@@ -71,6 +71,7 @@ void raiseFlags()
 {
   motor[flagLeft] = FLAG_POW;
   motor[flagRight] = FLAG_POW;
+
   wait10Msec(FLAG_REG_TIME);
 
 	stopFlags();
@@ -104,29 +105,29 @@ task Arm()
 task Flags()
 {
   ClearTimer(T1);
-	//int TSval = 0;
-	bool hasMoved = false;
+  bool hasMoved = false;
 
   while(true)
   {
-  	//TSval = HTSMUXreadAnalogue(TOUCH_SENSOR);
+    //TSval = HTSMUXreadAnalogue(TOUCH_SENSOR); //read touch sensor value
+
     //check status of touch sensor and if flag needs to reset
-  	bool isPressed = HTTMUXisActive(TUX, 2);
-		//(nMotorEncoder[flagLeft] > 0 || nMotorEncoder[flagRight] > 0)
+    bool isPressed = HTTMUXisActive(TUX, 2);
 
     // Check if the sensor is pressed or not.
-    if(!isPressed && hasMoved) //not pressed, flags moved
+
+    if(isPressed && !hasMoved) //pressed, flags have not yet moved
     {
-    	resetFlags();
-    	hasMoved = false;
-    	PlayTone(200,5);
+      raiseFlags();
+      hasMoved = true;
+      PlayTone(400,5);
     }
-    else if(isPressed && !hasMoved) //pressed, flags have not yet moved
-    {
-    	raiseFlags();
-    	hasMoved = true;
-    	PlayTone(400,5);
-    }
+    else if(!isPressed && hasMoved) //not pressed, flags moved
+		{
+      resetFlags();
+      hasMoved = false;
+      PlayTone(200, 5);
+		}
     wait1Msec(5);
   }
 }
