@@ -14,7 +14,8 @@
 /**********************************
 ** WHS Robotics  |  FTC Team 542 **
 ** Ring It Up! 2012-2013 Season  **
-** Autonomous Program 1.0        **
+** Autonomous Series 1    			 **
+** Offensive direct IR score     **
 ** Main  |  Blue  |  V1          **
 ***********************************/
 
@@ -36,7 +37,7 @@ void initializeRobot()
 	nMotorEncoder[driveLeft] = 0;
 	nMotorEncoder[driveRight] = 0;
 
-	HTGYROstartCal(3); //calibrate gyro
+	HTGYROstartCal(gyroRobot); //calibrate gyro
 
 	//clear timers T1 and T2
 	ClearTimer(T1);
