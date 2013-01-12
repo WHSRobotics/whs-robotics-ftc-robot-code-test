@@ -21,6 +21,9 @@
 const float MILLISECOND = 1000.0; //number of milliseconds in one second
 const float DEFAULT_VAL = 42.0; //generic value for initialization that's greater than 0
 
+////Sensor Definitions////
+const tMUXSensor IRSensor = msensor_S2_3;
+
 ////Gyro KONSTANTS////
 //gyroCenterPivot
 const float LOW_TURK = 0.75; //turn konstant for low power
@@ -34,7 +37,7 @@ const int TURN_THRESHOLD = 1; //stop turning when <1 degree left to turn
 //moveStraight
 const float INCH_ENCODERVALUE = 114.591559; //number of encoder values in one inch forward for a 4 inch wheel
 																						//(number of encoder values in one rotation[1440])/(wheel diameter[4]*pi[3.14...])
-const float PWR_ADJUST = 3.9;
+const float PWR_ADJUST = 3.9; //7.5
 
 ////Arm KONSTANTS////
 //moveArm

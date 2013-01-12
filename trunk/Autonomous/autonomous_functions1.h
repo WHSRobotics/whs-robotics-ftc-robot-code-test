@@ -216,6 +216,14 @@ void moveStraight(float distanceInches, int pwr)
 	  // do not continue
 	}
 
+	pwrDriveLeft = (PWR_ADJUST/2);
+	pwrDriveRight = -(PWR_ADJUST/2);
+
+	motor[driveLeft] = pwrDriveLeft;
+	motor[driveRight] = pwrDriveRight;
+
+	wait1Msec(500);
+
 	stopDriveTrain();
 }
 
