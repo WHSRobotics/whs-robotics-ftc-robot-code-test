@@ -60,7 +60,9 @@ task main()
 
   waitForStart(); // Wait for the beginning of autonomous phase.
 
-  //raise arm to IR beacon level
+  moveStraight(30,50);//testing 123
+
+  /*//raise arm to IR beacon level
 	moveArm(3, 1250);
 
 	//move to plywood
@@ -180,7 +182,7 @@ task main()
       gyroCenterPivot(-95, 50);
 			moveStraight(30, 50);
 		}
-	}
+	}*/
 
   while (true)
   {
