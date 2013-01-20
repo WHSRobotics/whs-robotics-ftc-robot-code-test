@@ -17,7 +17,6 @@
 #include "hitechnic-touchmux.h"  //header file for Windsor's TUX
 
 
-
 /////////////////////////FUNCTIONS/////////////////////////////
 /**************************************
 ** resetGlobVars resets the global   **
@@ -29,7 +28,8 @@ void resetGlobVars()
   currentValue = 0.0;
 	angleChange = 0.0;
 	timeChange = 0.0;
-	currTotalMove = 0.0;
+	gCurrTotalMove = 0.0;
+	sCurrTotalTurn = 0.0;
 	remainingTurn = DEFAULT_VAL;
 	error = 0.0;
 	gyroReading = 0.0;
@@ -135,10 +135,10 @@ float getAngleChange()
 **  getCurrTotalMove gives a current    **
 **  running total of turn for the gyro  **
 ******************************************/
-float getCurrTotalMove()
+float getCurrTotalMove(float currTotal)
 {
-	currTotalMove += getAngleChange();
-	return currTotalMove;
+	currTotal += getAngleChange();
+	return currTotal;
 }
 
 
@@ -164,8 +164,9 @@ void gyroCenterPivot(int turnDirection, int speedKonstant)
 
 	while(abs(remainingTurn) > TURN_THRESHOLD) //while significantly turning
 	{
-		remainingTurn = adjustedTarget - currTotalMove; //find # of degrees left to turn
-		error = adjustedTarget - getCurrTotalMove();
+		remainingTurn = adjustedTarget - gCurrTotalMove; //find # of degrees left to turn
+		gCurrTotalMove += getAngleChange();
+		error = adjustedTarget - gCurrTotalMove;
 		turn = error * speedKonstant; //find pwr for DT motors
 
 	  //apply calculated turn pwr to DT motors
@@ -195,8 +196,8 @@ void moveStraight(float distanceInches, int pwr)
 	float targetDistance = distanceInches * INCH_ENCODERVALUE;
 
 	//adjust pwr to drive train motors
-	float pwrDriveLeft = pwr + (PWR_ADJUST/2);
-	float pwrDriveRight = pwr - (PWR_ADJUST/2);
+	float pwrDriveLeft = pwr;
+	float pwrDriveRight = pwr;
 
 	//reset drive train motor encoders
 	nMotorEncoder[driveLeft] = 0;
@@ -210,19 +211,54 @@ void moveStraight(float distanceInches, int pwr)
 	motor[driveLeft] = pwrDriveLeft;
 	motor[driveRight] = pwrDriveRight;
 
+	float scurrentValue = 0.0;
 	//while DT motors are still running (not stopped)
 	while(nMotorRunState[driveLeft] != runStateIdle && nMotorRunState[driveRight] != runStateIdle)
 	{
+		scurrentValue = HTGyroreadRot(gyroRobot);
+		if(scurrentValue < -0.5)
+		{
+			pwrDriveLeft += 1;
+			//pwrDriveRight -= 1;
+			motor[driveLeft] = pwrDriveLeft;
+			//motor[driveRight] = pwrDriveRight;
+		}
+		else if(scurrentValue > 0.5)
+		{
+			pwrDriveRight += 1;
+			//pwrDriveLeft -= 1;
+			//motor[driveLeft] = pwrDriveLeft;
+			motor[driveRight] = pwrDriveRight;
+		}
+		else if(pwrDriveLeft >= pwr || pwrDriveRight >= pwr)
+		{
+			pwrDriveLeft -= 1;
+			pwrDriveRight -= 1;
+			motor[driveLeft] = pwrDriveLeft;
+			motor[driveRight] = pwrDriveRight;
+		}
+		/*sCurrTotalTurn += getAngleChange();
+		wait10Msec(1);*/
 	  // do not continue
 	}
 
-	pwrDriveLeft = (PWR_ADJUST/2);
+	/*ClearTimer(T1);
+	scurrentValue = HTGYROreadRot(gyroRobot);//gyroReading - BIAS;
+	float stimeChange = time1[T1]/MILLISECOND; //change in time (sec)
+
+	ClearTimer(T1);
+
+	float sangleChange = scurrentValue * stimeChange;
+
+	PlayTone(440,40);
+	gyroCenterPivot(-sangleChange, 50);*/
+	/*pwrDriveLeft = (PWR_ADJUST/2);
 	pwrDriveRight = -(PWR_ADJUST/2);
 
 	motor[driveLeft] = pwrDriveLeft;
 	motor[driveRight] = pwrDriveRight;
 
-	wait1Msec(500);
+	wait1Msec(500);*/
 
 	stopDriveTrain();
 }

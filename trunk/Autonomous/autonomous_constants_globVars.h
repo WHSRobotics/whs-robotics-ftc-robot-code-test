@@ -37,7 +37,7 @@ const int TURN_THRESHOLD = 1; //stop turning when <1 degree left to turn
 //moveStraight
 const float INCH_ENCODERVALUE = 114.591559; //number of encoder values in one inch forward for a 4 inch wheel
 																						//(number of encoder values in one rotation[1440])/(wheel diameter[4]*pi[3.14...])
-const float PWR_ADJUST = 3.9; //7.5
+const float PWR_ADJUST = 7.355;//3.9 //7.5
 
 ////Arm KONSTANTS////
 //moveArm
@@ -47,11 +47,12 @@ const float MINOR_MSEC_PERCENT = 0.95; //percent of Msec to gradually ramp arm p
 
 
 ///////////////GLOBAL VARIABLES////////////////
-//Gyro variables
+//int ingPt = 0;//Gyro variables
 float currentValue = 0.0; //current value of adjusted gyro reading (w/o BIAS)
 float angleChange = 0.0; //amt of change in angle turned
 float timeChange = 0.0; //amt of change in time (sec)
-float currTotalMove = 0.0; //amt turned already
+float gCurrTotalMove = 0.0; //amt turned already
+float sCurrTotalTurn = 0.0; //amt of turn in moveStraight
 float remainingTurn = DEFAULT_VAL; //amt of turn remaining
 float error = 0.0;
 float gyroReading = 0.0; //gyro reading WHAT IS THIS VARIABLE FOR
