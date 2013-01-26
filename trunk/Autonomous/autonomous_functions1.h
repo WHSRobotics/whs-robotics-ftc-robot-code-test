@@ -13,8 +13,6 @@
 ///////////////////////////INCLUDES////////////////////////////
 #include "common.h" //header file for common stuf
 #include "autonomous_constants_globVars.h" //Header file with constants and global variables
-#include "hitechnic-gyro.h" //driver for gyro
-#include "hitechnic-touchmux.h"  //header file for Windsor's TUX
 
 
 /////////////////////////FUNCTIONS/////////////////////////////
@@ -192,74 +190,94 @@ void gyroCenterPivot(int turnDirection, int speedKonstant)
 ***************************************/
 void moveStraight(float distanceInches, int pwr)
 {
-  //convert given inches to encoder values
-	float targetDistance = distanceInches * INCH_ENCODERVALUE;
+ // //convert given inches to encoder values
+	//float targetDistance = distanceInches * INCH_ENCODERVALUE;
 
-	//adjust pwr to drive train motors
-	float pwrDriveLeft = pwr;
-	float pwrDriveRight = pwr;
+	////adjust pwr to drive train motors
+	//float pwrDriveLeft = pwr;
+	//float pwrDriveRight = pwr;
 
-	//reset drive train motor encoders
+	////reset drive train motor encoders
+	//nMotorEncoder[driveLeft] = 0;
+	//nMotorEncoder[driveRight] = 0;
+
+	////set DT motor encoders to converted inches
+	//nMotorEncoderTarget[driveLeft] = targetDistance;
+	//nMotorEncoderTarget[driveRight] = targetDistance;
+
+	////set DT motors to adjusted powers
+	//motor[driveLeft] = pwrDriveLeft;
+	//motor[driveRight] = pwrDriveRight;
+
+	//float scurrentValue = 0.0;
+	////while DT motors are still running (not stopped)
+	//while(nMotorRunState[driveLeft] != runStateIdle && nMotorRunState[driveRight] != runStateIdle)
+	//{
+	//	scurrentValue = HTGyroreadRot(gyroRobot);
+	//	if(scurrentValue < -0.5)
+	//	{
+	//		pwrDriveLeft += 1;
+	//		//pwrDriveRight -= 1;
+	//		motor[driveLeft] = pwrDriveLeft;
+	//		//motor[driveRight] = pwrDriveRight;
+	//	}
+	//	else if(scurrentValue > 0.5)
+	//	{
+	//		pwrDriveRight += 1;
+	//		//pwrDriveLeft -= 1;
+	//		//motor[driveLeft] = pwrDriveLeft;
+	//		motor[driveRight] = pwrDriveRight;
+	//	}
+	//	else if(pwrDriveLeft >= pwr || pwrDriveRight >= pwr)
+	//	{
+	//		pwrDriveLeft -= 1;
+	//		pwrDriveRight -= 1;
+	//		motor[driveLeft] = pwrDriveLeft;
+	//		motor[driveRight] = pwrDriveRight;
+	//	}
+	//	/*sCurrTotalTurn += getAngleChange();
+	//	wait10Msec(1);*/
+	//  // do not continue
+	//}
+
+	///*ClearTimer(T1);
+	//scurrentValue = HTGYROreadRot(gyroRobot);//gyroReading - BIAS;
+	//float stimeChange = time1[T1]/MILLISECOND; //change in time (sec)
+
+	//ClearTimer(T1);
+
+	//float sangleChange = scurrentValue * stimeChange;
+
+	//PlayTone(440,40);
+	//gyroCenterPivot(-sangleChange, 50);*/
+	///*pwrDriveLeft = (PWR_ADJUST/2);
+	//pwrDriveRight = -(PWR_ADJUST/2);
+
+	//motor[driveLeft] = pwrDriveLeft;
+	//motor[driveRight] = pwrDriveRight;
+
+	//wait1Msec(500);*/
+
+	//stopDriveTrain();
+
+	float targetDistance = distanceInches*INCH_ENCODERVALUE;
+	float pwrDriveLeft = pwr; //+ (PWR_ADJUST/2.0);
+	float pwrDriveRight = pwr; //- (PWR_ADJUST/2.0);
+
 	nMotorEncoder[driveLeft] = 0;
 	nMotorEncoder[driveRight] = 0;
 
-	//set DT motor encoders to converted inches
 	nMotorEncoderTarget[driveLeft] = targetDistance;
 	nMotorEncoderTarget[driveRight] = targetDistance;
 
-	//set DT motors to adjusted powers
 	motor[driveLeft] = pwrDriveLeft;
 	motor[driveRight] = pwrDriveRight;
 
-	float scurrentValue = 0.0;
-	//while DT motors are still running (not stopped)
-	while(nMotorRunState[driveLeft] != runStateIdle && nMotorRunState[driveRight] != runStateIdle)
-	{
-		scurrentValue = HTGyroreadRot(gyroRobot);
-		if(scurrentValue < -0.5)
+
+	while(nMotorRunState[driveLeft] != runStateIdle && nMotorRunState[driveRight] != runStateIdle)  // while Motor B is still running (hasn't reached target yet):
 		{
-			pwrDriveLeft += 1;
-			//pwrDriveRight -= 1;
-			motor[driveLeft] = pwrDriveLeft;
-			//motor[driveRight] = pwrDriveRight;
+		  // do not continue
 		}
-		else if(scurrentValue > 0.5)
-		{
-			pwrDriveRight += 1;
-			//pwrDriveLeft -= 1;
-			//motor[driveLeft] = pwrDriveLeft;
-			motor[driveRight] = pwrDriveRight;
-		}
-		else if(pwrDriveLeft >= pwr || pwrDriveRight >= pwr)
-		{
-			pwrDriveLeft -= 1;
-			pwrDriveRight -= 1;
-			motor[driveLeft] = pwrDriveLeft;
-			motor[driveRight] = pwrDriveRight;
-		}
-		/*sCurrTotalTurn += getAngleChange();
-		wait10Msec(1);*/
-	  // do not continue
-	}
-
-	/*ClearTimer(T1);
-	scurrentValue = HTGYROreadRot(gyroRobot);//gyroReading - BIAS;
-	float stimeChange = time1[T1]/MILLISECOND; //change in time (sec)
-
-	ClearTimer(T1);
-
-	float sangleChange = scurrentValue * stimeChange;
-
-	PlayTone(440,40);
-	gyroCenterPivot(-sangleChange, 50);*/
-	/*pwrDriveLeft = (PWR_ADJUST/2);
-	pwrDriveRight = -(PWR_ADJUST/2);
-
-	motor[driveLeft] = pwrDriveLeft;
-	motor[driveRight] = pwrDriveRight;
-
-	wait1Msec(500);*/
-
 	stopDriveTrain();
 }
 

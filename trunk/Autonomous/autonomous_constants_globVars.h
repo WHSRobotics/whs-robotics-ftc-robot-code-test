@@ -13,7 +13,8 @@
 ///////////////////////////INCLUDES////////////////////////////
 #include "hitechnic-sensormux.h"  //header file for SMUX
 #include "hitechnic-irseeker-v2.h" //header file for IR seeker v2! :D
-
+#include "hitechnic-gyro.h" //driver for gyro
+#include "hitechnic-touchmux.h"  //header file for Windsor's TUX
 
 
 ///////////////////KONSTANTS///////////////////
@@ -57,7 +58,7 @@ float remainingTurn = DEFAULT_VAL; //amt of turn remaining
 float error = 0.0;
 float gyroReading = 0.0; //gyro reading WHAT IS THIS VARIABLE FOR
 float adjustedTarget = 0.0; //adjusted amt of turn remaining
-
+int IRVal = 0;
 
 
 #endif;
