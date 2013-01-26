@@ -60,18 +60,19 @@ task main()
 
   waitForStart(); // Wait for the beginning of autonomous phase.
 
-  moveStraight(30,50);//testing 123
-
-  /*//raise arm to IR beacon level
-	moveArm(3, 1250);
+  //raise arm to IR beacon level
+	moveArm(6, 1250);
 
 	//move to plywood
   moveStraight(28,50);
 
-  if(SensorValue[IRSensor] != -1) //IR doesn't return error
+  //Check the IR sensor value
+	IRVal = HTIRS2readACDir(IRSensor);
+
+  if(IRVal != -1) //IR doesn't return error
 	{
 	  //----------------IR BEACON IS ON THE RIGHT----------------
-		if(SensorValue[IRSensor] >= 6)
+		if(IRVal >= 6)
 		{
 			PlayTone(500, 100); //signal that IR is on right
 
@@ -113,7 +114,7 @@ task main()
 
 		}
 		//----------------IR BEACON IS ON THE LEFT----------------
-		else if(SensorValue[IRSensor] <= 4)
+		else if(IRVal <= 4)
 		{
 			PlayTone(380, 100); //signal that IR is on left
 
@@ -150,7 +151,7 @@ task main()
 			moveStraight(15, 50);
 		}
 		//----------------IR BEACON IS IN THE MIDDLE----------------
-		else if(SensorValue[IRSensor] == 5)
+		else if(IRVal == 5)
 		{
 			PlayTone(440, 100); //signal that IR is in middle
 
@@ -182,7 +183,7 @@ task main()
       gyroCenterPivot(-95, 50);
 			moveStraight(30, 50);
 		}
-	}*/
+	}
 
   while (true)
   {
