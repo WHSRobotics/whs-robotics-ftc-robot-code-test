@@ -81,27 +81,29 @@ task main()
 
 			//back up about one floor tile (24 inches)
 			wait10Msec(50);
-			moveStraight(19, -25);
+			gyroCenterPivot(90,15);
+			moveStraight(24, 20);
+			//moveStraight(9.5/*19*/, -25);
 
 			//turn 45 degrees to line up with beacon
-			gyroCenterPivot(45, 20);
+			gyroCenterPivot(-45, 20);
 
 			///SCORING
 			//Move closer and lift arm
-			moveStraight(31, 20);
+			moveStraight(10, 20);
 
 		  StartTask(ElevatorMusic); //Initiate elevator music
 
 		  //Put ring on peg
 			moveArm(20, 1000);
-			moveStraight(10, 50);
+			moveStraight(2.5, 50);
 
 			///MOVING BACK
 			//Retreat and lower arm
 			//lower the arm a bit to back away
-			moveArm(-7, 600);
-			moveStraight(6, -15);
-			moveArm(-8, 600);
+			moveArm(-15, 600);
+			moveStraight(9, -15);
+			moveArm(-13, 600);
 
 			StartTask(Flags); //Triumphantly wave flags
 
@@ -109,8 +111,8 @@ task main()
 			moveStraight(12, -15);
 			gyroCenterPivot(-140, 50);
 			moveStraight(30, 50);
-			gyroCenterPivot(80, 50);
-			moveStraight(40, 50);
+			//gyroCenterPivot(80, 50);
+			//moveStraight(40, 50);
 
 		}
 		//----------------IR BEACON IS ON THE LEFT----------------
@@ -123,8 +125,8 @@ task main()
 
 			//move forward more than middle, turn about the same amt.
 			gyroCenterPivot(-30, 15);
-			moveStraight(29,15);
-			gyroCenterPivot(94, 5);
+			moveStraight(29.5,15);
+			gyroCenterPivot(83, 5);
 
 			///SCORING
 			//Move closer and lift arm
@@ -138,9 +140,9 @@ task main()
 
 			///MOVING BACK
 			//Retreat and lower arm
-			moveArm(-7, 400);
+			moveArm(-15, 400);
 			moveStraight(3, -10);
-			moveArm(-8, 430);
+			moveArm(-20, 430);
 
 			StartTask(Flags); //Triumphantly wave flags
 
@@ -157,7 +159,7 @@ task main()
 
 			///ALIGNING
 			//Move closer and align to goal
-			moveStraight(9, 50);
+			moveStraight(14, 50);
 			gyroCenterPivot(54, 10);
 
 			///SCORING
@@ -168,13 +170,13 @@ task main()
 
 			//Put ring on peg
 			moveArm(9, 600);
-			moveStraight(7, 15);
+			moveStraight(8.5, 15);
 
 	    ///MOVING BACK
       //Retreat and lower arm
-			moveArm(-7, 400);
+			moveArm(-20, 400);
 			moveStraight(3, -10);
-			moveArm(-7, 300);
+			moveArm(-25, 300);
 			moveStraight(12, -10);
 
       StartTask(Flags); //Triumphantly wave flags
