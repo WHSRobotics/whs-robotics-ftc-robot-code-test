@@ -15,7 +15,7 @@
 ** WHS Robotics  |  FTC Team 542  **
 ** Ring It Up! 2012-2013 Season   **
 ** Autonomous Series 2            **
-** Defensive blocking							**
+** Offensive Blocking							**
 ** Main  |  Blue or Red  |  V1    **
 ***********************************/
 
@@ -72,7 +72,7 @@ task main()
 
 
 	///MOVE TO OTHER SIDE
-	moveStraight(60,100);
+	moveStraight(60, 50);
 
 	///ALIGNING
 	//Take an IR reading.
@@ -83,20 +83,77 @@ task main()
 	{
 		//right is >= 8
 		//Turn to block right peg
-		gyroCenterPivot(45,100);
+		gyroCenterPivot(45, 50);
 		//---------------------IR BEACON IS ON LEFT/MIDDLE----------------------
 		if(IRVal < 8)
 		{
-			//Move forward to block middle peg
-			moveStraight(30,100);
-			//Take an IR reading
+			//Move forward to block the middle and left pegs
+			moveStraight(35, 50);
+			//Take another IR reading(differentiate between mid and left)
 			IRVal = HTIRS2readACDir(IRSensor);
 			//---------------------IR BEACON IS ON LEFT---------------------------
-			if(IRVal <= 6)
+			if(IRVal <= 7)
 			{
-				//Move forward to block left peg
-				moveStraight(15, 100);
+				//Line up with left peg
+				moveStraight(10, 100);
+				gyroCenterPivot(90, 15);
+
+				//Move straight onto the peg
+				moveStraight(15, 30);
+				moveArm(-15, 500);
+
+				StartTask(ElevatorMusic); //Initiate Elevator Music
+
+				//Score the ring
+				moveStraight(4, -50);
+				moveArm(15, 600);
+
+				//Turn to block
+				gyroCenterPivot(160, 100);
+
 			}
+			//---------------------IR BEACON IS ON MIDDLE--------------------------
+			else
+			{
+				//Back up to the middle peg
+				moveStraight(7, -50);
+
+				//Line up with middle peg
+				gyroCenterPivot(95, 15);
+
+				//Move straight onto the peg
+				moveStraight(13, 30);
+				moveArm(-15, 500);
+
+				StartTask(ElevatorMusic); //Initiate Elevator Music
+
+				//Score the ring
+				moveStraight(4, -50);
+				moveArm(15, 600);
+
+				//Turn to block
+				gyroCenterPivot(160, 100);
+			}
+		}
+		//-----------------------IR BEACON IS ON RIGHT---------------------------
+		else
+		{
+			//Line up with the peg
+			moveStraight(5, 50);
+			gyroCenterPivot(90, 15);
+
+			//Move straight onto the peg
+			moveStraight(13, 30);
+			moveArm(-15, 500);
+
+			StartTask(ElevatorMusic); //Initiate Elevator Music
+
+			//Score the ring
+			moveStraight(4, -50);
+			moveArm(15, 600);
+
+			//Turn to block
+			gyroCenterPivot(160, 100);
 		}
 	}
 }

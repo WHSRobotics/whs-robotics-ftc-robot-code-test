@@ -52,8 +52,141 @@ void initializeRobot()
 }
 
 
+task main()
+{
+  initializeRobot();
 
-////////////////////////////MAIN///////////////////////////////
+  waitForStart(); // Wait for the beginning of autonomous phase.
+
+  //raise arm to IR beacon level
+	moveArm(6, 1250);
+
+	//move to plywood
+  moveStraight(28,50);
+
+  //Check the IR sensor value
+	IRVal = HTIRS2readACDir(IRSensor);
+
+  if(IRVal != -1) //IR doesn't return error
+	{
+	  //----------------IR BEACON IS ON THE RIGHT----------------
+		if(IRVal >= 6)
+		{
+			PlayTone(500, 100); //signal that IR is on right
+
+			///ALIGNING
+			//Move back and align to goal
+
+			//back up about one floor tile (24 inches)
+			wait10Msec(50);
+			gyroCenterPivot(90,15);
+			moveStraight(24, 20);
+			//moveStraight(9.5/*19*/, -25);
+
+			//turn 45 degrees to line up with beacon
+			gyroCenterPivot(-45, 20);
+
+			///SCORING
+			//Move closer and lift arm
+			moveStraight(10, 20);
+
+		  StartTask(ElevatorMusic); //Initiate elevator music
+
+		  //Put ring on peg
+			moveArm(20, 1000);
+			moveStraight(2.5, 50);
+
+			///MOVING BACK
+			//Retreat and lower arm
+			//lower the arm a bit to back away
+			moveArm(-15, 600);
+			moveStraight(9, -15);
+			moveArm(-13, 600);
+
+			StartTask(Flags); //Triumphantly wave flags
+
+			///DRIVE TO DISPENSER
+      //moveStraight(12, -15);
+      gyroCenterPivot(120, 50);
+      moveStraight(6,50);
+		}
+		//----------------IR BEACON IS ON THE LEFT----------------
+		else if(IRVal <= 4)
+		{
+			PlayTone(380, 100); //signal that IR is on left
+
+			///ALIGNING
+			//Move back and align to goal
+
+			//move forward more than middle, turn about the same amt.
+			gyroCenterPivot(-30, 15);
+			moveStraight(29.5,15);
+			gyroCenterPivot(83, 5);
+
+			///SCORING
+			//Move closer and lift arm
+			moveStraight(16, 15);
+
+			StartTask(ElevatorMusic); //Initiate elevator music
+
+			//Put ring on peg
+			moveArm(8,1000);
+			moveStraight(13, 13);
+
+			///MOVING BACK
+			//Retreat and lower arm
+			moveArm(-15, 400);
+			moveStraight(3, -10);
+			moveArm(-20, 430);
+
+			StartTask(Flags); //Triumphantly wave flags
+
+			moveStraight(15, -10);
+
+			///DRIVE TO DISPENSER
+      gyroCenterPivot(100, 50);
+      moveStraight(40, 50);
+		}
+		//----------------IR BEACON IS IN THE MIDDLE----------------
+		else if(IRVal == 5)
+		{
+			PlayTone(440, 100); //signal that IR is in middle
+
+			///ALIGNING
+			//Move closer and align to goal
+			moveStraight(14, 50);
+			gyroCenterPivot(54, 10);
+
+			///SCORING
+			//Move closer and lift arm
+			moveStraight(13, 15);
+
+			StartTask(ElevatorMusic); //Initiate elevator music
+
+			//Put ring on peg
+			moveArm(9, 600);
+			moveStraight(8.5, 15);
+
+	    ///MOVING BACK
+      //Retreat and lower arm
+			moveArm(-20, 400);
+			moveStraight(3, -10);
+			moveArm(-25, 300);
+			moveStraight(12, -10);
+
+      StartTask(Flags); //Triumphantly wave flags
+
+      ///DRIVE TO DISPENSER
+      gyroCenterPivot(90, 50);
+      moveStraight(30, 50);
+		}
+	}
+
+  while (true)
+  {
+  }
+}
+/*////////////////////////////MAIN///////////////////////////////
 task main()
 {
   initializeRobot();
@@ -190,3 +323,4 @@ task main()
   {
   }
 }
+*/

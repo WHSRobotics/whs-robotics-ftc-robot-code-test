@@ -1,5 +1,6 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  none,     none)
 #pragma config(Sensor, S2,     HTSMUX,         sensorI2CCustom)
+#pragma config(Sensor, S3,     TUX,            sensorHiTechnicTouchMux)
 #pragma config(Motor,  motorB,          flagLeft,      tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  motorC,          flagRight,     tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  mtr_S1_C1_1,     driveRight,    tmotorTetrix, openLoop, reversed, encoder)
@@ -54,7 +55,8 @@ int scalePow(int rawPow, bool NormalSpeed)
 	float finalPow = 0;
 
 	//find the proportional motor power using ratio of motor to joystick
-	finalPow = SCALE_JOYMOT * rawPow;
+	//finalPow = SCALE_JOYMOT * rawPow;
+	finalPow = rawPow;
 
 	if(NormalSpeed)
 	{
