@@ -79,7 +79,7 @@ task main()
 
   //Start all other tasks
 	StartTask(Arm);
-	StartTask(Flags);
+	//StartTask(Flags);
 
 	//Control Drive Train
   while (true)
