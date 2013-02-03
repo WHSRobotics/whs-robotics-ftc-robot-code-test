@@ -1,5 +1,5 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  none,     none)
-#pragma config(Sensor, S2,     SMUX,           sensorI2CCustom)
+#pragma config(Sensor, S2,     IRSensor,       sensorHiTechnicIRSeeker1200)
 #pragma config(Sensor, S3,     TUX,            sensorHiTechnicTouchMux)
 #pragma config(Sensor, S4,     gyroRobot,      sensorI2CHiTechnicGyro)
 #pragma config(Motor,  motorA,           ,             tmotorNXT, openLoop)
@@ -65,7 +65,8 @@ task main()
   moveStraight(28,50);
 
   //Check the IR sensor value
-	IRVal = HTIRS2readACDir(IRSensor);
+	///IRVal = HTIRS2readACDir(IRSensor);
+	IRVal = SensorValue[IRSensor];
 
   if(IRVal != -1) //IR doesn't return error
 	{
