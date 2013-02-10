@@ -260,9 +260,29 @@ void moveStraight(float distanceInches, int pwr)
 
 	//stopDriveTrain();
 
+	//float targetDistance = distanceInches*INCH_ENCODERVALUE;
+	//float pwrDriveLeft = pwr; //+ (PWR_ADJUST/2.0);
+	//float pwrDriveRight = pwr; //- (PWR_ADJUST/2.0);
+
+	//nMotorEncoder[driveLeft] = 0;
+	//nMotorEncoder[driveRight] = 0;
+
+	//nMotorEncoderTarget[driveLeft] = targetDistance;
+	//nMotorEncoderTarget[driveRight] = targetDistance;
+
+	//motor[driveLeft] = pwrDriveLeft;
+	//motor[driveRight] = pwrDriveRight;
+
+
+	//while(nMotorRunState[driveLeft] != runStateIdle && nMotorRunState[driveRight] != runStateIdle)  // while Motor B is still running (hasn't reached target yet):
+	//	{
+	//	  // do not continue
+	//	}
+	//stopDriveTrain();
+
 	float targetDistance = distanceInches*INCH_ENCODERVALUE;
-	float pwrDriveLeft = pwr; //+ (PWR_ADJUST/2.0);
-	float pwrDriveRight = pwr; //- (PWR_ADJUST/2.0);
+	float pwrDriveLeft = pwr;
+	float pwrDriveRight = pwr;
 
 	nMotorEncoder[driveLeft] = 0;
 	nMotorEncoder[driveRight] = 0;
@@ -273,11 +293,49 @@ void moveStraight(float distanceInches, int pwr)
 	motor[driveLeft] = pwrDriveLeft;
 	motor[driveRight] = pwrDriveRight;
 
+  ClearTimer(T1);
+	while(nMotorRunState[driveLeft] != runStateIdle && nMotorRunState[driveRight] != runStateIdle)
+	{
+    //while encoders still have not reached their target
+    if(time1[T1] >= TIME_INTERVAL) //if 100 Msec have passed
+    {
+      //get both encoder values
+	    leftEncoderCurr = nMotorEncoder[driveLeft];
+	    rightEncoderCurr = nMotorEncoder[driveRight];
 
-	while(nMotorRunState[driveLeft] != runStateIdle && nMotorRunState[driveRight] != runStateIdle)  // while Motor B is still running (hasn't reached target yet):
-		{
-		  // do not continue
-		}
+	    leftEncoderDiff = leftEncoderCurr - leftEncoderPrev;
+	    rightEncoderDiff = rightEncoderCurr - rightEncoderPrev;
+
+	    //calculate encoder counts per 100 Msec for both encoders
+	    leftEncoderRate = leftEncoderDiff / TIME_INTERVAL;
+	    rightEncoderRate = rightEncoderDiff / TIME_INTERVAL;
+
+	    //calculate error between current rates and avg rates
+	    leftEncoderError = abs(leftEncoderRate - CHANGE_AVG_RATE);
+	    rightEncoderError = abs(rightEncoderRate - CHANGE_AVG_RATE);
+
+	    if(leftError > THRESHOLD || rightError > THRESHOLD)
+	    {
+	      //if current rates are significantly different from average
+	      //(the robot is ramming something else)
+
+	      //back up at full power for 500 Msec
+	      motor[driveLeft] = -100;
+	      motor[driveRight] = -100;
+
+	      wait1Msec(500);
+	      stopDriveTrain();
+	    }
+
+	    //reset timers and encoders
+	    ClearTimer(T1);
+
+	    leftEncoderPrev = leftEncoderCurr;
+	    rightEncoderPrev = rightEncoderCurr;
+
+	    break;
+	  }
+	}
 	stopDriveTrain();
 }
 

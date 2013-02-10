@@ -48,7 +48,7 @@ const float MINOR_MSEC_PERCENT = 0.95; //percent of Msec to gradually ramp arm p
 
 
 ///////////////GLOBAL VARIABLES////////////////
-//int ingPt = 0;//Gyro variables
+//Gyro variables
 float currentValue = 0.0; //current value of adjusted gyro reading (w/o BIAS)
 float angleChange = 0.0; //amt of change in angle turned
 float timeChange = 0.0; //amt of change in time (sec)
@@ -59,6 +59,21 @@ float error = 0.0;
 float gyroReading = 0.0; //gyro reading WHAT IS THIS VARIABLE FOR
 float adjustedTarget = 0.0; //adjusted amt of turn remaining
 int IRVal = 0;
+
+//Encoder stop ramming variables
+float leftEncoderPrev = 0.0;
+float rightEncoderPrev = 0.0;
+float leftEncoderCurr = 0.0;
+float rightEncoderCurr = 0.0;
+float leftEncoderDiff = 0.0;
+float rightEncoderDiff = 0.0;
+float leftEncoderRate = 0.0;
+float rightEncoderRate = 0.0;
+float leftEncoderError = 0.0;
+float rightEncoderError = 0.0;
+const float CHANGE_AVG_RATE = 42.0; //magic num
+const float THRESHOLD = 5.0; //magic num
+const float TIME_INTERVAL = 100.0; //magic numish
 
 
 #endif;
