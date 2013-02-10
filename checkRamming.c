@@ -1,9 +1,13 @@
-float leftEncoder = 0.0;
-float rightEncoder = 0.0;
+float leftEncoderPrev = 0.0;
+float rightEncoderPrev = 0.0;
+float leftEncoderCurr = 0.0;
+float rightEncoderCurr = 0.0;
+float leftEncoderDiff = 0.0;
+float rightEncoderDiff = 0.0;
 float leftEncoderRate = 0.0;
 float rightEncoderRate = 0.0;
-float leftError = 0.0;
-float rightError = 0.0;
+float leftEncoderError = 0.0;
+float rightEncoderError = 0.0;
 const float CHANGE_AVG_RATE = 42.0; //magic num
 const float THRESHOLD = 5.0; //magic num
 const float TIME_INTERVAL = 100.0; //magic num
@@ -29,12 +33,15 @@ void CheckRamming()
     if(time1[T1] >= TIME_INTERVAL) //if 100 Msec have passed
     {
       //get both encoder values
-	    leftEncoder = nMotorEncoder[driveLeft];
-	    rightEncoder = nMotorEncoder[driveRight];
+	    leftEncoderCurr = nMotorEncoder[driveLeft];
+	    rightEncoderCurr = nMotorEncoder[driveRight];
+
+	    leftEncoderDiff = leftEncoderCurr - leftEncoderPrev;
+	    rightEncoderDiff = rightEncoderCurr - rightEncoderPrev;
 
 	    //calculate encoder counts per 100 Msec for both encoders
-	    leftEncoderRate = leftEncoder / TIME_INTERVAL;
-	    rightEncoderRate = rightEncoder / TIME_INTERVAL;
+	    leftEncoderRate = leftEncoderDiff / TIME_INTERVAL;
+	    rightEncoderRate = rightEncoderDiff / TIME_INTERVAL;
 
 	    //calculate error between current rates and avg rates
 	    leftError = abs(leftEncoderRate - CHANGE_AVG_RATE);
@@ -57,12 +64,13 @@ void CheckRamming()
 	    }
 
 	    //reset timers and encoders
-	    ClearTimer[T1];
-	    nMotorEncoder[driveLeft] = 0;
-	    nMotorEncoder[driveRight] = 0;
+	    ClearTimer(T1);
+
+	    leftEncoderPrev = leftEncoderCurr;
+	    rightEncoderPrev = rightEncoderCurr;
 
 	    break;
-	 }
+
   }
  }
 }
