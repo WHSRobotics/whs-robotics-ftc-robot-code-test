@@ -102,7 +102,7 @@ task Arm()
 }
 
 
-/*task Flags()
+task Flags()
 {
   ClearTimer(T1);
   bool hasMoved = false;
@@ -130,7 +130,7 @@ task Arm()
 		}
     wait1Msec(5);
   }
-}*/
+}
 
 
 

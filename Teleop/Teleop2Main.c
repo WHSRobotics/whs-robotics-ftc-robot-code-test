@@ -1,5 +1,5 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  none,     none)
-#pragma config(Sensor, S2,     HTSMUX,         sensorI2CCustom)
+#pragma config(Sensor, S2,     IRSensor,             sensorHiTechnicIRSeeker1200)
 #pragma config(Sensor, S3,     TUX,            sensorHiTechnicTouchMux)
 #pragma config(Motor,  motorB,          flagLeft,      tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  motorC,          flagRight,     tmotorNXT, PIDControl, encoder)
@@ -79,7 +79,7 @@ task main()
 
   //Start all other tasks
 	StartTask(Arm);
-	//StartTask(Flags);
+	StartTask(Flags);
 
 	//Control Drive Train
   while (true)

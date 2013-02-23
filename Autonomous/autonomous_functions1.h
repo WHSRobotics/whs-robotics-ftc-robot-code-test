@@ -296,45 +296,45 @@ void moveStraight(float distanceInches, int pwr)
   ClearTimer(T1);
 	while(nMotorRunState[driveLeft] != runStateIdle && nMotorRunState[driveRight] != runStateIdle)
 	{
-    //while encoders still have not reached their target
-    if(time1[T1] >= TIME_INTERVAL) //if 100 Msec have passed
-    {
-      //get both encoder values
-	    leftEncoderCurr = nMotorEncoder[driveLeft];
-	    rightEncoderCurr = nMotorEncoder[driveRight];
+    ////while encoders still have not reached their target
+    //if(time1[T1] >= TIME_INTERVAL) //if 100 Msec have passed
+    //{
+    //  //get both encoder values
+	   // leftEncoderCurr = nMotorEncoder[driveLeft];
+	   // rightEncoderCurr = nMotorEncoder[driveRight];
 
-	    leftEncoderDiff = leftEncoderCurr - leftEncoderPrev;
-	    rightEncoderDiff = rightEncoderCurr - rightEncoderPrev;
+	   // leftEncoderDiff = leftEncoderCurr - leftEncoderPrev;
+	   // rightEncoderDiff = rightEncoderCurr - rightEncoderPrev;
 
-	    //calculate encoder counts per 100 Msec for both encoders
-	    leftEncoderRate = leftEncoderDiff / TIME_INTERVAL;
-	    rightEncoderRate = rightEncoderDiff / TIME_INTERVAL;
+	   // //calculate encoder counts per 100 Msec for both encoders
+	   // leftEncoderRate = leftEncoderDiff / TIME_INTERVAL;
+	   // rightEncoderRate = rightEncoderDiff / TIME_INTERVAL;
 
-	    //calculate error between current rates and avg rates
-	    leftEncoderError = abs(leftEncoderRate - CHANGE_AVG_RATE);
-	    rightEncoderError = abs(rightEncoderRate - CHANGE_AVG_RATE);
+	   // //calculate error between current rates and avg rates
+	   // leftEncoderError = abs(leftEncoderRate - CHANGE_AVG_RATE);
+	   // rightEncoderError = abs(rightEncoderRate - CHANGE_AVG_RATE);
 
-	    if(leftError > THRESHOLD || rightError > THRESHOLD)
-	    {
-	      //if current rates are significantly different from average
-	      //(the robot is ramming something else)
+	   // if(leftEncoderError > THRESHOLD || rightEncoderError > THRESHOLD)
+	   // {
+	   //   //if current rates are significantly different from average
+	   //   //(the robot is ramming something else)
 
-	      //back up at full power for 500 Msec
-	      motor[driveLeft] = -100;
-	      motor[driveRight] = -100;
+	   //   //back up at full power for 500 Msec
+	   //   motor[driveLeft] = -100;
+	   //   motor[driveRight] = -100;
 
-	      wait1Msec(500);
-	      stopDriveTrain();
-	    }
+	   //   wait1Msec(500);
+	   //   stopDriveTrain();
+	   // }
 
-	    //reset timers and encoders
-	    ClearTimer(T1);
+	   // //reset timers and encoders
+	   // ClearTimer(T1);
 
-	    leftEncoderPrev = leftEncoderCurr;
-	    rightEncoderPrev = rightEncoderCurr;
+	   // leftEncoderPrev = leftEncoderCurr;
+	   // rightEncoderPrev = rightEncoderCurr;
 
-	    break;
-	  }
+	   // break;
+	  //}
 	}
 	stopDriveTrain();
 }
