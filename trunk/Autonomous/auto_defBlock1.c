@@ -77,7 +77,7 @@ task main()
 	///ALIGNING
 	//Take an IR reading.
 	//right >= 8
-	///IRVal = HTIRS2readACDir(IRSensor);
+	//IRVal = HTIRS2readACDir(IRSensor);
 	  IRVal = SensorValue[IRSensor];
 
 	if(IRVal != 1)
@@ -85,13 +85,15 @@ task main()
 		//right is >= 8
 		//Turn to block right peg
 		gyroCenterPivot(45,100);
+		moveStraight(5,100);
 		//---------------------IR BEACON IS ON LEFT/MIDDLE----------------------
 		if(IRVal < 8)
 		{
 			//Move forward to block middle peg
 			moveStraight(30,100);
 			//Take an IR reading
-			IRVal = HTIRS2readACDir(IRSensor);
+			//IRVal = HTIRS2readACDir(IRSensor);
+			IRVal = SensorValue[IRSensor];
 			//---------------------IR BEACON IS ON LEFT---------------------------
 			if(IRVal <= 6)
 			{
