@@ -178,6 +178,42 @@ void gyroCenterPivot(int turnDirection, int speedKonstant)
   resetGlobVars();
 }
 
+/***************************************
+**  gyroRightPivot turns the robot    **
+**  accurately, driving on one side   **
+**  using the gyro sensor. 						**
+**  Turns at a certain speed until it **
+**  gets to turnDirection.            **
+*--------------------------------------*
+* Parameters:
+* int turnDirection - Num degrees to turn to
+* int speedKonstant - Speed to turn at
+****************************************/
+void gyroRightPivot(int turnDirection, int speedKonstant)
+{
+  //Initialization
+	HTGYROstartCal(gyroRobot); //Calibrate gyro sensor
+	ClearTimer(T1);
+
+	adjustedTarget = ADJUST_M * turnDirection - ADJUST_B; //scale target angle linearly
+	float turn = 100.0;  //default pwr for drive train motors
+
+	while(abs(remainingTurn) > TURN_THRESHOLD) //while significantly turning
+	{
+		remainingTurn = adjustedTarget - gCurrTotalMove; //find # of degrees left to turn
+		gCurrTotalMove += getAngleChange();
+		error = adjustedTarget - gCurrTotalMove;
+		turn = error * speedKonstant; //find pwr for DT motors
+
+	  //apply calculated turn pwr to DT motors
+		motor[driveRight] = -turn;
+
+		wait10Msec(1);
+	}
+
+  stopDriveTrain();
+  resetGlobVars();
+}
 
 /**************************************
 **  moveStraight moves the robot

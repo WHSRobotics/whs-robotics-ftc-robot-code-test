@@ -72,7 +72,7 @@ task main()
 
 
 	///MOVE TO OTHER SIDE
-	moveStraight(60, 50);
+	moveStraight(60, 100);
 
 	///ALIGNING
 	//Take an IR reading.
@@ -84,46 +84,46 @@ task main()
 	{
 		//right is >= 8
 		//Turn to block right peg
-		gyroCenterPivot(45, 50);
+		gyroCenterPivot(45, 100);
 		//---------------------IR BEACON IS ON LEFT/MIDDLE----------------------
 		if(IRVal < 8)
 		{
 			//Move forward to block the middle and left pegs
-			moveStraight(35, 50);
+			moveStraight(35, 100);
 			//Take another IR reading(differentiate between mid and left)
-			IRVal = HTIRS2readACDir(IRSensor);
+			IRVal = SensorValue[IRSensor];
 			//---------------------IR BEACON IS ON LEFT---------------------------
 			if(IRVal <= 7)
 			{
 				//Line up with left peg
-				moveStraight(10, 100);
-				gyroCenterPivot(90, 15);
+				moveStraight(22, 100);//12.75, 100);
+				gyroRightPivot(93, 100);
 
 				//Move straight onto the peg
-				moveStraight(15, 30);
-				moveArm(-15, 500);
+				/*moveStraight(11.5, 30);
+				moveArm(-25, 600);
 
 				StartTask(ElevatorMusic); //Initiate Elevator Music
 
 				//Score the ring
-				moveStraight(4, -50);
-				moveArm(15, 600);
+				moveStraight(7, -100);
+				//moveArm(15, 600);
 
 				//Turn to block
-				gyroCenterPivot(160, 100);
+				gyroCenterPivot(160, 100);*/
 
 			}
 			//---------------------IR BEACON IS ON MIDDLE--------------------------
 			else
 			{
 				//Back up to the middle peg
-				moveStraight(7, -50);
+				moveStraight(7, -100);
 
 				//Line up with middle peg
-				gyroCenterPivot(95, 15);
+				gyroCenterPivot(95, 100);
 
 				//Move straight onto the peg
-				moveStraight(13, 30);
+				/*moveStraight(13, 30);
 				moveArm(-15, 500);
 
 				StartTask(ElevatorMusic); //Initiate Elevator Music
@@ -133,18 +133,18 @@ task main()
 				moveArm(15, 600);
 
 				//Turn to block
-				gyroCenterPivot(160, 100);
+				gyroCenterPivot(160, 100);*/
 			}
 		}
 		//-----------------------IR BEACON IS ON RIGHT---------------------------
 		else
 		{
 			//Line up with the peg
-			moveStraight(5, 50);
-			gyroCenterPivot(90, 15);
+			moveStraight(5, 100);
+			gyroCenterPivot(90, 100);
 
 			//Move straight onto the peg
-			moveStraight(13, 30);
+			/*moveStraight(13, 30);
 			moveArm(-15, 500);
 
 			StartTask(ElevatorMusic); //Initiate Elevator Music
@@ -154,7 +154,7 @@ task main()
 			moveArm(15, 600);
 
 			//Turn to block
-			gyroCenterPivot(160, 100);
+			gyroCenterPivot(160, 100);*/
 		}
 	}
 }
