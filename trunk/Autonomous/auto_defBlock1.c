@@ -84,7 +84,7 @@ task main()
 	{
 		//right is >= 8
 		//Turn to block right peg
-		gyroCenterPivot(45,100);
+		gyroCenterPivot(52,100);
 		moveStraight(5,100);
 		//---------------------IR BEACON IS ON LEFT/MIDDLE----------------------
 		if(IRVal < 8)
@@ -95,10 +95,14 @@ task main()
 			//IRVal = HTIRS2readACDir(IRSensor);
 			IRVal = SensorValue[IRSensor];
 			//---------------------IR BEACON IS ON LEFT---------------------------
-			if(IRVal <= 6)
+			if(IRVal <= 7)
 			{
 				//Move forward to block left peg
-				moveStraight(15, 100);
+				moveStraight(13, 100);
+			}
+			else
+			{
+				moveStraight(10, -100);
 			}
 		}
 	}
