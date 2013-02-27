@@ -83,11 +83,11 @@ task main()
 			//back up about one floor tile (24 inches)
 			wait10Msec(50);
 			gyroCenterPivot(90,15);
-			moveStraight(24, 20);
+			moveStraight(13, 20); //24
 			//moveStraight(9.5/*19*/, -25);
 
 			//turn 45 degrees to line up with beacon
-			gyroCenterPivot(-45, 20);
+			gyroCenterPivot(-30, 20); //45
 
 			///SCORING
 			//Move closer and lift arm
@@ -97,7 +97,7 @@ task main()
 
 		  //Put ring on peg
 			moveArm(20, 1000);
-			moveStraight(2.5, 50);
+			moveStraight(4, 50); //2.5
 
 			///MOVING BACK
 			//Retreat and lower arm
@@ -160,7 +160,7 @@ task main()
 
 			///ALIGNING
 			//Move closer and align to goal
-			moveStraight(14, 50);
+			moveStraight(20, 50); //14
 			gyroCenterPivot(54, 10);
 
 			///SCORING

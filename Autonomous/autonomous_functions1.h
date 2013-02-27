@@ -179,17 +179,21 @@ void gyroCenterPivot(int turnDirection, int speedKonstant)
 }
 
 /***************************************
-**  gyroRightPivot turns the robot    **
-**  accurately, driving on one side   **
-**  using the gyro sensor. 						**
+**  gyroSidePivot turns the robot     **
+**  accurately, driving on one side		**
+**  using the gyro sensor.   					**
 **  Turns at a certain speed until it **
 **  gets to turnDirection.            **
 *--------------------------------------*
 * Parameters:
 * int turnDirection - Num degrees to turn to
+										- Positive number of degrees turns the robot with the right
+										- Negative number of degrees turns the robot with the left
 * int speedKonstant - Speed to turn at
+										- Positive number of degrees turns the robot by moving the motors forward
+										- Negative number of degrees turns the robot by moving the motors backwards
 ****************************************/
-void gyroRightPivot(int turnDirection, int speedKonstant)
+void gyroSidePivot(int turnDirection, int speedKonstant)
 {
   //Initialization
 	HTGYROstartCal(gyroRobot); //Calibrate gyro sensor
@@ -205,8 +209,17 @@ void gyroRightPivot(int turnDirection, int speedKonstant)
 		error = adjustedTarget - gCurrTotalMove;
 		turn = error * speedKonstant; //find pwr for DT motors
 
-	  //apply calculated turn pwr to DT motors
-		motor[driveRight] = -turn;
+	  ////apply calculated turn pwr to DT motors
+		//Use the right side of the DT with a positive target
+		if(turnDirection > 0)
+		{
+		  motor[driveRight] = turn;
+		}
+		//Use the left side of the DT with a negative target
+		else
+		{
+			motor[driveLeft] = turn;
+		}
 
 		wait10Msec(1);
 	}
