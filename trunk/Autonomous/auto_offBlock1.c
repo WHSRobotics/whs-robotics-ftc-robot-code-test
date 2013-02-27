@@ -96,65 +96,61 @@ task main()
 			if(IRVal <= 7)
 			{
 				//Line up with left peg
-				moveStraight(22, 100);//12.75, 100);
-				gyroRightPivot(93, 100);
+				moveStraight(22.25, 100);//12.75, 100);
+				gyroSidePivot(93, -100);
 
 				//Move straight onto the peg
-				/*moveStraight(11.5, 30);
-				moveArm(-25, 600);
+				moveStraight(23, 30);
+				moveArm(-20, 600);
 
 				StartTask(ElevatorMusic); //Initiate Elevator Music
 
 				//Score the ring
-				moveStraight(7, -100);
-				//moveArm(15, 600);
+				moveStraight(8, -100);
 
-				//Turn to block
-				gyroCenterPivot(160, 100);*/
+				StartTask(Flags); //Triumphantly wave flags
 
 			}
 			//---------------------IR BEACON IS ON MIDDLE--------------------------
 			else
 			{
 				//Back up to the middle peg
-				moveStraight(7, -100);
+				moveStraight(6, -100);
 
 				//Line up with middle peg
-				gyroCenterPivot(95, 100);
+				gyroCenterPivot(103, 100);
 
 				//Move straight onto the peg
-				/*moveStraight(13, 30);
-				moveArm(-15, 500);
+				moveStraight(16, 30);
+				moveArm(-22, 600);
 
 				StartTask(ElevatorMusic); //Initiate Elevator Music
 
 				//Score the ring
-				moveStraight(4, -50);
-				moveArm(15, 600);
+				moveStraight(7, -50);
 
-				//Turn to block
-				gyroCenterPivot(160, 100);*/
+				StartTask(Flags); //Triumphantly wave flags
+
 			}
 		}
 		//-----------------------IR BEACON IS ON RIGHT---------------------------
 		else
 		{
 			//Line up with the peg
-			moveStraight(5, 100);
-			gyroCenterPivot(90, 100);
+			moveStraight(8.75, 100);
+			gyroCenterPivot(95, 100);
 
 			//Move straight onto the peg
-			/*moveStraight(13, 30);
-			moveArm(-15, 500);
+			moveStraight(13, 30);
+			moveArm(-20, 550);
 
 			StartTask(ElevatorMusic); //Initiate Elevator Music
 
 			//Score the ring
-			moveStraight(4, -50);
-			moveArm(15, 600);
+			moveStraight(7, -100);
 
-			//Turn to block
-			gyroCenterPivot(160, 100);*/
+			StartTask(Flags); //Triumphantly wave flags
+
 		}
 	}
 }
