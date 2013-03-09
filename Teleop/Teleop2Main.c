@@ -22,7 +22,7 @@
 
 
 ///////////////////////GLOBAL VARIABLES////////////////////////
-const int JOY_THRESHOLD = 25;
+const int JOY_THRESHOLD = 30;
 const int SLOW_FACTOR = 3;
 const float MOTOR_MAX = 100.0;
 const float MOTOR_MIN = 0.0;
