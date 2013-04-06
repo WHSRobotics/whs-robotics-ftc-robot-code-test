@@ -64,7 +64,7 @@ task main()
 	moveArm(6, 1250);
 
 	//move to plywood
-  moveStraight(28,50);
+  moveStraight(28,100);
 
   //Check the IR sensor value
 	///IRVal = HTIRS2readACDir(IRSensor);
@@ -81,17 +81,17 @@ task main()
 			//Move back and align to goal
 
 			//back up about one floor tile (24 inches)
-			wait10Msec(50);
-			gyroCenterPivot(90,15);
-			moveStraight(13, 20); //24
+			//wait10Msec(50);
+			gyroCenterPivot(90,100);
+			moveStraight(21, 100); //24
 			//moveStraight(9.5/*19*/, -25);
 
 			//turn 45 degrees to line up with beacon
-			gyroCenterPivot(-30, 20); //45
+			gyroCenterPivot(-30, 100); //45
 
 			///SCORING
 			//Move closer and lift arm
-			moveStraight(10, 20);
+			moveStraight(10, 100);
 
 		  StartTask(ElevatorMusic); //Initiate elevator music
 
@@ -103,15 +103,16 @@ task main()
 			//Retreat and lower arm
 			//lower the arm a bit to back away
 			moveArm(-15, 600);
-			moveStraight(9, -15);
+			moveStraight(4, -15);
 			moveArm(-13, 600);
 
 			StartTask(Flags); //Triumphantly wave flags
 
 			///DRIVE TO DISPENSER
-			moveStraight(12, -15);
-			gyroCenterPivot(-140, 50);
-			moveStraight(30, 50);
+			moveStraight(3, -15);
+			moveStraight(9, -100);
+			gyroCenterPivot(-100, 100);
+			moveStraight(30, 100);
 			//gyroCenterPivot(80, 50);
 			//moveStraight(40, 50);
 
@@ -125,9 +126,9 @@ task main()
 			//Move back and align to goal
 
 			//move forward more than middle, turn about the same amt.
-			gyroCenterPivot(-30, 15);
-			moveStraight(29.5,15);
-			gyroCenterPivot(83, 5);
+			gyroCenterPivot(-30, 100);
+			moveStraight(28,100);
+			gyroCenterPivot(85.5, 100);
 
 			///SCORING
 			//Move closer and lift arm
@@ -160,12 +161,12 @@ task main()
 
 			///ALIGNING
 			//Move closer and align to goal
-			moveStraight(20, 50); //14
-			gyroCenterPivot(54, 10);
+			moveStraight(11, 100); //14
+			gyroCenterPivot(49, 100);
 
 			///SCORING
 			//Move closer and lift arm
-			moveStraight(13, 15);
+			moveStraight(19, 15);
 
 			StartTask(ElevatorMusic); //Initiate elevator music
 
