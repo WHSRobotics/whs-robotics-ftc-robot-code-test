@@ -15,7 +15,8 @@ float leftEncoderRate = 0.0;
 float rightEncoderRate = 0.0;
 float leftEncoderError = 0.0;
 float rightEncoderError = 0.0;
-const float CHANGE_AVG_RATE = 0.68;
+const float CHANGE_AVG_RATE_RUN = 0.68;
+const float CHANGE_AVG_RATE_SLOW = 0.3;
 const float THRESHOLD = -0.04;//-0.16; //-.04 //-0.08
 const float TIME_INTERVAL = 100.0; //magic numish
 
@@ -27,7 +28,7 @@ void stopDriveTrain()
 
 void moveStraight(float distanceInches, int pwr)
 {
-	float targetDistance = distanceInches*INCH_ENCODERVALUE;
+	float targetDistance = distanceInches * INCH_ENCODERVALUE;
 	float pwrDriveLeft = pwr;
 	float pwrDriveRight = pwr;
 
@@ -60,8 +61,16 @@ void moveStraight(float distanceInches, int pwr)
 	    rightEncoderRate = rightEncoderDiff / TIME_INTERVAL;
 
 	    //calculate error between current rates and avg rates
-	    leftEncoderError = leftEncoderRate - CHANGE_AVG_RATE;
-	    rightEncoderError = rightEncoderRate - CHANGE_AVG_RATE;
+	    if(nMotorRunState[driveLeft] == runStateRunning && nMotorRunState[driveRight] == runStateRunning)
+	    {
+	    	leftEncoderError = leftEncoderRate - CHANGE_AVG_RATE_RUN;
+	    	rightEncoderError = rightEncoderRate - CHANGE_AVG_RATE_RUN;
+	  	}
+	  	else if(nMotorRunState[driveLeft] == runStateHoldPosition && nMotorRunState[driveRight] == runStateHoldPosition)
+	  	{
+	  		leftEncoderError = leftEncoderRate - CHANGE_AVG_RATE_SLOW;
+	    	rightEncoderError = rightEncoderRate - CHANGE_AVG_RATE_SLOW;
+	  	}
 
 	    if(leftEncoderError < THRESHOLD || rightEncoderError < THRESHOLD)
 	    {
@@ -69,11 +78,14 @@ void moveStraight(float distanceInches, int pwr)
 	      //(the robot is ramming something else)
 
 	      //back up at full power for 500 Msec
+	    	PlayTone(440,500);
 	      motor[driveLeft] = -100;
 	      motor[driveRight] = -100;
 
+
 	      wait1Msec(500);
 	      stopDriveTrain();
+
 	    }
 
 	    //reset timers and encoders
@@ -115,6 +127,9 @@ void testMovie(float distanceInches, int pwr)
 	while(nMotorRunState[driveLeft] != runStateIdle && nMotorRunState[driveRight] != runStateIdle)
 	{
     ////while encoders still have not reached their target
+
+if(nMotorRunState[driveLeft] == runStateHoldPosition && nMotorRunState[driveRight] == runStateHoldPosition)
+	{
     if(time1[T1] >= TIME_INTERVAL) //if 100 Msec have passed
     {
       //get both encoder values
@@ -129,8 +144,8 @@ void testMovie(float distanceInches, int pwr)
 	    rightEncoderRate = rightEncoderDiff / TIME_INTERVAL;
 
 	    //calculate error between current rates and avg rates
-	    leftEncoderError = leftEncoderRate - CHANGE_AVG_RATE;
-	    rightEncoderError = rightEncoderRate - CHANGE_AVG_RATE;
+	    leftEncoderError = leftEncoderRate - CHANGE_AVG_RATE_RUN;
+	    rightEncoderError = rightEncoderRate - CHANGE_AVG_RATE_RUN;
 
 	    changeSumLeft += leftEncoderRate;
 	    changeSumRight += rightEncoderRate;
@@ -146,6 +161,8 @@ void testMovie(float distanceInches, int pwr)
 	    count += 1.0;
 	  }
 	}
+}
+
 	/*changeSumLeft = changeSumLeft / count;
 	changeSumRight = changeSumRight / count;
 	errorSumLeft = errorSumLeft / count;
@@ -162,6 +179,6 @@ void testMovie(float distanceInches, int pwr)
 
 task main()
 {
-	//testMovie(6,100);
-	moveStraight(32, 100);
+	testMovie(6,100);
+	//moveStraight(9001, 50);
 }

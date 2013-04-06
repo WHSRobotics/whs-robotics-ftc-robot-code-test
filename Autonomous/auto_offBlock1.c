@@ -96,12 +96,12 @@ task main()
 			if(IRVal <= 7)
 			{
 				//Line up with left peg
-				moveStraight(22.25, 100);//12.75, 100);
-				gyroSidePivot(93, -100);
+				moveStraight(19.75, 100);//20//22.25//12.75, 100);
+				gyroSidePivot(95, -100);//93
 
 				//Move straight onto the peg
-				moveStraight(23, 30);
-				moveArm(-20, 600);
+				moveStraight(23, 30);//23
+				moveArm(-22, 800);//600
 
 				StartTask(ElevatorMusic); //Initiate Elevator Music
 
