@@ -190,14 +190,14 @@ task main()
 {
 	initializeRobot();
 	StartTask(UpdateExcel);
-	StartTask(Graph);
-	//StartTask(Values);
+	//StartTask(Graph);
+	StartTask(Values);
 	ClearTimer(T1);
 	while(true)//time100[T1] <= 20)
 	{
-		float power = 50.0*sin(time100[T1]/5.0);
-		motor[leftDrive] = power;
-		motor[rightDrive] = power;
+		//float power = 50.0*sin(time100[T1]/5.0);
+		//motor[leftDrive] = power;
+		//motor[rightDrive] = power;
 	}
 	/*while(true)
 	{
