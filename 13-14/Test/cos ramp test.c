@@ -10,6 +10,7 @@
 
 int min = 100; //arbitrary number greater than 0 for initialization
 bool hit = false;
+float time = 0;
 /*	int excel_x_raw = 0;
 	int excel_y_raw = 0;
 	int excel_z_raw = 0;
@@ -97,7 +98,10 @@ task Values()
 task FindMinimum() //time in 100-Msec
 {
 	ClearTimer(T2);
-	while(time100[T2] < 30)
+
+	while(time100[T2] < time*0.2)
+	{} //do nothing
+	while(time100[T2] < time*0.8)
 	{
 		updateExcel();
 		if(excel_y < min)
@@ -115,11 +119,11 @@ task FindMinimum() //time in 100-Msec
 		nxtDisplayString(1,"min: %d", min);
 		if(hit)
 		{
-			nxtDisplayString(2,"hit: %s", "true");
+			nxtDisplayString(2,"hit: true");
 		}
 		else
 		{
-			nxtDisplayString(2,"hit: %s", "false");
+			nxtDisplayString(2,"hit: false");
 		}
 	}
 }
@@ -153,12 +157,13 @@ void cosRampMove(float maxPwr, float time)
 
 task main()
 {
+	time = 15;
 	initializeExcel();
 	//StartTask(Graph);
 	StartTask(Values);
 	//StartTask(Display);
 	//StartTask(yValue);
 	StartTask(FindMinimum);
-	cosRampMove(50.0,30);
+	cosRampMove(100.0,time);
 	while(true){};
 }
