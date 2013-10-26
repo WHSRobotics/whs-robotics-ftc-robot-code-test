@@ -9,6 +9,7 @@
 #include "ExcelDriver.h";
 
 int min = 100; //arbitrary number greater than 0 for initialization
+int max = -100; //arbitrary num < 0 for init
 bool hit = false;
 float time = 0;
 /*	int excel_x_raw = 0;
@@ -95,6 +96,40 @@ task Values()
 }
 
 
+task FindMaximum() //time in 100-Msec
+{
+	ClearTimer(T2);
+
+	while(time100[T2] < time*0.2)
+	{} //do nothing
+	while(time100[T2] < time*0.8)
+	{
+		updateExcel();
+		if(excel_y > max)
+		{
+			max = excel_y;
+		}
+		if(excel_y > 8) //threshold
+		{
+			PlayTone(440,1);
+			hit = true;
+		}
+	}
+	while(true)
+	{
+		nxtDisplayString(1,"max: %d", max);
+		if(hit)
+		{
+			nxtDisplayString(2,"hit: true");
+		}
+		else
+		{
+			nxtDisplayString(2,"hit: false");
+		}
+	}
+}
+
+
 task FindMinimum() //time in 100-Msec
 {
 	ClearTimer(T2);
@@ -108,7 +143,7 @@ task FindMinimum() //time in 100-Msec
 		{
 			min = excel_y;
 		}
-		if(min < -6) //threshold
+		if(excel_y < -8) //threshold
 		{
 			PlayTone(440,1);
 			hit = true;
@@ -163,7 +198,8 @@ task main()
 	StartTask(Values);
 	//StartTask(Display);
 	//StartTask(yValue);
-	StartTask(FindMinimum);
-	cosRampMove(100.0,time);
+	//StartTask(FindMinimum);
+	StartTask(FindMaximum);
+	cosRampMove(-100.0,time);
 	while(true){};
 }
