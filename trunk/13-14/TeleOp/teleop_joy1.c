@@ -6,7 +6,7 @@
 #pragma config(Motor,  mtr_S1_C1_2,     rightDrive,    tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C2_1,     hangMotor,     tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C2_2,     tableMotor,    tmotorTetrix, openLoop)
-#pragma config(Servo,  srvo_S1_C3_1,    armServo,             tServoStandard)
+#pragma config(Servo,  srvo_S1_C3_1,    armServo,             tServoContinuousRotation)
 #pragma config(Servo,  srvo_S1_C3_2,    servo2,               tServoNone)
 #pragma config(Servo,  srvo_S1_C3_3,    servo3,               tServoNone)
 #pragma config(Servo,  srvo_S1_C3_4,    servo4,               tServoNone)
@@ -100,13 +100,38 @@ task turnTable()
 	}
 }
 
+/*task dongers()
+{
+	while(true)
+	{
+		getJoystickSettings(joystick);
+		if(joy1Btn(2))
+		{
+			servo[armServo] = 124 + 8;
+		}
+		if(joy1Btn(4))
+		{
+			servo[armServo] = 124 - 8;
+		}
+		else
+		{
+			servo[armServo] = 0;
+		}
+	}
+}*/
+
 task dongers()
 {
 	while(true)
 	{
 		getJoystickSettings(joystick);
-		if(true)
+		if(joy1Btn(2))
 		{
+			servo[armServo] = 124 + 8;
+		}
+		if(joy1Btn(4))
+		{
+			servo[armServo] = 124 - 8;
 		}
 	}
 }
@@ -120,5 +145,6 @@ task main()
 		StartTask(hangYourself);
 		StartTask(turnTable);
 		StartTask(Intake);
+		StartTask(dongers);
 	}
 }
