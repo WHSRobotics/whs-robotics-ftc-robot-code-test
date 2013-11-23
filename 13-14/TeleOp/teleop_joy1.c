@@ -69,16 +69,18 @@ task Intake()
 		getJoystickSettings(joystick);
 		if(joy1Btn(6))
 		{
-			servo[intakeServo] = 180;
+			motor[leftIntake] = 100;
+			motor[rightIntake] = 100;
 		}
 		if(joy1Btn(8))
 		{
-			servo[intakeServo] = -180;
+			servo[intakeServo] = 90;
 		}
 		else
 		{
 			servo[intakeServo] = 0;
 			motor[rightIntake] = 0;
+			motor[leftIntake] = 0;
 		}
 	}
 }
