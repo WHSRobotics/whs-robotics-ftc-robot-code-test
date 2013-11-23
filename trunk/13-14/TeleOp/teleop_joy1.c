@@ -1,4 +1,4 @@
-#pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTServo,  none)
+#pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTServo,  HTMotor)
 #pragma config(Sensor, S1,     ,               sensorI2CMuxController)
 #pragma config(Motor,  motorA,          leftIntake,    tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  motorB,          rightIntake,   tmotorNXT, PIDControl, encoder)
@@ -6,8 +6,10 @@
 #pragma config(Motor,  mtr_S1_C1_2,     rightDrive,    tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C2_1,     hangMotor,     tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C2_2,     tableMotor,    tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C4_1,     leftArm,       tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C4_2,     rightArm,      tmotorTetrix, openLoop)
 #pragma config(Servo,  srvo_S1_C3_1,    armServo,             tServoContinuousRotation)
-#pragma config(Servo,  srvo_S1_C3_2,    servo2,               tServoNone)
+#pragma config(Servo,  srvo_S1_C3_2,    intakeServo,          tServoStandard)
 #pragma config(Servo,  srvo_S1_C3_3,    servo3,               tServoNone)
 #pragma config(Servo,  srvo_S1_C3_4,    servo4,               tServoNone)
 #pragma config(Servo,  srvo_S1_C3_5,    servo5,               tServoNone)
@@ -37,7 +39,7 @@ task DriveTrain()
 	}
 }
 
-task Intake()
+/*task Intake()
 {
 	while(true)
 	{
@@ -55,6 +57,27 @@ task Intake()
 		else
 		{
 			motor[leftIntake] = 0;
+			motor[rightIntake] = 0;
+		}
+	}
+}*/
+
+task Intake()
+{
+	while(true)
+	{
+		getJoystickSettings(joystick);
+		if(joy1Btn(6))
+		{
+			servo[intakeServo] = 100;
+		}
+		if(joy1Btn(8))
+		{
+			servo[intakeServo] = -100;
+		}
+		else
+		{
+			servo[intakeServo] = 0;
 			motor[rightIntake] = 0;
 		}
 	}
@@ -120,7 +143,7 @@ task turnTable()
 	}
 }*/
 
-task dongers()
+/*task dongers()
 {
 	while(true)
 	{
@@ -132,6 +155,29 @@ task dongers()
 		if(joy1Btn(4))
 		{
 			servo[armServo] = 124 - 8;
+		}
+	}
+}*/
+
+task dongers()
+{
+	while(true)
+	{
+		getJoystickSettings(joystick);
+		if(joy1Btn(2))
+		{
+			motor[leftArm] = 100;
+			motor[rightArm] = 100;
+		}
+		if(joy1Btn(4))
+		{
+			motor[leftArm] = -100;
+			motor[rightArm] = -100;
+		}
+		else
+		{
+			motor[leftArm] = 0;
+			motor[rightArm] = 0;
 		}
 	}
 }
