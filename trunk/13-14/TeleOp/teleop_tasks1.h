@@ -40,7 +40,6 @@ task Arm()
 	while(true)
 	{
 		getJoystickSettings(joystick);
-
 		//-----------joystick 1------------//
 		//low priority
 		if(joy1Btn(6) && !joy1Btn(8)) //move arm up

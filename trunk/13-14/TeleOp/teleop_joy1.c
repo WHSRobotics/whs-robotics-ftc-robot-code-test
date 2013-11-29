@@ -2,14 +2,14 @@
 #pragma config(Sensor, S1,     ,               sensorI2CMuxController)
 #pragma config(Motor,  motorA,          leftIntake,    tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  motorB,          rightIntake,   tmotorNXT, PIDControl, encoder)
-#pragma config(Motor,  mtr_S1_C1_1,     leftDrive,     tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C1_1,     leftDrive,     tmotorTetrix, openLoop, reversed)
 #pragma config(Motor,  mtr_S1_C1_2,     rightDrive,    tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C2_1,     hangMotor,     tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C2_2,     tableMotor,    tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C4_1,     leftArm,       tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C4_2,     rightArm,      tmotorTetrix, openLoop)
-#pragma config(Servo,  srvo_S1_C3_1,    armServo,             tServoContinuousRotation)
-#pragma config(Servo,  srvo_S1_C3_2,    intakeServo,          tServoStandard)
+#pragma config(Motor,  mtr_S1_C2_1,     leftArm,       tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C2_2,     rightArm,      tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C4_1,     motorH,        tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C4_2,     motorI,        tmotorTetrix, openLoop)
+#pragma config(Servo,  srvo_S1_C3_1,    ,                     tServoStandard)
+#pragma config(Servo,  srvo_S1_C3_2,    intakeServo,          tServoContinuousRotation)
 #pragma config(Servo,  srvo_S1_C3_3,    servo3,               tServoNone)
 #pragma config(Servo,  srvo_S1_C3_4,    servo4,               tServoNone)
 #pragma config(Servo,  srvo_S1_C3_5,    servo5,               tServoNone)
@@ -23,13 +23,10 @@ task DriveTrain()
 	while(true)
 	{
 		getJoystickSettings(joystick);
-		if(abs(joystick.joy1_y1) > 10)
+		if(abs(joystick.joy1_y1) > 10 || abs(joystick.joy1_y2) > 10)
 		{
-			motor[leftDrive] = 100;
-		}
-		if(abs(joystick.joy1_y2) > 10)
-		{
-			motor[rightDrive] = 100;
+			motor[leftDrive] = joystick.joy1_y1;
+			motor[rightDrive] = joystick.joy1_y2;
 		}
 		else
 		{
@@ -72,7 +69,7 @@ task Intake()
 			motor[leftIntake] = 100;
 			motor[rightIntake] = 100;
 		}
-		if(joy1Btn(8))
+		else if(joy1Btn(8))
 		{
 			servo[intakeServo] = 90;
 		}
@@ -85,7 +82,7 @@ task Intake()
 	}
 }
 
-task hangYourself()
+/*task hangYourself()
 {
 	while(true)
 	{
@@ -123,7 +120,7 @@ task turnTable()
 			motor[tableMotor] = 0;
 		}
 	}
-}
+}*/
 
 /*task dongers()
 {
@@ -190,8 +187,8 @@ task main()
 	{
 		getJoystickSettings(joystick);
 		StartTask(DriveTrain);
-		StartTask(hangYourself);
-		StartTask(turnTable);
+		//StartTask(hangYourself);
+		//StartTask(turnTable);
 		StartTask(Intake);
 		StartTask(dongers);
 	}
