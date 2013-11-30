@@ -22,15 +22,16 @@
 
 task main()
 {
-	while(true)
+	StartTask(Intake);
+	StartTask(Arm);
+	StartTask(DriveTrain);
+	//StartTask(Turntable);
+	ClearTimer(T1);
+	while(time100[T1] < 1200)
 	{
-		getJoystickSettings(joystick);
-
-		StartTask(Arm);
-		StartTask(DriveTrain);
-		StartTask(Hang);
-		StartTask(Intake);
-		//StartTask(Turntable);
-
+	}
+	StartTask(Hang);
+	while(time100[T1] < 1500)
+	{
 	}
 }

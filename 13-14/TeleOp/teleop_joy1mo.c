@@ -45,14 +45,14 @@ task Intake()
 		//Condition activates servo drop
 		if(joy1Btn(5) || joy2Btn(5))
 		{
-			servoTarget[intakeServo] = 228;
+			servoTarget[intakeServo] = 150;
 			motor[rightIntake] = 0;
 			motor[leftIntake] = 0;
 		}
 		//Re-enables and returns servo to initial position
 		else
 		{
-			servoTarget[intakeServo] = 75;
+			servoTarget[intakeServo] = 80;
 			motor[leftIntake] = 100;
 			motor[rightIntake] = 100;
 		}

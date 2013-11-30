@@ -28,6 +28,11 @@ void runArm(int power)
 }
 
 ////LOW PRIORITIZATION FUNCTIONS/////
+/* Prioritization functions allow one
+** driver to override the other based
+** set prioritization controls. Each
+** function is associated with a task. */
+
 void joy1Arm()
 {
 	while(true)
@@ -89,7 +94,8 @@ task Arm()
 		}
 		else //if not pressed/pressed at same time
 		{
-			joy1Arm();
+			//joy1Arm();
+			runArm(STOP);
 		}
 	}
 }
@@ -132,12 +138,16 @@ task Hang()
 	{
 		getJoystickSettings(joystick);
 		//Activates winch lift motors
-		motor[hang1] = joystick.joy1_TopHat == 0 && joystick.joy2_TopHat == 0
-		?MOT_MAX
-		:STOP;
-		motor[hang2] = joystick.joy1_TopHat == 0 && joystick.joy2_TopHat == 0
-		?MOT_MAX
-		:STOP;
+		if(joy1Btn(7) && joy2Btn(7))
+		{
+			motor[hang1] = MOT_MAX;
+			motor[hang2] = MOT_MAX;
+		}
+		else
+		{
+			motor[hang1] = STOP;
+			motor[hang2] = STOP;
+		}
 		//Only when the button for the lift arms are pressed, lift
 		if(joy1Btn(1) && joy2Btn(1))
 		{
@@ -157,26 +167,30 @@ task Hang()
 ///////////////////////////////////////////
 //////------------INTAKE------------///////
 // Button presses drive motors at set speeds.
-// USED: Btn 5 (eat/drop)
+// USED: Btn 5 (eat/drop), Btn 2 (Toggle Intake)
 ///////////////////////////////////////////
 task Intake()
 {
+	bool toggle = false;
 	while(true)
 	{
 		getJoystickSettings(joystick);
-		//Condition activates servo drop
-		if(joy1Btn(5) || joy2Btn(5))
+		//Activates Servo Drop and Returns Servo to Initial Position
+		servoTarget[intakeServo] = joy2Btn(5)
+		? 150
+		: 80;
+		if(joy2Btn(2))
 		{
-			servoTarget[intakeServo] = 228;
-			motor[rightIntake] = 0;
-			motor[leftIntake] = 0;
+			toggle = !toggle;
+			wait10Msec(25);
 		}
-		//Re-enables and returns servo to initial position
+		if(toggle)
+		{
+			runIntake(100);
+		}
 		else
 		{
-			servoTarget[intakeServo] = 75;
-			motor[leftIntake] = INTAKE_POW;
-			motor[rightIntake] = INTAKE_POW;
+			runIntake(0);
 		}
 	}
 }

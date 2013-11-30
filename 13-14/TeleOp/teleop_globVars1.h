@@ -9,11 +9,16 @@
 1 motor controller - drive train
   + MotorD = leftDrive (encoder)
   + MotorE = rightDrive (encoder)
-1 motor controller - lift and the turntable
-  + MotorF = hangMotor
-  + MotorG = tableMotor (encoder)
-1 servo controller - arm
-  + servo1 - armServo (assuming that only 1 servo is being used for the arm)
+1 motor controller - scoring arm
+  + MotorF = leftArm
+  + MotorG = rightArm
+1 motor controller - hang lift
+	+ MotorH = hang1
+	+ MotorI = hang2
+1 servo controller - hang arm and box drop
+  + servo4 - intakeServo
+  + servo5 - hangServo1
+  + servo6 - hangServo2
 2 direct NXT motors - intake
   + motorA = leftIntake
   + motorB = rightIntake
