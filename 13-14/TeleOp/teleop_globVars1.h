@@ -26,13 +26,13 @@ const int STOP = 0;
 const int MOT_MAX = 100;
 
 ///////Power KONSTANTS////////
-const int TABLE_HI_POW = 50;
-const int TABLE_LOW_POW = 30;
+//const int TABLE_HI_POW = 50;
+//const int TABLE_LOW_POW = 30;
 const int INTAKE_POW = 100;
 
 ///////Threshold KONSTANTS///////
 const int DRIVE_HI_THRESH = 25;
-const int DRIVE_LOW_THRESH = 10;
+const int DRIVE_LOW_THRESH = 15;
 
 
 
