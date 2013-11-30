@@ -1,8 +1,8 @@
 #ifndef TELEOP_TASKS1.H;
 #define TELEOP_TASKS1.H;
 
-//joystick1 - drive train & intake
-//joystick2 - arm & turntable
+//joystick1 - drive train
+//joystick2 - arm & intake
 
 ////////////INCLUDE/////////////
 #include "teleop_globVars1.h";
@@ -27,6 +27,43 @@ void runArm(int power)
 	motor[rightArm] = power;
 }
 
+////LOW PRIORITIZATION FUNCTIONS/////
+void joy1Arm()
+{
+	while(true)
+	{
+		//-----------joystick 1------------//
+		//low priority
+		getJoystickSettings(joystick);
+		if(joy1Btn(6) && !joy1Btn(8)) //move arm up
+		{
+			runArm(80);
+		}
+		else if(joy1Btn(8) && !joy1Btn(6)) //move arm down
+		{
+			runArm(-40);
+		}
+		else //if not pressed/pressed at same time
+		{
+			runArm(STOP);
+		}
+	}
+}
+
+void joy2drive()
+{
+		//-----------joystick 2------------//
+		//low priority
+		//higher thresholds than joy1
+		getJoystickSettings(joystick);
+		motor[leftDrive] = abs(joystick.joy2_y1 * 25/32) > DRIVE_HI_THRESH
+		? joystick.joy2_y1 * 25/32 //if left movement is significant
+		: STOP; //if left movement is insignificant
+		motor[rightDrive] = abs(joystick.joy2_y2 * 25/32) > DRIVE_HI_THRESH
+		? joystick.joy2_y2 * 25/32 //if right movement is significant
+		: STOP; //if right movement is insignificant
+}
+
 
 ///////////////TASKS////////////////
 
@@ -39,45 +76,21 @@ task Arm()
 {
 	while(true)
 	{
-		getJoystickSettings(joystick);
-		//-----------joystick 1------------//
-		//low priority
-		if(joy1Btn(6) && !joy1Btn(8)) //move arm up
-		{
-			runArm(MOT_MAX);
-		}
-		else //if not pressed/pressed at same time
-		{
-			runArm(STOP);
-		}
-		if(joy1Btn(8) && !joy1Btn(6)) //move arm down
-		{
-			runArm(-MOT_MAX);
-		}
-		else //if not pressed/pressed at same time
-		{
-			runArm(STOP);
-		}
-
 		//-----------joystick 2------------//
 		//high priority
+		getJoystickSettings(joystick);
 		if(joy2Btn(6) && !joy2Btn(8)) //move arm up
 		{
-			runArm(MOT_MAX);
+			runArm(80);
+		}
+		else if(joy2Btn(8) && !joy2Btn(6)) //move arm down
+		{
+			runArm(-40);
 		}
 		else //if not pressed/pressed at same time
 		{
-			runArm(STOP);
+			joy1Arm();
 		}
-		if(joy2Btn(8) && !joy2Btn(6)) //move arm down
-		{
-			runArm(-MOT_MAX);
-		}
-		else //if not pressed/pressed at same time
-		{
-			runArm(STOP);
-		}
-
 	}
 }
 
@@ -91,99 +104,51 @@ task DriveTrain()
 {
 	while(true)
 	{
-		getJoystickSettings(joystick);
-
-		//-----------joystick 1------------//
 		//high priority
-		if(abs(joystick.joy1_y1) > DRIVE_LOW_THRESH) //if left movement is significant
+		//-----------joystick 1------------//
+		getJoystickSettings(joystick);
+		if(abs(joystick.joy1_y1 * 25/32) > DRIVE_LOW_THRESH || abs(joystick.joy1_y2 * 25/32) > DRIVE_LOW_THRESH)
+		//if movement is significant
 		{
-			motor[leftDrive] = joystick.joy1_y1;
+			motor[leftDrive] = joystick.joy1_y1 * 25/32;
+			motor[rightDrive] = joystick.joy1_y2 *25/32;
 		}
-		else //if left movement is insignificant
+		else //if movement is insignificant
 		{
-			motor[leftDrive] = STOP;
-		}
-		if(abs(joystick.joy1_y2) > DRIVE_LOW_THRESH) //if right movement is significant
-		{
-			motor[rightDrive] = joystick.joy1_y2;
-		}
-		else //if right movement is insignificant
-		{
-			motor[rightDrive] = STOP;
-		}
-
-		//-----------joystick 2------------//
-		//low priority
-		//higher thresholds than joy1
-		if(abs(joystick.joy2_y1) > DRIVE_HI_THRESH) //if left movement is significant
-		{
-			motor[leftDrive] = joystick.joy2_y1;
-		}
-		else //if left movement is insignificant
-		{
-			motor[leftDrive] = STOP;
-		}
-
-		if(abs(joystick.joy2_y2) > DRIVE_HI_THRESH) //if right movement is significant
-		{
-			motor[rightDrive] = joystick.joy2_y2;
-		}
-		else //if right movement is insignificant
-		{
-			motor[rightDrive] = STOP;
+			joy2drive();
 		}
 	}
 }
 
 
-
 ///////////////////////////////////////////
 //////-------------HANG-------------///////
 // Button presses drive motors at set speeds.
-// USED: Btn 1 (up), Btn 3 (down)
+// USED: Btn 1 (FS, Raise), TopHat 0 (D-UP, FS, Lift)
 ///////////////////////////////////////////
 task Hang()
 {
 	while(true)
 	{
 		getJoystickSettings(joystick);
-
-		//-----------joystick 1------------//
-		//high priority
-		if(joy1Btn(1) && !joy1Btn(3)) //go up
+		//Activates winch lift motors
+		motor[hang1] = joystick.joy1_TopHat == 0 && joystick.joy2_TopHat == 0
+		?MOT_MAX
+		:STOP;
+		motor[hang2] = joystick.joy1_TopHat == 0 && joystick.joy2_TopHat == 0
+		?MOT_MAX
+		:STOP;
+		//Only when the button for the lift arms are pressed, lift
+		if(joy1Btn(1) && joy2Btn(1))
 		{
-			motor[hangMotor] = MOT_MAX;
+			servoTarget[hangServo1] = 250;
+			servoTarget[hangServo2] = 0;
 		}
-		else //if not pressed/pressed same time
+		//Otherwise, Drop the servo arms
+		else
 		{
-			motor[hangMotor] = STOP;
-		}
-		if(joy1Btn(3) && !joy1Btn(1)) //go down
-		{
-			motor[hangMotor] = -MOT_MAX;
-		}
-		else //if not pressed/pressed same time
-		{
-			motor[hangMotor] = STOP;
-		}
-
-		//-----------joystick 2------------//
-		//low priority
-		if(joy2Btn(1) && !joy2Btn(3)) //go up
-		{
-			motor[hangMotor] = MOT_MAX;
-		}
-		else //if not pressed/pressed same time
-		{
-			motor[hangMotor] = STOP;
-		}
-		if(joy2Btn(3) && !joy2Btn(1)) //go down
-		{
-			motor[hangMotor] = -MOT_MAX;
-		}
-		else //if not pressed/pressed same time
-		{
-			motor[hangMotor] = STOP;
+			servoTarget[hangServo1] = 90;
+			servoTarget[hangServo2] = 160;
 		}
 	}
 }
@@ -192,55 +157,32 @@ task Hang()
 ///////////////////////////////////////////
 //////------------INTAKE------------///////
 // Button presses drive motors at set speeds.
-// USED: Btn 2 (eat), Btn 4 (cough)
+// USED: Btn 5 (eat/drop)
 ///////////////////////////////////////////
 task Intake()
 {
 	while(true)
 	{
 		getJoystickSettings(joystick);
-
-		//-----------joystick 1------------//
-		//high priority
-		if(joy1Btn(2) && !joy1Btn(4)) //eat waffles
+		//Condition activates servo drop
+		if(joy1Btn(5) || joy2Btn(5))
 		{
-			runIntake(INTAKE_POW);
+			servoTarget[intakeServo] = 228;
+			motor[rightIntake] = 0;
+			motor[leftIntake] = 0;
 		}
-		else //if not pressed/pressed at same time
+		//Re-enables and returns servo to initial position
+		else
 		{
-			runIntake(STOP);
-		}
-		if(joy1Btn(4) && !joy1Btn(2)) //cough waffles
-		{
-			runIntake(-INTAKE_POW);
-		}
-		else //if not pressed/pressed at same time
-		{
-			runIntake(STOP);
-		}
-
-		//-----------joystick 2------------//
-		//low priority
-		if(joy2Btn(2) && !joy2Btn(4)) //eat waffles
-		{
-			runIntake(INTAKE_POW);
-		}
-		else //if not pressed/pressed at same time
-		{
-			runIntake(STOP);
-		}
-		if(joy2Btn(4) && !joy2Btn(2)) //cough waffles
-		{
-			runIntake(-INTAKE_POW);
-		}
-		else //if not pressed/pressed at same time
-		{
-			runIntake(STOP);
+			servoTarget[intakeServo] = 75;
+			motor[leftIntake] = INTAKE_POW;
+			motor[rightIntake] = INTAKE_POW;
 		}
 	}
 }
 
 
+//----NOT TO BE USED FOR COMPETITION 1---//
 
 ///////////////////////////////////////////
 //////----------TURNTABLE-----------///////
@@ -248,7 +190,7 @@ task Intake()
 // USED: TopHat 2 (right), TopHat 4 (left)
 //       Btn 5 (set slow speed)
 ///////////////////////////////////////////
-task Turntable()
+/*task Turntable()
 {
 	while(true)
 	{
@@ -321,7 +263,7 @@ task Turntable()
 			motor[tableMotor] = STOP;
 		}
 	}
-}
+}*/
 
 
 
