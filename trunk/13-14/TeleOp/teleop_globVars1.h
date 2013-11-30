@@ -39,6 +39,9 @@ const int INTAKE_POW = 100;
 const int DRIVE_HI_THRESH = 25;
 const int DRIVE_LOW_THRESH = 15;
 
+//////Servo Position KONSTANTS//////
+const int HANG_POS_ONE = 60;
+const int HANG_POS_TWO = 180;
 
 
 #endif;
