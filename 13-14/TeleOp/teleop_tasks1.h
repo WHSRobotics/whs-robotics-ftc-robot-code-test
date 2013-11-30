@@ -157,8 +157,8 @@ task Hang()
 		//Otherwise, Drop the servo arms
 		else
 		{
-			servoTarget[hangServo1] = 90;
-			servoTarget[hangServo2] = 160;
+			servoTarget[hangServo1] = HANG_POS_ONE;
+			servoTarget[hangServo2] = HANG_POS_TWO;
 		}
 	}
 }
