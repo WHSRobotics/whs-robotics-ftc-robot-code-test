@@ -19,58 +19,69 @@
 
 #include "JoystickDriver.c"
 
+//Uses Ternary Operators and scaled Joystick Values to output a tank drive
 task DriveTrain()
 {
 	while(true)
 	{
 		getJoystickSettings(joystick);
-		motor[leftDrive] = abs(joystick.joy1_y1) > 10
-		? joystick.joy1_y1
-		: 0;
-		motor[rightDrive] = abs(joystick.joy1_y2) > 10
-		? joystick.joy1_y2
-		: 0;
+		//leftDrive Motor definition
+		motor[leftDrive] = abs(joystick.joy1_y1 * 25/32) > 15
+		? joystick.joy1_y1 * 25/32 //If greater than threshold output scaled Joystick
+		: 0; //Else, 0 power
+		//rightDrive Motor definition
+		motor[rightDrive] = abs(joystick.joy1_y2 * 25/32) > 15
+		? joystick.joy1_y2 * 25/32 //If greater than threshold output scaled Joystick
+		: 0; //Else, 0 power
 	}
 }
 
+//Responsible for Intake Controls (NXT motors and Servo Base Drop)
 task Intake()
 {
 	while(true)
 	{
 		getJoystickSettings(joystick);
+		//Initial condition activates NXT motors for the Intake
 		if(joy1Btn(4))
 		{
 			motor[leftIntake] = 100;
 			motor[rightIntake] = 100;
 		}
+		//Secondary condition activates servo drop
 		else if(joy1Btn(3))
 		{
 			servoTarget[intakeServo] = 228;
 		}
+		//Disables all motors and returns servo to initial position
 		else
 		{
-			servoTarget[intakeServo] = 100;
+			servoTarget[intakeServo] = 75;
 			motor[rightIntake] = 0;
 			motor[leftIntake] = 0;
 		}
 	}
 }
 
+//Controls Scoring Arm
 task ScoringArm()
 {
 	while(true)
 	{
 		getJoystickSettings(joystick);
+		//Lifts arm
 		if(joy1Btn(6))
 		{
 			motor[leftArm] = 80;
 			motor[rightArm] = 80;
 		}
+		//Lowers Arm
 		else if(joy1Btn(8))
 		{
-			motor[leftArm] = -60;
-			motor[rightArm] = -60;
+			motor[leftArm] = -40;
+			motor[rightArm] = -40;
 		}
+		//Cuts off Power
 		else
 		{
 			motor[leftArm] = 0;
@@ -79,29 +90,30 @@ task ScoringArm()
 	}
 }
 
+//Responsible for hang
 task Hang()
 {
 	while(true)
 	{
 		getJoystickSettings(joystick);
+		//Activates winch lift motors
 		motor[hang1] = joy1Btn(1)
-		?50
+		?100
 		:0;
 		motor[hang2] = joy1Btn(1)
-		?50
+		?100
 		:0;
+		//Only when the button for the lif arms are pressed, lift
 		if(joy1Btn(5))
 		{
 			servoTarget[hangServo1] = 250;
 			servoTarget[hangServo2] = 0;
 		}
-		else if(joy1Btn(7))
+		//Otherwise, Drop the servo arms
+		else
 		{
 			servoTarget[hangServo1] = 90;
 			servoTarget[hangServo2] = 160;
-		}
-		else
-		{
 		}
 	}
 }
