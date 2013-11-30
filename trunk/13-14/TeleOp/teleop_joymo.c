@@ -136,7 +136,7 @@ task Hang()
 	}
 }
 
-task Intake()
+/*task Intake()
 {
 	while(true)
 	{
@@ -144,16 +144,174 @@ task Intake()
 		//Condition activates servo drop
 		if(joy1Btn(5) || joy2Btn(5))
 		{
-			servoTarget[intakeServo] = 228;
+			servoTarget[intakeServo] = 150;
 			motor[rightIntake] = 0;
 			motor[leftIntake] = 0;
 		}
 		//Re-enables and returns servo to initial position
 		else
 		{
-			servoTarget[intakeServo] = 75;
+			servoTarget[intakeServo] = 80;
 			motor[leftIntake] = 100;
 			motor[rightIntake] = 100;
 		}
+	}
+}*/
+
+// NON FUNCTIONAL //
+task IntakeOne()
+{
+	while(true)
+	{
+		int val = 0;
+		servoTarget[intakeServo] = joy1Btn(5)
+		? 150
+		: 80;
+		if(joy1Btn(2))
+		{
+			val = 100 - val;
+			wait10Msec(20);
+		}
+		else
+		{
+			runIntake(val);
+		}
+	}
+}
+
+task IntakeTwo()
+{
+	while(true)
+	{
+		while(!joy1Btn(2))
+		{
+			servoTarget[intakeServo] = joy1Btn(5)
+			? 150
+			: 80;
+			runIntake(STOP);
+		}
+		while(joy1Btn(2))
+		{
+			servoTarget[intakeServo] = joy1Btn(5)
+			? 150
+			: 80;
+			runIntake(MOT_MAX);
+		}
+	}
+}
+
+task IntakeWeirdVer()
+{
+	bool togone = false;
+	while(true)
+	{
+		servoTarget[intakeServo] = joy2Btn(5)
+		? 150
+		: 80;
+		if(joy1Btn(2))
+		{
+			togone = true;
+		}
+		else
+		{
+			if(togone)
+			{
+				wait10Msec(20);
+				while(!joy1Btn(2))
+				{
+					runIntake(100);
+				}
+				togone = false;
+			}
+			else
+			{
+				while(!joy1Btn(2))
+				{
+					runIntake(0);
+				}
+			}
+		}
+	}
+}
+
+//END OF NON FUNCTIONAL TASKS//
+
+bool NOR(bool inone, bool intwo)
+{
+	if(!inone && !intwo)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool XOR(bool inone, bool intwo)
+{
+	if(inone && !intwo)
+	{
+		return true;
+	}
+	else if(!inone && intwo)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+//check out some notes about task functioning within tasks//
+//Certain tasks won't work in the loop//
+
+task IntakeToggleOne()
+{
+	bool toggle = false;
+	while(true)
+	{
+		getJoystickSettings(joystick);
+		toggle = XOR(joy1Btn(2), toggle);
+		wait10Msec(25);
+		if(toggle)
+		{
+			runIntake(100);
+		}
+		else
+		{
+			runIntake(0);
+		}
+ 	}
+}
+
+task IntakeToggleTwo()
+{
+	bool toggle = false;
+	while(true)
+	{
+		getJoystickSettings(joystick);
+		if(joy1Btn(2))
+		{
+			toggle = !toggle;
+			wait10Msec(25);
+		}
+		if(toggle)
+		{
+			runIntake(100);
+		}
+		else
+		{
+			runIntake(0);
+		}
+	}
+}
+
+task main()
+{
+	StartTask(IntakeToggleTwo);
+	while(true)
+	{
 	}
 }
