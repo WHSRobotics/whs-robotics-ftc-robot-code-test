@@ -42,20 +42,14 @@ task Intake()
 	while(true)
 	{
 		getJoystickSettings(joystick);
-		//Initial condition activates NXT motors for the Intake
-		if(joy1Btn(4))
-		{
-			motor[leftIntake] = 100;
-			motor[rightIntake] = 100;
-		}
-		//Secondary condition activates servo drop
-		else if(joy1Btn(3))
+		//Condition activates servo drop
+		if(joy1Btn(5) || joy2Btn(5))
 		{
 			servoTarget[intakeServo] = 228;
 			motor[rightIntake] = 0;
 			motor[leftIntake] = 0;
 		}
-		//Disables all motors and returns servo to initial position
+		//Re-enables and returns servo to initial position
 		else
 		{
 			servoTarget[intakeServo] = 75;
@@ -99,14 +93,14 @@ task Hang()
 	{
 		getJoystickSettings(joystick);
 		//Activates winch lift motors
-		motor[hang1] = joy1Btn(1)
+		motor[hang1] = joystick.joy1_TopHat == 0 && joystick.joy2_TopHat == 0
 		?100
 		:0;
-		motor[hang2] = joy1Btn(1)
+		motor[hang2] = joystick.joy1_TopHat == 0 && joystick.joy2_TopHat == 0
 		?100
 		:0;
-		//Only when the button for the lif arms are pressed, lift
-		if(joy1Btn(5))
+		//Only when the button for the lift arms are pressed, lift
+		if(joy1Btn(1) && joy2Btn(1))
 		{
 			servoTarget[hangServo1] = 250;
 			servoTarget[hangServo2] = 0;
