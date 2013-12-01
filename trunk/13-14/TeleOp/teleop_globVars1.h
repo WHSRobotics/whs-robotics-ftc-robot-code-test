@@ -31,8 +31,6 @@ const int STOP = 0;
 const int MOT_MAX = 100;
 
 ///////Power KONSTANTS////////
-//const int TABLE_HI_POW = 50;
-//const int TABLE_LOW_POW = 30;
 const int INTAKE_POW = 100;
 
 ///////Threshold KONSTANTS///////
@@ -41,7 +39,9 @@ const int DRIVE_LOW_THRESH = 15;
 
 //////Servo Position KONSTANTS//////
 const int HANG_POS_ONE = 60;
+const int HANG_END_ONE = 250;
 const int HANG_POS_TWO = 180;
+const int HANG_END_TWO = 0;
 
 
 #endif;

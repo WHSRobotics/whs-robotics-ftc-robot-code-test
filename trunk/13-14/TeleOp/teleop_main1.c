@@ -22,16 +22,14 @@
 
 task main()
 {
+	InitializeRobot();
+	waitForStart();
 	StartTask(Intake);
 	StartTask(Arm);
 	StartTask(DriveTrain);
-	//StartTask(Turntable);
 	ClearTimer(T1);
-	while(time100[T1] < 1200)
-	{
-	}
+	wait10Msec(12000);
 	StartTask(Hang);
-	while(time100[T1] < 1500)
-	{
-	}
+	wait10Msec(3000);
+	StopAllTasks();
 }
