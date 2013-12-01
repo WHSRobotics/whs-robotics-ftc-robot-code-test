@@ -52,6 +52,47 @@ void moveStraight(float distanceInches, int pwr)
 	stopDriveTrain();
 }
 
+
+/**************************************
+**  moveCurve moves the robot
+**  forward a specified distance at a
+**  specified power using encoders
+*--------------------------------------
+* Parameters:
+* float distanceInches - distance to move in inches
+* int pwr - motor power for drive train
+* int dir - if positive, curve right; if negative, curve left.
+***************************************/
+void moveCurve(float distanceInches, int leftPwr, int rightPwr)
+{
+	float targetDistance = distanceInches*INCH_ENCODERVALUE;
+
+	nMotorEncoder[leftDrive] = 0;
+	nMotorEncoder[rightDrive] = 0;
+
+	motor[leftDrive] = leftPwr;
+	motor[rightDrive] = rightPwr;
+
+	if(leftPwr > rightPwr)
+	{
+		nMotorEncoderTarget[leftDrive] = targetDistance;
+
+		while(nMotorRunState[leftDrive] != runStateIdle)
+		{
+		}
+	}
+	else
+	{
+		nMotorEncoderTarget[rightDrive] = targetDistance;
+
+		while(nMotorRunState[rightDrive] != runStateIdle)
+		{
+		}
+	}
+	stopDriveTrain();
+}
+
+
 void moveArm(int power)
 {
 	motor[leftArm] = power;
@@ -73,7 +114,7 @@ void resetArm()
 void resetBucket()
 {
 	//Close the bucket
-	servoTarget[intakeServo] = 75;
+	servoTarget[intakeServo] = 80;
 }
 
 
@@ -101,8 +142,8 @@ void resetGlobVars()
 void resetHang()
 {
 	//Drop the hang arms
-	servoTarget[hangServo1] = 90;
-	servoTarget[hangServo2] = 160;
+	servoTarget[hangServo1] = 60;
+	servoTarget[hangServo2] = 180;
 }
 
 
@@ -113,7 +154,7 @@ void resetHang()
 ***************************************/
 float getAngleChange()
 {
-	currentValue = SensorValue[gyroSensor];//gyroReading - BIAS;
+	currentValue = HTGYROreadRot(gyroSensor);//gyroReading - BIAS;
 	timeChange = time1[T1]/MILLISECOND; //change in time (sec)
 
 	ClearTimer(T1);
