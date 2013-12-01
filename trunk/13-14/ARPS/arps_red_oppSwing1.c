@@ -35,7 +35,6 @@
 //INITIALIZATION//
 void initializeRobot()
 {
-  resetArm();
   resetHang(); //hang arm
   resetBucket(); //DO NOT reset the NXT motors!!
 
@@ -66,14 +65,12 @@ task main()
 	waitForStart();
 
 	//----------CHARGE BEGIN------------
-	//---Move forward
-	moveStraight(20.0, 100);
-	//---Turn Right/Left(depending on which side we start)
-	moveCurve(5.0,100,30);
-	//---Get on ramp
-	//moveStraight(20.0,100);
+	//---Move forward onto ramp.
+	moveStraight(62.0, 100);
+	//---Turn Right
+	gyroCenterPivot(45,100);
+	//---Get further on ramp
+	moveStraight(19.0,100);
 	//---Stop
 	stopDriveTrain();
-	//---Park left
-	//park(-1);
 }
