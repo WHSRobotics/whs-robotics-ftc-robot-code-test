@@ -1,5 +1,8 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  HTServo)
 #pragma config(Sensor, S1,     ,               sensorI2CMuxController)
+#pragma config(Sensor, S2,     touchSensor,    sensorTouch)
+#pragma config(Sensor, S3,     IRSensor,       sensorHiTechnicIRSeeker1200)
+#pragma config(Sensor, S4,     gyroSensor,     sensorI2CHiTechnicGyro)
 #pragma config(Motor,  motorA,          leftIntake,    tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  motorB,          rightIntake,   tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  motorC,           ,             tmotorNXT, openLoop)
@@ -37,8 +40,8 @@ void initializeRobot()
   resetBucket(); //DO NOT reset the NXT motors!!
 
 	//reset drive train encoders
-	nMotorEncoder[driveLeft] = 0;
-	nMotorEncoder[driveRight] = 0;
+	nMotorEncoder[leftDrive] = 0;
+	nMotorEncoder[rightDrive] = 0;
 
 	//---------------------------------------------------HTGYROstartCal(gyroRobot); //calibrate gyro
 
@@ -65,10 +68,35 @@ task main()
 	//----------CHARGE BEGIN------------
 	//---Move forward
 	moveStraight(12.0, 100);
+	//---Detect IR Beacon
+	SensorValue[IRSensor];
 	//---Turn Right/Left(depending on which side we start)
-	//gyroCenterPivot(45,50);
+	gyroCenterPivot(45,50);
+	//---Move forward
+	moveStraight();
+	//---Turn Right/Left again
+	gyroCenterPivot();
 	//---Get on ramp
-	//moveStraight(20.0,100);
+	moveStraight(20.0,100);
+	//---Move forward if IR Beacon is on the left side
+	if(SensorValue[IRSensor] > ?);
+	{
+		moveStraight();
+		gyroCenterPivot();
+		//---Lift Arms
+		moveArm(100);
+		//---Dump the waffle
+		servo[intakeServo] = 150;
+	}
+	//---Turn Right towards
+	if(SensorValue[IRSensor] =< ?);
+	{
+		gyroCenterPivot();
+		//---Lift Arms
+		moveArm(100);
+		//---Dump the waffle
+		servo[intakeServo] = 150;
+	}
 	//---Stop
 	stopDriveTrain();
 	//---Park left
