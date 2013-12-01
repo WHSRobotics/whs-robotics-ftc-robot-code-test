@@ -9,6 +9,12 @@
 
 
 /////////////FUNCTIONS//////////////
+/*Initialization*/
+void InitializeRobot()
+{
+	return;
+}
+
 /* Groups intake motors together
 ** to run the same power to them
 ** at the same time. */
@@ -151,8 +157,8 @@ task Hang()
 		//Only when the button for the lift arms are pressed, lift
 		if(joy1Btn(1) && joy2Btn(1))
 		{
-			servoTarget[hangServo1] = 250;
-			servoTarget[hangServo2] = 0;
+			servoTarget[hangServo1] = HANG_END_ONE;
+			servoTarget[hangServo2] = HANG_END_TWO;
 		}
 		//Otherwise, Drop the servo arms
 		else
@@ -171,7 +177,7 @@ task Hang()
 ///////////////////////////////////////////
 task Intake()
 {
-	bool toggle = false;
+	bool toggle = true;
 	while(true)
 	{
 		getJoystickSettings(joystick);
@@ -186,99 +192,14 @@ task Intake()
 		}
 		if(toggle)
 		{
-			runIntake(100);
+			runIntake(INTAKE_POW);
 		}
 		else
 		{
-			runIntake(0);
+			runIntake(STOP);
 		}
 	}
 }
-
-
-//----NOT TO BE USED FOR COMPETITION 1---//
-
-///////////////////////////////////////////
-//////----------TURNTABLE-----------///////
-// D-pad drives motor at set speed.
-// USED: TopHat 2 (right), TopHat 4 (left)
-//       Btn 5 (set slow speed)
-///////////////////////////////////////////
-/*task Turntable()
-{
-	while(true)
-	{
-		getJoystickSettings(joystick);
-
-		//-----------joystick 1------------//
-		//low priority
-		if(joystick.joy1_TopHat == 2 && !(joystick.joy1_TopHat == 4)) //turntable right
-		{
-			if(!joy2Btn(5)) //regular speed
-			{
-				motor[tableMotor] = TABLE_HI_POW;
-			}
-			else //slow speed
-			{
-				motor[tableMotor] = TABLE_LOW_POW;
-			}
-		}
-		else //if no top hat input
-		{
-			motor[tableMotor] = STOP;
-		}
-		if(joystick.joy1_TopHat == 4 && !(joystick.joy1_TopHat == 2)) //turntable left
-		{
-			if(!joy2Btn(5)) //regular speed
-			{
-				motor[tableMotor] = TABLE_HI_POW;
-			}
-			else //slow speed
-			{
-				motor[tableMotor] = TABLE_LOW_POW;
-			}
-		}
-		else //if no top hat input
-		{
-			motor[tableMotor] = STOP;
-		}
-
-		//-----------joystick 2------------//
-		//high priority
-		if(joystick.joy2_TopHat == 2 && !(joystick.joy2_TopHat == 6)) //turntable right
-		{
-			if(!joy2Btn(5)) //regular speed
-			{
-				motor[tableMotor] = TABLE_HI_POW;
-			}
-			else //slow speed
-			{
-				motor[tableMotor] = TABLE_LOW_POW;
-			}
-		}
-		else //if no top hat input
-		{
-			motor[tableMotor] = STOP;
-		}
-
-		if(joystick.joy2_TopHat == 6 && !(joystick.joy2_TopHat == 2)) //turntable left
-		{
-			if(!joy2Btn(5)) //regular speed
-			{
-				motor[tableMotor] = -TABLE_HI_POW;
-			}
-			else //slow speed
-			{
-				motor[tableMotor] = -TABLE_LOW_POW;
-			}
-		}
-		else //if no top hat input
-		{
-			motor[tableMotor] = STOP;
-		}
-	}
-}*/
-
 
 
 #endif;
