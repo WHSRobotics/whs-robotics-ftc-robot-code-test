@@ -23,7 +23,7 @@
 /**********************************
 ** WHS Robotics  |  FTC Team 542 **
 ** Block Party! 2013-2014 Season **
-** Charge!(Ramp Only)            **
+** Opponent Charge (Ramp Only)   **
 ** Main  |  Red  |  V1           **
 ***********************************/
 
@@ -42,12 +42,6 @@ void initializeRobot()
 	nMotorEncoder[leftDrive] = 0;
 	nMotorEncoder[rightDrive] = 0;
 
-	//---------------------------------------------------HTGYROstartCal(gyroRobot); //calibrate gyro
-
-	//clear timers T1 and T2
-	ClearTimer(T1);
-	ClearTimer(T2);
-
 	//beep to signal end of initialization
 	PlayTone(440, 30);
 
@@ -56,7 +50,7 @@ void initializeRobot()
 
 
 
-//MAIN//
+////////////////MAIN////////////////
 
 task main()
 {
@@ -64,7 +58,7 @@ task main()
 
 	waitForStart();
 
-	//----------CHARGE BEGIN------------
+	//----------OPP CHARGE BEGIN------------
 	//---Move forward onto ramp.
 	moveStraight(68.0, 100);
 

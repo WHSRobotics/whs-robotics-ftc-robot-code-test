@@ -23,7 +23,7 @@
 /**********************************
 ** WHS Robotics  |  FTC Team 542 **
 ** Block Party! 2013-2014 Season **
-** Charge!(Ramp Only)            **
+** Opponent Swing (Ramp Only)    **
 ** Main  |  Red  |  V1           **
 ***********************************/
 
@@ -64,7 +64,7 @@ task main()
 
 	waitForStart();
 
-	//----------CHARGE BEGIN------------
+	//----------OPP SWING BEGIN------------
 	//---Move forward onto ramp.
 	moveStraight(62.0, 100);
 	//---Turn Right

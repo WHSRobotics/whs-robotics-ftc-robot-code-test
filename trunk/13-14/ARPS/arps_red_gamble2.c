@@ -23,7 +23,7 @@
 /**********************************
 ** WHS Robotics  |  FTC Team 542 **
 ** Block Party! 2013-2014 Season **
-** Gamble (Ramp + Random Box)    **
+** Gamble (Ramp + Box 1)         **
 ** Main  |  Red  |  V1           **
 ***********************************/
 
@@ -35,19 +35,12 @@
 //INITIALIZATION//
 void initializeRobot()
 {
-  //resetArm();
   resetHang(); //hang arm
   resetBucket(); //DO NOT reset the NXT motors!!
 
 	//reset drive train encoders
 	nMotorEncoder[leftDrive] = 0;
 	nMotorEncoder[rightDrive] = 0;
-
-	//---------------------------------------------------HTGYROstartCal(gyroRobot); //calibrate gyro
-
-	//clear timers T1 and T2
-	ClearTimer(T1);
-	ClearTimer(T2);
 
 	//beep to signal end of initialization
 	PlayTone(440, 30);
@@ -70,20 +63,9 @@ task main()
 	moveArm(0);
 	//---Move forward
 	moveStraight(13.0,50);
-	//---Relase the waffle!
+	//---Release the waffle!
 	while(true)
 	{
-	servo[intakeServo] = 150;
+		servo[intakeServo] = 150;
 	}
-	//---Turn left
-	//gyroCenterPivot(-15,50);
-	//---Move straight
-	//moveStraight(32.0, 100);
-	//---Turn right
-	//gyroCenterPivot(90,50);
-	//---Get on the ramp
-	//moveStraight(30,100);
-	//---Stop
-	//stopDriveTrain();
-
 }
