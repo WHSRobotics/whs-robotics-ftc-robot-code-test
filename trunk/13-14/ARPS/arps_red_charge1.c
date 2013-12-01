@@ -69,10 +69,10 @@ task main()
 	//---Move forward
 	motor[leftDrive] = 100;
 	motor[rightDrive] = 100;
-	wait1Msec(880);
+	wait1Msec(800);
 	//---Turn Right
 	motor[rightDrive] = -100;
-	wait1Msec(820);
+	wait1Msec(700);
 
 	//Move forward
 	motor[rightDrive] = 100;
