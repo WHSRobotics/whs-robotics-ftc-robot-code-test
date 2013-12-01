@@ -53,45 +53,6 @@ void moveStraight(float distanceInches, int pwr)
 }
 
 
-/**************************************
-**  moveCurve moves the robot
-**  forward a specified distance at a
-**  specified power using encoders
-*--------------------------------------
-* Parameters:
-* float distanceInches - distance to move in inches
-* int pwr - motor power for drive train
-* int dir - if positive, curve right; if negative, curve left.
-***************************************/
-void moveCurve(float distanceInches, int leftPwr, int rightPwr)
-{
-	float targetDistance = distanceInches*INCH_ENCODERVALUE;
-
-	nMotorEncoder[leftDrive] = 0;
-	nMotorEncoder[rightDrive] = 0;
-
-	motor[leftDrive] = leftPwr;
-	motor[rightDrive] = rightPwr;
-
-	if(leftPwr > rightPwr)
-	{
-		nMotorEncoderTarget[leftDrive] = targetDistance;
-
-		while(nMotorRunState[leftDrive] != runStateIdle)
-		{
-		}
-	}
-	else
-	{
-		nMotorEncoderTarget[rightDrive] = targetDistance;
-
-		while(nMotorRunState[rightDrive] != runStateIdle)
-		{
-		}
-	}
-	stopDriveTrain();
-}
-
 
 void moveArm(int power)
 {
@@ -258,6 +219,63 @@ void gyroSidePivot(int turnDirection, int speedKonstant)
 		}
 
 		wait10Msec(1);
+	}
+
+  stopDriveTrain();
+  resetGlobVars();
+}
+
+
+/***************************************
+**  gyroSidePivot turns the robot     **
+**  accurately, driving on one side		**
+**  using the gyro sensor.   					**
+**  Turns at a certain speed until it **
+**  gets to turnDirection.            **
+*--------------------------------------*
+* Parameters:
+* int turnDirection - Num degrees to turn to
+										- Positive number of degrees turns the robot with the right
+										- Negative number of degrees turns the robot with the left
+* int speedKonstant - Speed to turn at
+										- Positive number of degrees turns the robot by moving the motors forward
+										- Negative number of degrees turns the robot by moving the motors backwards
+****************************************/
+void gyroCurve(int turnDirection, int speedKonstant, int subPwr)
+{
+  //Initialization
+	HTGYROstartCal(gyroSensor); //Calibrate gyro sensor
+	ClearTimer(T1);
+
+	adjustedTarget = ADJUST_M * turnDirection - ADJUST_B; //scale target angle linearly
+	float turn = 100.0;  //default pwr for drive train motors
+	float subturn = 100.0;
+	float subRatio = subPwr/speedKonstant;
+
+	while(abs(remainingTurn) > TURN_THRESHOLD) //while significantly turning
+	{
+		remainingTurn = adjustedTarget - gCurrTotalMove; //find # of degrees left to turn
+		gCurrTotalMove += getAngleChange();
+		error = adjustedTarget - gCurrTotalMove;
+		turn = error * speedKonstant; //find pwr for DT motors
+		subturn = turn * subRatio;
+
+
+	  ////apply calculated turn pwr to DT motors
+		//Use the right side of the DT with a positive target
+		if(turnDirection < 0)
+		{
+		  motor[rightDrive] = turn;
+		  motor[leftDrive] = subturn;
+		}
+		//Use the left side of the DT with a negative target
+		else
+		{
+			motor[leftDrive] = turn;
+			motor[rightDrive] = subturn;
+		}
+
+		wait10Msec(50);
 	}
 
   stopDriveTrain();

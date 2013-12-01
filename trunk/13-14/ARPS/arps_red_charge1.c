@@ -67,13 +67,18 @@ task main()
 
 	//----------CHARGE BEGIN------------
 	//---Move forward
-	moveStraight(20.0, 100);
-	//---Turn Right/Left(depending on which side we start)
-	moveCurve(5.0,100,30);
-	//---Get on ramp
-	//moveStraight(20.0,100);
-	//---Stop
+	motor[leftDrive] = 100;
+	motor[rightDrive] = 100;
+	wait1Msec(880);
+	//---Turn Right
+	motor[rightDrive] = -100;
+	wait1Msec(820);
+
+	//Move forward
+	motor[rightDrive] = 100;
+	motor[leftDrive] = 100;
+	wait1Msec(1500);
+
 	stopDriveTrain();
-	//---Park left
-	//park(-1);
+
 }
