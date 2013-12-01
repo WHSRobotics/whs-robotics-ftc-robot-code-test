@@ -22,7 +22,7 @@
 /**********************************
 ** WHS Robotics  |  FTC Team 542 **
 ** Block Party! 2013-2014 Season **
-** Charge!(Ramp Only)            **
+** Simple IR (IR only)           **
 ** Main  |  Red  |  V1           **
 ***********************************/
 
@@ -46,7 +46,6 @@ void initArr()
 
 void initializeRobot()
 {
-  resetArm();
   resetHang(); //hang arm
   resetBucket(); //DO NOT reset the NXT motors!!
 
@@ -54,8 +53,7 @@ void initializeRobot()
 	nMotorEncoder[leftDrive] = 0;
 	nMotorEncoder[rightDrive] = 0;
 
-	//---------------------------------------------------HTGYROstartCal(gyroRobot); //calibrate gyro
-	//--------------------------------------------------- //read IR
+	HTGYROstartCal(gyroSensor); //calibrate gyro
 
 	//clear timers T1 and T2
 	ClearTimer(T1);
@@ -146,7 +144,7 @@ task main
 	//   while(still moving) check IR
 	finishIR = true;
 
-/*
+
 	int tallyMaxIndex = checkTally();
 
 	 if(tallyMaxIndex == 1 || tallyMaxIndex == 2)
@@ -181,5 +179,5 @@ task main
 			needArmUp = true; //while moving, position arm
 			moveStraight(6.0, 100);
 		}
-	}*/
+	}
 }

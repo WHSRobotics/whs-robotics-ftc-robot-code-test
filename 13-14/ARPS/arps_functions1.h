@@ -14,6 +14,10 @@
 
 
 //-----------------MOVES AND STOPS------------------
+/**************************************
+** stopDriveTrain sets both drive    **
+** train motors to a specific power. **
+***************************************/
 void stopDriveTrain()
 {
 	motor[leftDrive] = STOP;
@@ -22,9 +26,9 @@ void stopDriveTrain()
 
 
 /**************************************
-**  moveStraight moves the robot
-**  forward a specified distance at a
-**  specified power using encoders
+**  moveStraight moves the robot     **
+**  forward a specified distance at  **
+**  a specified power using encoders **
 *--------------------------------------
 * Parameters:
 * float distanceInches - distance to move in inches
@@ -53,7 +57,10 @@ void moveStraight(float distanceInches, int pwr)
 }
 
 
-
+/**************************************
+** moveArm sets both arm motors to   **
+** a specific power.                 **
+***************************************/
 void moveArm(int power)
 {
 	motor[leftArm] = power;
@@ -62,22 +69,15 @@ void moveArm(int power)
 
 
 //--------------------RESETS-------------------------
-void resetArm()
-{
-	while(false) //please update this condition.
-	{
-		motor[leftArm] = -40;
-		motor[rightArm] = -40;
-	}
-}
 
-
+/**************************************
+** resetBucket closes the intake     **
+** bucket to initial position.       **
+***************************************/
 void resetBucket()
 {
-	//Close the bucket
 	servoTarget[intakeServo] = 80;
 }
-
 
 
 
@@ -99,10 +99,12 @@ void resetGlobVars()
 }
 
 
-
+/**************************************
+** resetHang drops the hang arms     **
+** to initial position.              **
+***************************************/
 void resetHang()
 {
-	//Drop the hang arms
 	servoTarget[hangServo1] = 60;
 	servoTarget[hangServo2] = 180;
 }
@@ -227,19 +229,21 @@ void gyroSidePivot(int turnDirection, int speedKonstant)
 
 
 /***************************************
-**  gyroSidePivot turns the robot     **
-**  accurately, driving on one side		**
-**  using the gyro sensor.   					**
+**  gyroCurve turns the robot         **
+**  accurately, curving	using the     **
+**  gyro and moving forward   				**
 **  Turns at a certain speed until it **
 **  gets to turnDirection.            **
+**  Can specify speed of minor motor. **
 *--------------------------------------*
 * Parameters:
 * int turnDirection - Num degrees to turn to
 										- Positive number of degrees turns the robot with the right
 										- Negative number of degrees turns the robot with the left
-* int speedKonstant - Speed to turn at
+* int speedKonstant - Speed for major turning motor to turn at
 										- Positive number of degrees turns the robot by moving the motors forward
 										- Negative number of degrees turns the robot by moving the motors backwards
+* int subPwr        - Speed for minor turning motor to turn at
 ****************************************/
 void gyroCurve(int turnDirection, int speedKonstant, int subPwr)
 {
@@ -285,6 +289,14 @@ void gyroCurve(int turnDirection, int speedKonstant, int subPwr)
 
 
 //-------------------PARKING-----------------
+/***************************************
+**  park turns the robot              **
+**  perpendicular to the field to     **
+**  make it harder to push.           **
+*--------------------------------------*
+* Parameters:
+* int dir - turn left (negative dir) or right (positive dir)
+****************************************/
 void park(int dir)
 {
 	if(dir > 0)
