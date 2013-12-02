@@ -23,7 +23,7 @@
 /**********************************
 ** WHS Robotics  |  FTC Team 542 **
 ** Block Party! 2013-2014 Season **
-** Gamble (Ramp + Box 1)         **
+** Safe (Ramp + Score)           **
 ** Main  |  Red  |  V1           **
 ***********************************/
 
@@ -32,15 +32,37 @@
 #include "arps_functions1.h"; //header file for ARP Functions
 
 
-//INITIALIZATION//
+///////////INITIALIZATION////////////
+bool needArm = false;
+
+
+
+///////////TASKS///////////////
+task Arm()
+{
+	while(needArm)
+	{
+		moveArm(100);
+		wait1Msec(750);
+		moveArm(0);
+		needArm = false;
+	}
+}
+
+
+
 void initializeRobot()
 {
-  resetHang(); //hang arm
-  resetBucket(); //DO NOT reset the NXT motors!!
+  //resetHang(); //hang arm
+  //resetBucket(); //DO NOT reset the NXT motors!!
 
 	//reset drive train encoders
 	nMotorEncoder[leftDrive] = 0;
 	nMotorEncoder[rightDrive] = 0;
+
+	HTGYROstartCal(gyroSensor); //calibrate gyro
+
+	StartTask(Arm);
 
 	//beep to signal end of initialization
 	PlayTone(440, 30);
@@ -48,7 +70,9 @@ void initializeRobot()
   return;
 }
 
-//MAIN//
+
+
+//////////////MAIN/////////////
 
 task main()
 {
@@ -56,17 +80,36 @@ task main()
 
 	waitForStart();
 
-	//TIME TO BEGIN//
-	//---Lift arms
-	moveArm(80);
-	wait10Msec(60);
-	moveArm(0);
+	servoTarget[intakeServo] = 80;
+	//----------SAFE BEGIN------------
+			moveArm(100);
+		wait1Msec(600);
+		moveArm(0);
 	//---Move forward
-	moveStraight(13.0,50);
-	//---Release the waffle!
-		servo[intakeServo] = 150;
-		wait1Msec(1000);
-		servo[intakeServo] = 80;
-		wait1Msec(5000);
+	moveStraight(6.0,100);
+	stopDriveTrain();
+	//---Turn Right
+	gyroCenterPivot(-30,100);
+	stopDriveTrain();
 
+	//---Move forward
+	moveStraight(20.0, 100);
+	stopDriveTrain();
+
+
+	//---Score
+	servo[intakeServo] = 150;
+	wait1Msec(700);
+	//---Move forward to get on ramp.
+	moveStraight(12.0, -100);
+	stopDriveTrain();
+
+	gyroCenterPivot(45,100);
+	stopDriveTrain();
+
+	moveStraight(60.0, 100);
+	stopDriveTrain();
+	//---Close box
+	servo[intakeServo] = 80;
+	wait1Msec(5000);
 }
