@@ -3,11 +3,11 @@
 #pragma config(Sensor, S2,     touchSensor,    sensorTouch)
 #pragma config(Sensor, S3,     IRSensor,       sensorHiTechnicIRSeeker1200)
 #pragma config(Sensor, S4,     gyroSensor,     sensorI2CHiTechnicGyro)
-#pragma config(Motor,  motorA,          leftIntake,    tmotorNXT, PIDControl, encoder)
-#pragma config(Motor,  motorB,          rightIntake,   tmotorNXT, PIDControl, encoder)
+#pragma config(Motor,  motorA,          rightIntake,   tmotorNXT, PIDControl, encoder)
+#pragma config(Motor,  motorB,          leftIntake,    tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  motorC,           ,             tmotorNXT, openLoop)
-#pragma config(Motor,  mtr_S1_C1_1,     leftDrive,     tmotorTetrix, openLoop, reversed)
-#pragma config(Motor,  mtr_S1_C1_2,     rightDrive,    tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C1_1,     leftDrive,     tmotorTetrix, PIDControl, reversed)
+#pragma config(Motor,  mtr_S1_C1_2,     rightDrive,    tmotorTetrix, PIDControl)
 #pragma config(Motor,  mtr_S1_C2_1,     leftArm,       tmotorTetrix, openLoop, reversed)
 #pragma config(Motor,  mtr_S1_C2_2,     rightArm,      tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C3_1,     hang1,         tmotorTetrix, openLoop)
@@ -31,6 +31,24 @@
 #include "JoystickDriver.c"; //driver for receiving bluetooth msgs
 #include "arps_functions1.h"; //header file for ARP Functions
 
+
+bool liftArm = false;
+
+//TASKS//
+task Arm()
+{
+	while(true)
+	{
+		if(arm)
+		{
+			moveArm(80);
+			wait10Msec(50);
+			moveArm(0);
+			liftArm = false;
+			return;
+		}
+	}
+}
 
 //INITIALIZATION//
 void initializeRobot()
@@ -61,42 +79,53 @@ void initializeRobot()
 
 task main()
 {
-	initializeRobot();
+	int crate = 0;
+
+	//initializeRobot();
 
 	waitForStart();
 
+	StartTask (Arm);
 	//----------CHARGE BEGIN------------
+	//moveArm(80);
 	//---Move forward
-	moveStraight(12.0, 100);
+	moveStraight(6, 50);
+	liftArm = true;
 	//---Detect IR Beacon
-	SensorValue[IRSensor];
+	//SensorValue[IRSensor];
 	//---Turn Right/Left(depending on which side we start)
-	gyroCenterPivot(45,50);
+	gyroCenterPivot(-38,100);
 	//---Move forward
-	moveStraight();
+	moveStraight(29.0, 50);
 	//---Turn Right/Left again
-	gyroCenterPivot();
+	gyroCenterPivot(93,100);
 	//---Get on ramp
-	moveStraight(20.0,100);
+	moveStraight(30.0,100);
 	//---Move forward if IR Beacon is on the left side
-	if(SensorValue[IRSensor] > ?);
-	{
-		moveStraight();
-		gyroCenterPivot();
-		//---Lift Arms
-		moveArm(100);
-		//---Dump the waffle
+	//if(SensorValue[IRSensor] <= 4 && SensorValue[IRSensor]!=0)
+	/*{
+		crate = 1;
+		moveStraight(20.0,100);
+		gyroCenterPivot(90,50);
 		servo[intakeServo] = 150;
+		//---Lift Arms
+
+	//---Dump the waffle
+	//servo[intakeServo] = 150;
 	}
 	//---Turn Right towards
-	if(SensorValue[IRSensor] =< ?);
+	//if(SensorValue[IRSensor] == 5)
 	{
-		gyroCenterPivot();
-		//---Lift Arms
-		moveArm(100);
-		//---Dump the waffle
+		moveStraight(23.0,100);
+		gyroCenterPivot(90,50);
 		servo[intakeServo] = 150;
 	}
+	//if(SensorValue[IRSensor] == 0)
+	{
+		moveStraight(26.0,100);
+		gyroCenterPivot(90,50);
+		servo[intakeServo] = 150;
+	}*/
 	//---Stop
 	stopDriveTrain();
 	//---Park left
