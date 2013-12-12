@@ -25,7 +25,7 @@
 ** Block Party! 2013-2014 Season **
 ** Charge!(Ramp Only)            **
 ** Main  |  Red  |  V1           **
-***********************************/
+**********************************/
 
 ////////////////////////INCLUDES////////////////////
 #include "JoystickDriver.c"; //driver for receiving bluetooth msgs
@@ -103,7 +103,7 @@ task main()
 	moveStraight(30.0,100);
 	//---Move forward if IR Beacon is on the left side
 	//if(SensorValue[IRSensor] <= 4 && SensorValue[IRSensor]!=0)
-	/*{
+	{
 		crate = 1;
 		moveStraight(20.0,100);
 		gyroCenterPivot(90,50);
@@ -112,16 +112,18 @@ task main()
 
 	//---Dump the waffle
 	//servo[intakeServo] = 150;
-	}
+	}/*
 	//---Turn Right towards
 	//if(SensorValue[IRSensor] == 5)
 	{
+		crate = 2;
 		moveStraight(23.0,100);
 		gyroCenterPivot(90,50);
 		servo[intakeServo] = 150;
 	}
 	//if(SensorValue[IRSensor] == 0)
 	{
+		crate =
 		moveStraight(26.0,100);
 		gyroCenterPivot(90,50);
 		servo[intakeServo] = 150;
