@@ -33,6 +33,7 @@
 
 
 //INITIALIZATION//
+
 void initializeRobot()
 {
   resetHang(); //hang arm
@@ -57,6 +58,7 @@ task main()
 	waitForStart();
 
 	//TIME TO BEGIN//
+
 	//---Lift arms
 	moveArm(80);
 	wait10Msec(60);
