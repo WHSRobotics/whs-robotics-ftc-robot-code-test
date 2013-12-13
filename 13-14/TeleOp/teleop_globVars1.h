@@ -38,10 +38,20 @@ const int DRIVE_HI_THRESH = 25;
 const int DRIVE_LOW_THRESH = 15;
 
 //////Servo Position KONSTANTS//////
+///Hang
 const int HANG_POS_ONE = 60;
 const int HANG_END_ONE = 250;
 const int HANG_POS_TWO = 180;
 const int HANG_END_TWO = 0;
+///Flag
+const int FLAG_POS_READY = 120;
+const int FLAG_POS_SET = 50;
+const int FLAG_POS_GO = 0;
+
+///////Flag Stages///////
+const int FLAG_STG_READY = 0;
+const int FLAG_STG_SET = 1;
+const int FLAG_STG_GO = 2;
 
 
 #endif;
