@@ -14,7 +14,7 @@
 void InitializeRobot()
 {
 	//ready KONSTANTS
-	const int FLAG_READY = 120;
+	const int FLAG_READY = 125;
 	const int AUTO_INIT = 15;
 	const int LEFT_HANG_INIT = 60;
 	const int RIGHT_HANG_INIT = 180;
@@ -244,9 +244,9 @@ task Flag()
 	const int STG_SET = 1;
 	const int STG_GO = 2;
 	///////Flag Positions///////
-	const int POS_READY = 100;
-	const int POS_SET = 50;
-	const int POS_GO = 0;
+	const int POS_READY = 125;
+	const int POS_SET = 90;
+	const int POS_GO = 25;
 
 	int currStage = STG_READY;
 	while(true)

@@ -34,6 +34,11 @@
 
 
 //INITIALIZATION//
+//---------Global Variables
+bool needArm = false;
+int crate = 0;
+
+//----------Task to keep servos locked
 task LockServos()
 {
 	while(true)
@@ -43,6 +48,24 @@ task LockServos()
 	}
 }
 
+
+//------Task to move the arm concurrently
+task Arm()
+{
+	while(true)
+	{
+		if(needArm)
+		{
+			moveArm(80);
+			wait1Msec(500);
+			moveArm(0);
+			return;
+		}
+	}
+}
+
+
+//-------Function for initialization
 void initializeRobot()
 {
   //ready KONSTANTS
@@ -57,14 +80,10 @@ void initializeRobot()
 	nMotorEncoder[leftDrive] = 0;
 	nMotorEncoder[rightDrive] = 0;
 
-	//---------------------------------------------------HTGYROstartCal(gyroRobot); //calibrate gyro
-
-	//clear timers T1 and T2
-	ClearTimer(T1);
-	ClearTimer(T2);
-
 	//lock hang arms
 	StartTask(LockServos);
+	//start task to lift arm concurrently
+	StartTask(Arm);
 
 	//beep to signal end of initialization
 	PlayTone(440, 30);
@@ -74,60 +93,55 @@ void initializeRobot()
 
 
 
-
 //MAIN//
 
 task main()
 {
-	int crate = 0;
-
-	//initializeRobot();
+	initializeRobot();
 
 	waitForStart();
 
-	//----------CHARGE BEGIN------------
-	//moveArm(80);
-	//---Move forward
-	moveStraight(8, 100);
+	//----------GAMBLE BEGIN------------
+	needArm = true;
+	wait1Msec(300);
 	//---Detect IR Beacon
-	//SensorValue[IRSensor];
-	//---Turn Right/Left(depending on which side we start)
-	gyroCenterPivot(-34,100);
-	//---Move forward
-	moveStraight(27.0, 50);
-	//---Turn Right/Left again
-	gyroCenterPivot(93,100);
-	//---Get on ramp
-	moveStraight(33.0,100);
-	//---Move forward if IR Beacon is on the left side
-	//if(SensorValue[IRSensor] <= 4 && SensorValue[IRSensor]!=0)
-	//{
-		/*crate = 1;
-		moveStraight(20.0,100);
-		servo[autoServo] = 160;
-		wait10Msec(50);
-		servo[autoServo] = 15;
-		wait10Msec(50);
-
-
-	//---Dump the waffle
-	//servo[intakeServo] = 150;
-	/*}
-	//---Turn Right towards
-	//if(SensorValue[IRSensor] == 5)
+	if(SensorValue[IRSensor] <= 4 && SensorValue[IRSensor]!=0)
+	{
+		crate = 1;
+	}
+	if(SensorValue[IRSensor] == 5)
 	{
 		crate = 2;
-		moveStraight(23.0,100);
-		gyroCenterPivot(90,50);
 	}
-	//if(SensorValue[IRSensor] == 0)
+	if(SensorValue[IRSensor] == 0)
 	{
-		crate =
-		moveStraight(26.0,100);
-		gyroCenterPivot(90,50);
-	}*/
+		crate = 3;
+	}
+	//---Move forward
+	moveStraight(8, 100);
+	//---Turn Left
+	gyroCenterPivot(-34,100);
+	//---Move forward
+	moveStraight(27.0, 100);
+	//---Turn Right
+	gyroCenterPivot(93,100);
+	//needArm = true;
+	//---Get on ramp
+	moveStraight(31.0,100);
+
+	//---Check which crate for positioning
+	if(crate == 2)
+	{
+		moveStraight(8.0, 100);
+	}
+	else if(crate == 3)
+	{
+		moveStraight(23.0,100);
+	}
+	//If crate == 1, then do not move. Robot is already positioned to score.
+
 	//---Stop
 	stopDriveTrain();
-	//---Park left
-	//park(-1);
+	//---SCORE
+	scoreAutoArm();
 }
