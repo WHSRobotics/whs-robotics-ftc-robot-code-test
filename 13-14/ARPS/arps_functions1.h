@@ -295,25 +295,13 @@ void gyroCurve(int turnDirection, int speedKonstant, int subPwr)
 
 
 
-//-------------------PARKING-----------------
-/***************************************
-**  park turns the robot              **
-**  perpendicular to the field to     **
-**  make it harder to push.           **
-*--------------------------------------*
-* Parameters:
-* int dir - turn left (negative dir) or right (positive dir)
-****************************************/
-void park(int dir)
+//-------------------AUTO ARM------------------
+void scoreAutoArm()
 {
-	if(dir > 0)
-	{
-		gyroCenterPivot(90, 50);
-	}
-	else if(dir < 0)
-	{
-		gyroCenterPivot(-90, 50);
-	}
+	servo[autoServo] = 160;
+	wait10Msec(50);
+	servo[autoServo] = 15;
+	wait10Msec(50);
 }
 
 
