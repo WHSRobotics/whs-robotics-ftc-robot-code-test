@@ -12,9 +12,9 @@
 #pragma config(Motor,  mtr_S1_C2_2,     rightArm,      tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C3_1,     hang1,         tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C3_2,     hang2,         tmotorTetrix, openLoop, reversed)
-#pragma config(Servo,  srvo_S1_C4_1,    servo1,               tServoNone)
+#pragma config(Servo,  srvo_S1_C4_1,    flagServo,            tServoStandard)
 #pragma config(Servo,  srvo_S1_C4_2,    servo2,               tServoNone)
-#pragma config(Servo,  srvo_S1_C4_3,    servo3,               tServoNone)
+#pragma config(Servo,  srvo_S1_C4_3,    autoServo,            tServoStandard)
 #pragma config(Servo,  srvo_S1_C4_4,    intakeServo,          tServoStandard)
 #pragma config(Servo,  srvo_S1_C4_5,    hangServo1,           tServoStandard)
 #pragma config(Servo,  srvo_S1_C4_6,    hangServo2,           tServoStandard)
@@ -32,29 +32,25 @@
 #include "arps_functions1.h"; //header file for ARP Functions
 
 
-bool liftArm = false;
 
-//TASKS//
-task Arm()
+//INITIALIZATION//
+task LockServos()
 {
 	while(true)
 	{
-		if(arm)
-		{
-			moveArm(80);
-			wait10Msec(50);
-			moveArm(0);
-			liftArm = false;
-			return;
-		}
+		resetHang();
+		resetFlag();
 	}
 }
 
-//INITIALIZATION//
 void initializeRobot()
 {
-  resetArm();
-  resetHang(); //hang arm
+  //ready KONSTANTS
+	const int AUTO_INIT = 15;
+
+	//set to ready positions
+	servo[autoServo] = AUTO_INIT;
+
   resetBucket(); //DO NOT reset the NXT motors!!
 
 	//reset drive train encoders
@@ -67,11 +63,15 @@ void initializeRobot()
 	ClearTimer(T1);
 	ClearTimer(T2);
 
+	//lock hang arms
+	StartTask(LockServos);
+
 	//beep to signal end of initialization
 	PlayTone(440, 30);
 
   return;
 }
+
 
 
 
@@ -85,48 +85,46 @@ task main()
 
 	waitForStart();
 
-	StartTask (Arm);
 	//----------CHARGE BEGIN------------
 	//moveArm(80);
 	//---Move forward
-	moveStraight(6, 50);
-	liftArm = true;
+	moveStraight(8, 100);
 	//---Detect IR Beacon
 	//SensorValue[IRSensor];
 	//---Turn Right/Left(depending on which side we start)
-	gyroCenterPivot(-38,100);
+	gyroCenterPivot(-34,100);
 	//---Move forward
-	moveStraight(29.0, 50);
+	moveStraight(27.0, 50);
 	//---Turn Right/Left again
 	gyroCenterPivot(93,100);
 	//---Get on ramp
-	moveStraight(30.0,100);
+	moveStraight(33.0,100);
 	//---Move forward if IR Beacon is on the left side
 	//if(SensorValue[IRSensor] <= 4 && SensorValue[IRSensor]!=0)
-	{
-		crate = 1;
+	//{
+		/*crate = 1;
 		moveStraight(20.0,100);
-		gyroCenterPivot(90,50);
-		servo[intakeServo] = 150;
-		//---Lift Arms
+		servo[autoServo] = 160;
+		wait10Msec(50);
+		servo[autoServo] = 15;
+		wait10Msec(50);
+
 
 	//---Dump the waffle
 	//servo[intakeServo] = 150;
-	}/*
+	/*}
 	//---Turn Right towards
 	//if(SensorValue[IRSensor] == 5)
 	{
 		crate = 2;
 		moveStraight(23.0,100);
 		gyroCenterPivot(90,50);
-		servo[intakeServo] = 150;
 	}
 	//if(SensorValue[IRSensor] == 0)
 	{
 		crate =
 		moveStraight(26.0,100);
 		gyroCenterPivot(90,50);
-		servo[intakeServo] = 150;
 	}*/
 	//---Stop
 	stopDriveTrain();
