@@ -110,6 +110,13 @@ void resetHang()
 }
 
 
+
+void resetFlag()
+{
+	servo[flagServo] = 120;
+}
+
+
 //------------------------------GYRO---------------------
 /**************************************
 **  getAngleChange gives an updated  **
