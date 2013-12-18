@@ -13,8 +13,8 @@
   + MotorF = leftArm
   + MotorG = rightArm
 1 motor controller - hang lift
-	+ MotorH = hang1
-	+ MotorI = hang2
+        + MotorH = hang1
+        + MotorI = hang2
 1 servo controller - hang arm and box drop
   + servo4 - intakeServo
   + servo5 - hangServo1
