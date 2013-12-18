@@ -15,7 +15,7 @@
 #include "hitechnic-irseeker-v2.h" //header file for IR seeker v2! :D
 #include "hitechnic-gyro.h" //driver for gyro
 //#include "hitechnic-touchmux.h"  //header file for TUX
-
+#include "JoystickDriver.c"
 
 ///////////////////KONSTANTS///////////////////
 ////General KONSTANTS////
