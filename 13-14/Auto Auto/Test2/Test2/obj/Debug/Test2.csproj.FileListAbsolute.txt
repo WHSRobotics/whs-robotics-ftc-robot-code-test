@@ -7,3 +7,12 @@ c:\users\proud\documents\visual studio 2013\Projects\Test2\Test2\obj\Debug\Test2
 c:\users\proud\documents\visual studio 2013\Projects\Test2\Test2\obj\Debug\Test2.pdb
 c:\users\proud\documents\visual studio 2013\Projects\Test2\Test2\obj\Debug\Test2.mainForm.resources
 c:\Users\Proud\documents\visual studio 2013\Projects\Test2\Test2\obj\Debug\Test2.csprojResolveAssemblyReference.cache
+C:\Users\Proud\whs-robotics-ftc-code-test\13-14\Auto Auto\Test2\Test2\bin\Debug\Test2.exe.config
+C:\Users\Proud\whs-robotics-ftc-code-test\13-14\Auto Auto\Test2\Test2\obj\Debug\Test2.exe
+C:\Users\Proud\whs-robotics-ftc-code-test\13-14\Auto Auto\Test2\Test2\obj\Debug\Test2.pdb
+C:\Users\Proud\whs-robotics-ftc-code-test\13-14\Auto Auto\Test2\Test2\bin\Debug\Test2.exe
+C:\Users\Proud\whs-robotics-ftc-code-test\13-14\Auto Auto\Test2\Test2\bin\Debug\Test2.pdb
+C:\Users\Proud\whs-robotics-ftc-code-test\13-14\Auto Auto\Test2\Test2\obj\Debug\Test2.csprojResolveAssemblyReference.cache
+C:\Users\Proud\whs-robotics-ftc-code-test\13-14\Auto Auto\Test2\Test2\obj\Debug\Test2.mainForm.resources
+C:\Users\Proud\whs-robotics-ftc-code-test\13-14\Auto Auto\Test2\Test2\obj\Debug\Test2.Properties.Resources.resources
+C:\Users\Proud\whs-robotics-ftc-code-test\13-14\Auto Auto\Test2\Test2\obj\Debug\Test2.csproj.GenerateResource.Cache
