@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,8 @@ namespace Test2
 
         public FCS()
         {
-           rob = new Rob();
+           //rob = new Rob(new Point(50,50));
+           rob.Image = new Bitmap(@"C:\Users\Proud\whs-robotics-ftc-code-test\13-14\Auto Auto\Test2\Test2\Rob\rob0.gif", false);
            robCanMove = false;
         }
 
@@ -26,8 +28,8 @@ namespace Test2
         {
             if (rob.moveEnabled)
             {
-                int oldX = rob.x;
-                int oldY = rob.y;
+                int oldX = (int)rob.x;
+                int oldY = (int)rob.y;
                 if (e.KeyCode == Keys.Left)// && rob.x >= FIELD_TOPX+5)
                 {
                     if (e.Modifiers == Keys.Alt && rob.x >= FIELD_TOPX+1)
