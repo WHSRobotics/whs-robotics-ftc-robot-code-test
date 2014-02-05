@@ -72,7 +72,7 @@ void assistedTankControl(float diffY1Input, float diffY2Input)
 	piMotor(sweBR, swiBR, scaledY2, velX, 0);
 }
 
-oid swerveControl(float transYInput, float transXInput, float angularInput)
+void swerveControl(float transYInput, float transXInput, float angularInput)
 {
 	float angSclr = abs(angularInput) > HI_THRESH
 	? angularInput * ROT_SCALE
