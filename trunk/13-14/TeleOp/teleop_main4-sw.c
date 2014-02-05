@@ -28,6 +28,11 @@
 
 void initializeRobot()
 {
+	//Setting wheels to 90 degree position
+	servo[swiFL] = 127;
+	servo[swiBL] = 127;
+	servo[swiFR] = 127;
+	servo[swiBR] = 127;
 	servo[antiRatchet] = 90; //closed
 	return;
 }
@@ -37,6 +42,14 @@ task main()
 	initializeRobot();
 	waitForStart();
 
+	//Servo responsiveness settings
+	muxUpdateInterval = 1;
+	servoChangeRate[swiFL] = 0;
+	servoChangeRate[swiFR] = 0;
+	servoChangeRate[swiBR] = 0;
+	servoChangeRate[swiBL] = 0;
+
+	StartTask(Drivetrain);
 	StartTask(Arm);
 	StartTask(Hang);
 	StartTask(Flag);
