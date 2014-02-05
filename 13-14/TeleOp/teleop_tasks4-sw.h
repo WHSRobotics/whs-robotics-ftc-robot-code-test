@@ -204,7 +204,6 @@ task Hang()
 		winchBackward = (joy1Btn(4) && joy2Btn(4));
 		hangmanOn = (joy1Btn(1) && joy2Btn(1));
 
-		/*
 		//Hangman movement
 		if(hangmanOn)
 		{
@@ -214,7 +213,6 @@ task Hang()
 		{
 			motor[hangmanMot] = 0;
 		}
-		*/
 		//Winch & Anti-ratchet movement
 		if(winchForward && !winchBackward)
 		{
@@ -222,12 +220,14 @@ task Hang()
 		}
 		else if(winchBackward)
 		{
-			motor[winchMot] = -100;
 			servo[antiRatchet] = 255; //open
+			wait10Msec(50);
+			motor[winchMot] = -100;
 		}
 		else
 		{
 			motor[winchMot] = 0;
+			wait10Msec(50);
 			servo[antiRatchet] = 90; //closed
 		}
 	}
