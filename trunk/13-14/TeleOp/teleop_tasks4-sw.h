@@ -13,7 +13,8 @@ const int HI_THRESH = 25;
 const int LOW_THRESH = 15;
 const float JOY_MAP = 0.78125;
 const float SERVO_MAP = 255.0/PI;
-const float ROT_SCALE = 0.075;
+const float ROT_ONLY_SCALE = 0.075;
+const float ROT_SCALE = 0.025;
 const float TANK_SPEED_SCALE = 1.0;
 const float SWERVE_SPEED_SCALE = 1.0;
 const float HALF_WIDTH_X = 6.8125;
@@ -36,6 +37,30 @@ float magnitudeCalc(float inputX, float inputY)
 	return sqrt( pow(inputX, 2) + pow(inputY, 2) ) < 128.0
 	? sqrt( pow(inputX, 2) + pow(inputY, 2) )
 	: 128.0;
+}
+
+float piMotorOnly(float inputY, float inputX)
+{
+	if(atan2(inputY, inputX) < 0)
+	{
+		return -magnitudeCalc(inputY, inputX) * JOY_MAP;
+	}
+	else
+	{
+		return magnitudeCalc(inputY, inputX)* JOY_MAP;
+	}
+}
+
+float piServoOnly(float inputY, float inputX)
+{
+	if(atan2(inputY, inputX) < 0)
+	{
+		return (atan2(inputY, inputX) + PI) * SERVO_MAP;
+	}
+	else
+	{
+		return atan2(inputY, inputX) * SERVO_MAP;
+	}
 }
 
 void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX, int initServoPos)
@@ -74,9 +99,19 @@ void assistedTankControl(float diffY1Input, float diffY2Input)
 
 void swerveControl(float transYInput, float transXInput, float angularInput)
 {
-	float angSclr = abs(angularInput) > HI_THRESH
-	? angularInput * ROT_SCALE
-	: 0.0 ;
+	float angSclr;
+	if(magnitudeCalc(transXInput, transYInput) > LOW_THRESH)
+	{
+		angSclr = angularInput * ROT_SCALE;
+	}
+	else if(abs(angularInput) > HI_THRESH)
+	{
+		angSclr = angularInput * ROT_ONLY_SCALE;
+	}
+	else
+	{
+		angSclr = 0.0;
+	}
 	float transXSclr = magnitudeCalc(transXInput, transYInput) > LOW_THRESH
 	? transXInput * SWERVE_SPEED_SCALE
 	: 0.0 ;
@@ -84,22 +119,24 @@ void swerveControl(float transYInput, float transXInput, float angularInput)
 	? -transYInput * SWERVE_SPEED_SCALE
 	: 0.0 ;
 
-	float velFLX = angSclr * -HALF_LENGTH_Y + transXSclr;
-	float velFLY = angSclr * -HALF_WIDTH_X + transYSclr;
+	float velFLX = transXSclr - (angSclr * HALF_LENGTH_Y);
+	float velFLY = transYSclr - (angSclr * HALF_WIDTH_X);
 
-	float velBLX = angSclr * HALF_LENGTH_Y + transXSclr;
-	float velBLY = angSclr * -HALF_WIDTH_X +  transYSclr;
+	float velBLX = transXSclr + (angSclr * HALF_LENGTH_Y);
+	float velBLY = transYSclr - (angSclr * HALF_WIDTH_X);
 
-	float velFRX = angSclr * -HALF_LENGTH_Y + transXSclr;
-	float velFRY = angSclr * HALF_WIDTH_X +  transYSclr;
+	float velFRX = transXSclr - (angSclr * HALF_LENGTH_Y);
+	float velFRY = transYSclr + (angSclr * HALF_WIDTH_X);
 
-	float velBRX = angSclr * HALF_LENGTH_Y + transXSclr;
-	float velBRY = angSclr * HALF_WIDTH_X + transYSclr;
+	float velBRX = transXSclr + (angSclr * HALF_LENGTH_Y);
+	float velBRY = transYSclr + (angSclr * HALF_WIDTH_X);
 
-	piMotor(sweFL, swiFL, velFLY, velFLX, 0);
-	piMotor(sweBL, swiBL, velBLY, velBLX, 0);
-	piMotor(sweFR, swiFR, velFRY, velFRX, 0);
-	piMotor(sweBR, swiBR, velBRY, velBRX, 0);
+	piMotor(sweFL, swiFL, velFRY, velFRX, 0);
+	piMotor(sweBL, swiBL, velBRY, velBRX, -20);
+	piMotor(sweFR, swiFR, velFLY, velFLX, 0);
+	piMotor(sweBR, swiBR, velBLY, velBLX, 0);
+	writeDebugStreamLine("sweFL: %f, sweBL: %f, sweFR: %f, sweBR: %f", piMotorOnly(velFLY, velFLX), piMotorOnly(velBLY, velBLX), piMotorOnly(velFRY,velFRX), piMotorOnly(velBRY, velBLX));
+	//writeDebugStreamLine("swiFL: %f, swiBL: %f, swiFR: %f, swiBR: %f", piServoOnly(velFLY, velFLX), piServoOnly(velBLY, velBLX), piServoOnly(velFRY,velFRX), piServoOnly(velBRY, velBLX));
 }
 
 void driveSwitch()
