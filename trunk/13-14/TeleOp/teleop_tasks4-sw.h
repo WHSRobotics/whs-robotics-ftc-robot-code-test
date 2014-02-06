@@ -81,7 +81,7 @@ void swerveControl(float transYInput, float transXInput, float angularInput)
 	? transXInput * SWERVE_SPEED_SCALE
 	: 0.0 ;
 	float transYSclr = magnitudeCalc(transXInput, transYInput) > LOW_THRESH
-	? transYInput * SWERVE_SPEED_SCALE
+	? -transYInput * SWERVE_SPEED_SCALE
 	: 0.0 ;
 
 	float velFLX = angSclr * -HALF_LENGTH_Y + transXSclr;
@@ -96,10 +96,10 @@ void swerveControl(float transYInput, float transXInput, float angularInput)
 	float velBRX = angSclr * HALF_LENGTH_Y + transXSclr;
 	float velBRY = angSclr * HALF_WIDTH_X + transYSclr;
 
-	piMotor(sweFL, swiFL, -velFLY, velFLX, 0);
-	piMotor(sweBL, swiBL, -velBLY, velBLX, 0);
-	piMotor(sweFR, swiFR, -velFRY, velFRX, 0);
-	piMotor(sweBR, swiBR, -velBRY, velBRX, 0);
+	piMotor(sweFL, swiFL, velFLY, velFLX, 0);
+	piMotor(sweBL, swiBL, velBLY, velBLX, 0);
+	piMotor(sweFR, swiFR, velFRY, velFRX, 0);
+	piMotor(sweBR, swiBR, velBRY, velBRX, 0);
 }
 
 void driveSwitch()
