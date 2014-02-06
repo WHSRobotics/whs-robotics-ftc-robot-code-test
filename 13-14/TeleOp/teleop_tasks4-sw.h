@@ -1,3 +1,6 @@
+#ifndef TELEOP_TASKS4-SW.H;
+#define TELEOP_TASKS4-SW.H;
+
 /*
 winch = dc motor
 flag = dc motor
@@ -31,6 +34,16 @@ void runIntake(float motPow)
 }*/
 
 ////////----FUNCTIONS----////////
+void initializeRobot()
+{
+	//Setting wheels to 90 degree position
+	servo[swiFL] = 127;
+	servo[swiBL] = 127;
+	servo[swiFR] = 127;
+	servo[swiBR] = 127;
+	servo[antiRatchet] = 90; //closed
+	return;
+}
 
 float magnitudeCalc(float inputX, float inputY)
 {
@@ -369,3 +382,5 @@ task Turntable()
 		writeDebugStreamLine("%f", nMotorEncoder[ttMot]);
 	}
 }
+
+#endif;
