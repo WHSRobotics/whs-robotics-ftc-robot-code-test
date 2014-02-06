@@ -51,18 +51,6 @@ float piMotorOnly(float inputY, float inputX)
 	}
 }
 
-float piServoOnly(float inputY, float inputX)
-{
-	if(atan2(inputY, inputX) < 0)
-	{
-		return (atan2(inputY, inputX) + PI) * SERVO_MAP;
-	}
-	else
-	{
-		return atan2(inputY, inputX) * SERVO_MAP;
-	}
-}
-
 void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX, int initServoPos)
 {
 	if((magnitudeCalc(inputY, inputX) > LOW_THRESH) && (magnitudeCalc(inputY, inputX) <= 128.0))
@@ -92,7 +80,7 @@ void assistedTankControl(float diffY1Input, float diffY2Input)
 	float velX = HALF_LENGTH_Y * (scaledY1 - scaledY2)/(2.0*HALF_WIDTH_X);
 
 	piMotor(sweFL, swiFL, scaledY1, -velX, 0);
-	piMotor(sweBL, swiBL, scaledY1, velX, 0);
+	piMotor(sweBL, swiBL, scaledY1, velX, -20);
 	piMotor(sweFR, swiFR, scaledY2, -velX, 0);
 	piMotor(sweBR, swiBR, scaledY2, velX, 0);
 }
@@ -136,7 +124,6 @@ void swerveControl(float transYInput, float transXInput, float angularInput)
 	piMotor(sweFR, swiFR, velFLY, velFLX, 0);
 	piMotor(sweBR, swiBR, velBLY, velBLX, 0);
 	writeDebugStreamLine("sweFL: %f, sweBL: %f, sweFR: %f, sweBR: %f", piMotorOnly(velFLY, velFLX), piMotorOnly(velBLY, velBLX), piMotorOnly(velFRY,velFRX), piMotorOnly(velBRY, velBLX));
-	//writeDebugStreamLine("swiFL: %f, swiBL: %f, swiFR: %f, swiBR: %f", piServoOnly(velFLY, velFLX), piServoOnly(velBLY, velBLX), piServoOnly(velFRY,velFRX), piServoOnly(velBRY, velBLX));
 }
 
 void driveSwitch()
