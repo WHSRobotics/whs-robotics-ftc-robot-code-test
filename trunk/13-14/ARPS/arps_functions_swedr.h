@@ -1,8 +1,8 @@
-#ifndef ARPS_FUNCTIONS_SWE.H;
-#define ARPS_FUNCTIONS_SWE.H;
+#ifndef ARPS_FUNCTIONS_SWEDR.H;
+#define ARPS_FUNCTIONS_SWEDR.H;
 
 ///////////////////////////INCLUDES////////////////////////////
-#include "auto_globVars_swedr." //Header file with constants and global variables
+#include "auto_globVars_swedr.h" //Header file with constants and global variables
 
 /**********************************
 ** WHS Robotics  |  FTC Team 542 **
@@ -11,19 +11,58 @@
 ** Functions                     **
 ***********************************/
 
-//-----------------BASE CONTROLS------------------
+//-----------------BASE FUNCTIONS------------------
 /**************************************
-** setAngle sets all swivel servos   **
-** to a specific angle in radians    **
+** magnitudeCalc calculates distance **
+** or magnitude given x and y values **
 ***************************************/
-void setAngle(float angle)
+float magnitudeCalc(float inputX, float inputY)
 {
-	servo[swiFL] = angle * SERVO_MAP;
-	servo[swiFR] = angle * SERVO_MAP;
-	servo[swiBR] = angle * SERVO_MAP;
-	servo[swiBL] = angle * SERVO_MAP - 20;
+	return sqrt( pow(inputX, 2) + pow(inputY, 2) ) < 128.0
+	? sqrt( pow(inputX, 2) + pow(inputY, 2) )
+	: 128.0;
 }
 
+
+/**************************************
+**  simpleMotor specifies movement   **
+**  explicity by parameters that     **
+**  control direction and power      **
+*--------------------------------------
+* Parameters:
+* tMotor motorName - specifies motor to control
+* TServoIndex servoName - specifies servo to control
+* int power - specifies motor velocity
+* int angle - specifies servo swivel direction
+* int initServoPos - allows calibration of servo swivel range
+***************************************/
+void simpleMotor(tMotor motorName, TServoIndex servoName, int power, int angle, int initServoPos)
+{
+	if(angle > 180)
+	{
+		servo[servoName] = (angle - 180) * SERVO_MAP_DEG + initServoPos;
+		motor[motorName] = -power;
+	}
+	else
+	{
+		servo[servoName] = angle * SERVO_MAP_DEG + initServoPos;
+		motor[motorName] = power;
+	}
+}
+
+
+/**************************************
+**  piMotor specifies movement       **
+**  implicitly by translation vector **
+**  components representing velocity **
+*--------------------------------------
+* Parameters:
+* tMotor motorName - specifies motor to control
+* TServoIndex servoName - specifies servo to control
+* float inputY - specifies y component of velocity vector
+* float inputX - specifies x component of velocity vector
+* int initServoPos - allows calibration of servo swivel range
+***************************************/
 void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX, int initServoPos)
 {
 	if((magnitudeCalc(inputY, inputX) > LOW_THRESH) && (magnitudeCalc(inputY, inputX) <= 128.0))
@@ -46,6 +85,7 @@ void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX
 	}
 }
 
+
 //-----------------MOVES AND STOPS------------------
 /**************************************
 ** stopDriveTrain sets both drive    **
@@ -63,30 +103,52 @@ void stopDriveTrain()
 	motor[sweBR] = STOP;
 }
 
+
 /**************************************
 **  moveArc moves the robot          **
 **  on a specificed circle at        **
 **  a specified power using encoders **
 *--------------------------------------
 * Parameters:
-* float turnRadius - specifies radius of path
+* float turnRadius - specifies radius of path in inches
 * float arcAngle - distance to move in degrees
-* int pwr - motor power for drive train
+* float angVel - influences tangential velocity of robot, viable values(-256,256)
 ***************************************/
-void moveArc(float turnRadius, float arcAngle, int pwr)
+void moveArc(float turnRadius, float arcAngle, float angVel)
 {
-	//specify swivel angles for turn radius
-	//
+	float angSclr = angVel / (2.0 * HALF_WIDTH_X);
+	float targetArcY1 = (turnRadius + HALF_WIDTH_X) * arcAngle * PI/180.0 * INCH_ENCODERVALUE;
+	float targetArcY2 = (turnRadius - HALF_WIDTH_X) * arcAngle * PI/180.0 * INCH_ENCODERVALUE;
 
-	float scaledY1 = -diffY1Input * TANK_SPEED_SCALE;
-	float scaledY2 = -diffY2Input * TANK_SPEED_SCALE;
-	float velX = HALF_LENGTH_Y * (scaledY1 - scaledY2)/(2.0*HALF_WIDTH_X);
+	float velX = angSclr * HALF_LENGTH_Y;
+	float velLY = angSclr * (turnRadius + HALF_WIDTH_X);
+	float velRY = angSclr * (turnRadius - HALF_WIDTH_X);
 
-	piMotor(sweFL, swiFL, scaledY1, -velX, 0);
-	piMotor(sweBL, swiBL, scaledY1, velX, -20);
-	piMotor(sweFR, swiFR, scaledY2, -velX, 0);
-	piMotor(sweBR, swiBR, scaledY2, velX, 0);
+	nMotorEncoder[sweFL] = 0;
+	nMotorEncoder[sweBL] = 0;
+	nMotorEncoder[sweFR] = 0;
+	nMotorEncoder[sweBR] = 0;
+
+	nMotorEncoderTarget[sweFL] = targetArcY1;
+	nMotorEncoderTarget[sweBL] = targetArcY1;
+	nMotorEncoderTarget[sweFR] = targetArcY2;
+	nMotorEncoderTarget[sweBR] = targetArcY2;
+
+	piMotor(sweFL, swiFL, velLY, -velX, 0);
+	piMotor(sweBL, swiBL, velLY, velX, -20);
+	piMotor(sweFR, swiFR, velRY, -velX, 0);
+	piMotor(sweBR, swiBR, velRY, velX, 0);
+
+	while((nMotorRunState[sweFL] != runStateIdle)
+		&& (nMotorRunState[sweBL] != runStateIdle)
+		&& (nMotorRunState[sweFR] != runStateIdle)
+		&& (nMotorRunState[sweBR] != runStateIdle))
+	{
+	}
+
+	stopDriveTrain();
 }
+
 
 /**************************************
 **  moveStraight moves the robot     **
@@ -98,30 +160,43 @@ void moveArc(float turnRadius, float arcAngle, int pwr)
 * float distanceInches - distance to move in inches
 * int pwr - motor power for drive train
 ***************************************/
-void moveStraight(float dirAngle, float distanceInches, int pwr)
+void moveStraight(int dirAngle, float distanceInches, int power)
 {
-	//set angle
-	//run motors
-	//stop motors
+	float targetDistance = distanceInches * INCH_ENCODERVALUE;
 
-	float targetDistance = distanceInches*INCH_ENCODERVALUE;
-	float leftPwr = pwr;
-	float rightPwr = pwr;
+	nMotorEncoder[sweFL] = 0;
+	nMotorEncoder[sweBL] = 0;
+	nMotorEncoder[sweFR] = 0;
+	nMotorEncoder[sweBR] = 0;
 
-	nMotorEncoder[leftDrive] = 0;
-	nMotorEncoder[rightDrive] = 0;
+	nMotorEncoderTarget[sweFL] = targetDistance;
+	nMotorEncoderTarget[sweBL] = targetDistance;
+	nMotorEncoderTarget[sweFR] = targetDistance;
+	nMotorEncoderTarget[sweBR] = targetDistance;
 
-	nMotorEncoderTarget[leftDrive] = targetDistance;
-	nMotorEncoderTarget[rightDrive] = targetDistance;
+	simpleMotor(sweFL, swiFL, power, dirAngle, 0);
+	simpleMotor(sweBL, swiBL, power, dirAngle, -20);
+	simpleMotor(sweFR, swiFR, power, dirAngle, 0);
+	simpleMotor(sweBR, swiBR, power, dirAngle, 0);
 
-	motor[leftDrive] = leftPwr;
-	motor[rightDrive] = rightPwr;
-
-	while(nMotorRunState[leftDrive] != runStateIdle && nMotorRunState[rightDrive] != runStateIdle)
+	while((nMotorRunState[sweFL] != runStateIdle)
+		&& (nMotorRunState[sweBL] != runStateIdle)
+		&& (nMotorRunState[sweFR] != runStateIdle)
+		&& (nMotorRunState[sweBR] != runStateIdle))
 	{
 	}
 
 	stopDriveTrain();
+}
+
+
+/**************************************
+** handArmMaintain prevents the hang **
+** arm from interfering with scoring **
+***************************************/
+void hangArmMaintain()
+{
+	motor[hangArm] = 30;
 }
 
 
@@ -131,11 +206,11 @@ void moveStraight(float dirAngle, float distanceInches, int pwr)
 ***************************************/
 void moveArm(int power)
 {
-	motor[leftArm] = power;
-	motor[rightArm] = power;
+	motor[armL] = power;
+	motor[armR] = power;
 }
 
-
+//--//
 //--------------------RESETS-------------------------
 
 /**************************************
@@ -164,24 +239,6 @@ void resetGlobVars()
 	remainingTurn = DEFAULT_VAL;
 	error = 0.0;
 	adjustedTarget = 0.0;
-}
-
-
-/**************************************
-** resetHang drops the hang arms     **
-** to initial position.              **
-***************************************/
-void resetHang()
-{
-	servoTarget[hangServo1] = 60;
-	servoTarget[hangServo2] = 180;
-}
-
-
-
-void resetFlag()
-{
-	servo[flagServo] = 120;
 }
 
 
@@ -250,117 +307,6 @@ void gyroCenterPivot(int turnDirection, int speedKonstant)
   stopDriveTrain();
   resetGlobVars();
 }
-
-
-/***************************************
-**  gyroSidePivot turns the robot     **
-**  accurately, driving on one side		**
-**  using the gyro sensor.   					**
-**  Turns at a certain speed until it **
-**  gets to turnDirection.            **
-*--------------------------------------*
-* Parameters:
-* int turnDirection - Num degrees to turn to
-										- Positive number of degrees turns the robot with the right
-										- Negative number of degrees turns the robot with the left
-* int speedKonstant - Speed to turn at
-										- Positive number of degrees turns the robot by moving the motors forward
-										- Negative number of degrees turns the robot by moving the motors backwards
-****************************************/
-void gyroSidePivot(int turnDirection, int speedKonstant)
-{
-  //Initialization
-	HTGYROstartCal(gyroSensor); //Calibrate gyro sensor
-	ClearTimer(T1);
-
-	adjustedTarget = ADJUST_M * turnDirection - ADJUST_B; //scale target angle linearly
-	float turn = 100.0;  //default pwr for drive train motors
-
-	while(abs(remainingTurn) > TURN_THRESHOLD) //while significantly turning
-	{
-		remainingTurn = adjustedTarget - gCurrTotalMove; //find # of degrees left to turn
-		gCurrTotalMove += getAngleChange();
-		error = adjustedTarget - gCurrTotalMove;
-		turn = error * speedKonstant; //find pwr for DT motors
-
-	  ////apply calculated turn pwr to DT motors
-		//Use the right side of the DT with a positive target
-		if(turnDirection > 0)
-		{
-		  motor[rightDrive] = turn;
-		}
-		//Use the left side of the DT with a negative target
-		else
-		{
-			motor[leftDrive] = turn;
-		}
-
-		wait10Msec(1);
-	}
-
-  stopDriveTrain();
-  resetGlobVars();
-}
-
-
-/***************************************
-**  gyroCurve turns the robot         **
-**  accurately, curving	using the     **
-**  gyro and moving forward   				**
-**  Turns at a certain speed until it **
-**  gets to turnDirection.            **
-**  Can specify speed of minor motor. **
-*--------------------------------------*
-* Parameters:
-* int turnDirection - Num degrees to turn to
-										- Positive number of degrees turns the robot with the right
-										- Negative number of degrees turns the robot with the left
-* int speedKonstant - Speed for major turning motor to turn at
-										- Positive number of degrees turns the robot by moving the motors forward
-										- Negative number of degrees turns the robot by moving the motors backwards
-* int subPwr        - Speed for minor turning motor to turn at
-****************************************/
-void gyroCurve(int turnDirection, int speedKonstant, int subPwr)
-{
-  //Initialization
-	HTGYROstartCal(gyroSensor); //Calibrate gyro sensor
-	ClearTimer(T1);
-
-	adjustedTarget = ADJUST_M * turnDirection - ADJUST_B; //scale target angle linearly
-	float turn = 100.0;  //default pwr for drive train motors
-	float subturn = 100.0;
-	float subRatio = subPwr/speedKonstant;
-
-	while(abs(remainingTurn) > TURN_THRESHOLD) //while significantly turning
-	{
-		remainingTurn = adjustedTarget - gCurrTotalMove; //find # of degrees left to turn
-		gCurrTotalMove += getAngleChange();
-		error = adjustedTarget - gCurrTotalMove;
-		turn = error * speedKonstant; //find pwr for DT motors
-		subturn = turn * subRatio;
-
-
-	  ////apply calculated turn pwr to DT motors
-		//Use the right side of the DT with a positive target
-		if(turnDirection < 0)
-		{
-		  motor[rightDrive] = turn;
-		  motor[leftDrive] = subturn;
-		}
-		//Use the left side of the DT with a negative target
-		else
-		{
-			motor[leftDrive] = turn;
-			motor[rightDrive] = subturn;
-		}
-
-		wait10Msec(50);
-	}
-
-  stopDriveTrain();
-  resetGlobVars();
-}
-
 
 
 //-------------------AUTO ARM------------------
