@@ -1,57 +1,47 @@
 #ifndef TELEOP_GLOBVARS4-SW.H;
 #define TELEOP_GLOBVARS4-SW.H;
 
-//---------INCLUDES------------
-#include "JoystickDriver.c";
+////////////GLOBAL VARS//////////////
+//////NOTE: getTap uses Timer T4
+//Control scheme variables
+bool DTjoy1 = true;
+bool ANIjoy2 = true;
+bool FSon = true;
+//Intake variables
+bool intakeOn = false;
+bool intakeReversed = false;
+bool boxOpen = false;
+//Drive Control variables
+bool tankDrive = false;
 
-//----------CONFIGURATION----------
-/*
-1 motor controller - drive train
-  + MotorD = leftDrive (encoder)
-  + MotorE = rightDrive (encoder)
-1 motor controller - scoring arm
-  + MotorF = leftArm
-  + MotorG = rightArm
-1 motor controller - hang lift
-        + MotorH = hang1
-        + MotorI = hang2
-1 servo controller - hang arm and box drop
-  + servo4 - intakeServo
-  + servo5 - hangServo1
-  + servo6 - hangServo2
-2 direct NXT motors - intake
-  + motorA = leftIntake
-  + motorB = rightIntake
-*/
 
-/*
-//-----------KONSTANTS----------
-////////General KONSTANTS////////
+/////////////KONSTANTS/////////////
+//Power KONSTANTS
 const int STOP = 0;
-const int MOT_MAX = 100;
+const int MAX = 100; //intake forward, winch forward, flag on
+const int ARM_UP = 90;
+const int ARM_DOWN = -50;
+const int INTAKE_R = -50;
+const int HANGMAN_UP = 90;
+const int WINCH_R = -100;
+const int AR_OPEN = 255; //anti-ratchet open
+const int AR_CLOSED = 90; //anti-ratchet closed
 
-///////Power KONSTANTS////////
-const int INTAKE_POW = 100;
+//THRESHOLDS
+const int TAP_THRESH = 1000; //1000 Msec timeout
 
-///////Threshold KONSTANTS///////
-const int DRIVE_HI_THRESH = 25;
-const int DRIVE_LOW_THRESH = 15;
-
-//////Servo Position KONSTANTS//////
-///Hang
-const int HANG_POS_ONE = 60;
-const int HANG_END_ONE = 250;
-const int HANG_POS_TWO = 180;
-const int HANG_END_TWO = 0;
-///Flag
-const int FLAG_POS_READY = 120;
-const int FLAG_POS_SET = 50;
-const int FLAG_POS_GO = 0;
-
-///////Flag Stages///////
-const int FLAG_STG_READY = 0;
-const int FLAG_STG_SET = 1;
-const int FLAG_STG_GO = 2;*/
+//Drive Train KONSTANTS
+const int HI_THRESH = 25;
+const int LOW_THRESH = 15;
+const int IDLE_THRESH = 10;
+const float JOY_MAP = 0.78125;
+const float SERVO_MAP = 255.0/PI;
+const float ROT_ONLY_SCALE = 0.075;
+const float ROT_SCALE = 0.025;
+const float TANK_SPEED_SCALE = 1.0;
+const float SWERVE_SPEED_SCALE = 1.0;
+const float HALF_WIDTH_X = 6.8125;
+const float HALF_LENGTH_Y = 7.125;
 
 
 #endif;
