@@ -57,6 +57,9 @@ const float MINOR_MSEC_PERCENT = 0.95; //percent of Msec to gradually ramp arm p
 
 
 ///////////////GLOBAL VARIABLES////////////////
+//Concurrent variables
+int currIR = 0;
+
 //Gyro variables
 float currentValue = 0.0; //current value of adjusted gyro reading (w/o BIAS)
 float angleChange = 0.0; //amt of change in angle turned
@@ -66,7 +69,7 @@ float sCurrTotalTurn = 0.0; //amt of turn in moveStraight
 float remainingTurn = DEFAULT_VAL; //amt of turn remaining
 float error = 0.0;
 float adjustedTarget = 0.0; //adjusted amt of turn remaining
-int currIR = 0;
+
 
 int tally[4]; //declare vars for tallies for each position
 const int thresh[4] = {0,0,0,0}; //declare vars for thresholds for each position

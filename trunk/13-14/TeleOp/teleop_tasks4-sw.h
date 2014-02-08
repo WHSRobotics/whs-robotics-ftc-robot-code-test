@@ -21,6 +21,12 @@ void runIntake(float motPow)
 	motor[intakeR] = motPow;
 }
 
+void runArm(float motPow)
+{
+	motor[armL] = motPow;
+	motor[armR] = motPow;
+}
+
 
 
 /**********SCORING ARM********
@@ -38,7 +44,7 @@ task Arm()
 		if((ANIjoy2 && joy2Btn(6) && !joy2Btn(8)) || (!DTjoy1 && joy1Btn(6) && !joy1Btn(8)))
 		{
 			//raise arm
-			motor[armMot] = ARM_UP;
+			runArm(ARM_UP);
 			if(intakeOn) //if intake is on
 			{
 				intakeReversed = true; //intake reversed to keep cubes in
@@ -47,7 +53,7 @@ task Arm()
 		else if((ANIjoy2 && joy2Btn(8) && !joy2Btn(6)) || (!DTjoy1 && joy1Btn(8) && !joy1Btn(6)))
 		{
 			//lower arm
-			motor[armMot] = ARM_DOWN;
+			runArm(ARM_DOWN);
 			//-/writeDebugStreamLine("arm motor -50");
 			if(intakeReversed)
 			{
@@ -57,7 +63,7 @@ task Arm()
 		else
 		{
 			//don't run arm
-			motor[armMot] = STOP;
+			runArm(STOP);
 			if(intakeReversed)
 			{
 				intakeReversed = false;
@@ -111,11 +117,11 @@ task Intake()
 
 		if(boxOpen)
 		{
-			//servo[dropbox] = open;
+			servo[dropbox] = BOX_OPEN;
 		}
 		else
 		{
-			//servo[dropbox] = close;
+			servo[dropbox] = BOX_CLOSED;
 		}
 	}
 }

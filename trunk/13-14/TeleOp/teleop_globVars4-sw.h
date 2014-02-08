@@ -8,7 +8,7 @@ bool DTjoy1 = true;
 bool ANIjoy2 = true;
 bool FSon = true;
 //Intake variables
-bool intakeOn = false;
+bool intakeOn = true;
 bool intakeReversed = false;
 bool boxOpen = false;
 //Drive Control variables
@@ -23,9 +23,12 @@ const int ARM_UP = 90;
 const int ARM_DOWN = -50;
 const int INTAKE_R = -50;
 const int HANGMAN_UP = 90;
+const int HANGMAN_DOWN = -30;
 const int WINCH_R = -100;
-const int AR_OPEN = 255; //anti-ratchet open
-const int AR_CLOSED = 90; //anti-ratchet closed
+const int AR_OPEN = 40; //anti-ratchet open
+const int AR_CLOSED = 255; //anti-ratchet closed
+const int BOX_OPEN = 175;
+const int BOX_CLOSED = 255;
 
 //THRESHOLDS
 const int TAP_THRESH = 1000; //1000 Msec timeout
