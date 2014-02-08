@@ -4,7 +4,7 @@
 /**********************************
 ** WHS Robotics  |  FTC Team 542 **
 ** Block Party! 2013-2014 Season **
-** Autonomous Version 1          **
+** Autonomous Version 4          **
 ** Global Variables              **
 ***********************************/
 
@@ -38,7 +38,7 @@ const int TURN_THRESHOLD = 1; //stop turning when <1 degree left to turn
 ////Drive Train KONSTANTS////
 //moveStraight
 const float INCH_ENCODERVALUE = 114.591559; //number of encoder values in one inch forward for a 4 inch wheel
-																						//(number of encoder values in one rotation[1440])/(wheel diameter[4]*pi[3.14...])
+											//(number of encoder values in one rotation[1440])/(wheel diameter[4]*pi[3.14...])
 const float PWR_ADJUST = 7.355;//3.9 //7.5
 
 ////Arm KONSTANTS////
