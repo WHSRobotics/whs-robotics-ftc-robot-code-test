@@ -2,16 +2,49 @@
 #define ARPS_FUNCTIONS_SWE.H;
 
 ///////////////////////////INCLUDES////////////////////////////
-#include "auto_globVars1.h" //Header file with constants and global variables
+#include "auto_globVars_swedr." //Header file with constants and global variables
 
 /**********************************
 ** WHS Robotics  |  FTC Team 542 **
 ** Block Party! 2013-2014 Season **
-** Autonomous (ARPS) V1          **
+** Autonomous (ARPS) V4          **
 ** Functions                     **
 ***********************************/
 
+//-----------------BASE CONTROLS------------------
+/**************************************
+** setAngle sets all swivel servos   **
+** to a specific angle in radians    **
+***************************************/
+void setAngle(float angle)
+{
+	servo[swiFL] = angle * SERVO_MAP;
+	servo[swiFR] = angle * SERVO_MAP;
+	servo[swiBR] = angle * SERVO_MAP;
+	servo[swiBL] = angle * SERVO_MAP - 20;
+}
 
+void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX, int initServoPos)
+{
+	if((magnitudeCalc(inputY, inputX) > LOW_THRESH) && (magnitudeCalc(inputY, inputX) <= 128.0))
+	{
+		if(atan2(inputY, inputX) < 0)
+		{
+			servo[servoName] = (atan2(inputY, inputX) + PI) * SERVO_MAP + initServoPos;
+			motor[motorName] = -magnitudeCalc(inputY, inputX) * JOY_MAP;
+		}
+		else
+		{
+			servo[servoName] = atan2(inputY, inputX) * SERVO_MAP + initServoPos;
+			motor[motorName] = magnitudeCalc(inputY, inputX)* JOY_MAP;
+		}
+	}
+	else
+	{
+		servo[servoName] = PI/2.0 * SERVO_MAP + initServoPos;
+		motor[motorName] = 0;
+	}
+}
 
 //-----------------MOVES AND STOPS------------------
 /**************************************
@@ -20,10 +53,40 @@
 ***************************************/
 void stopDriveTrain()
 {
-	motor[leftDrive] = STOP;
-	motor[rightDrive] = STOP;
+	servo[swiFL] = 127;
+	servo[swiBL] = 107;
+	servo[swiFR] = 127;
+	servo[swiBR] = 127;
+	motor[sweFL] = STOP;
+	motor[sweBL] = STOP;
+	motor[sweFR] = STOP;
+	motor[sweBR] = STOP;
 }
 
+/**************************************
+**  moveArc moves the robot          **
+**  on a specificed circle at        **
+**  a specified power using encoders **
+*--------------------------------------
+* Parameters:
+* float turnRadius - specifies radius of path 
+* float arcAngle - distance to move in degrees
+* int pwr - motor power for drive train
+***************************************/
+void moveArc(float turnRadius, float arcAngle, int pwr)
+{
+	//specify swivel angles for turn radius
+	//
+
+	float scaledY1 = -diffY1Input * TANK_SPEED_SCALE;
+	float scaledY2 = -diffY2Input * TANK_SPEED_SCALE;
+	float velX = HALF_LENGTH_Y * (scaledY1 - scaledY2)/(2.0*HALF_WIDTH_X);
+
+	piMotor(sweFL, swiFL, scaledY1, -velX, 0);
+	piMotor(sweBL, swiBL, scaledY1, velX, -20);
+	piMotor(sweFR, swiFR, scaledY2, -velX, 0);
+	piMotor(sweBR, swiBR, scaledY2, velX, 0);
+}
 
 /**************************************
 **  moveStraight moves the robot     **
@@ -31,11 +94,16 @@ void stopDriveTrain()
 **  a specified power using encoders **
 *--------------------------------------
 * Parameters:
+* float dirAngle - direction of movement in degrees
 * float distanceInches - distance to move in inches
 * int pwr - motor power for drive train
 ***************************************/
-void moveStraight(float distanceInches, int pwr)
+void moveStraight(float dirAngle, float distanceInches, int pwr)
 {
+	//set angle
+	//run motors
+	//stop motors
+	
 	float targetDistance = distanceInches*INCH_ENCODERVALUE;
 	float leftPwr = pwr;
 	float rightPwr = pwr;
