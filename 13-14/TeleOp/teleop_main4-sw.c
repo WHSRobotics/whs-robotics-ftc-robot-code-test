@@ -3,19 +3,19 @@
 #pragma config(Sensor, S1,     ,               sensorI2CMuxController)
 #pragma config(Sensor, S3,     ,               sensorI2CMuxController)
 #pragma config(Motor,  motorA,          hangmanMot,    tmotorNXT, PIDControl, encoder)
-#pragma config(Motor,  motorB,          intakeL,       tmotorNXT, PIDControl, encoder)
-#pragma config(Motor,  motorC,          intakeR,       tmotorNXT, PIDControl, encoder)
+#pragma config(Motor,  motorB,          intakeL,       tmotorNXT, PIDControl, reversed, encoder)
+#pragma config(Motor,  motorC,          intakeR,       tmotorNXT, PIDControl, reversed, encoder)
 #pragma config(Motor,  mtr_S1_C1_1,     sweBL,         tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C1_2,     ttMot,         tmotorTetrix, openLoop, encoder)
+#pragma config(Motor,  mtr_S1_C1_2,     armL,          tmotorTetrix, openLoop, encoder)
 #pragma config(Motor,  mtr_S1_C2_1,     sweFL,         tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C2_2,     flagMot,       tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C3_1,     sweBR,         tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C3_2,     armMot,        tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C3_2,     armR,          tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C4_1,     sweFR,         tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C4_2,     winchMot,      tmotorTetrix, openLoop, reversed)
 #pragma config(Servo,  srvo_S3_C1_1,    swiFR,                tServoStandard)
 #pragma config(Servo,  srvo_S3_C1_2,    swiBR,                tServoStandard)
-#pragma config(Servo,  srvo_S3_C1_3,    servo3,               tServoNone)
+#pragma config(Servo,  srvo_S3_C1_3,    dropbox,              tServoStandard)
 #pragma config(Servo,  srvo_S3_C1_4,    servo4,               tServoNone)
 #pragma config(Servo,  srvo_S3_C1_5,    servo5,               tServoNone)
 #pragma config(Servo,  srvo_S3_C1_6,    servo6,               tServoNone)
@@ -36,8 +36,9 @@ void initializeRobot()
 	servo[swiBL] = 127;
 	servo[swiFR] = 127;
 	servo[swiBR] = 127;
-	//Setting Anti-Ratchet to closed position
+	//Setting servos to closed position
 	servo[antiRatchet] = AR_CLOSED;
+	servo[dropbox] = BOX_CLOSED;
 	//Servo responsiveness settings
 	muxUpdateInterval = 1;
 	servoChangeRate[swiFL] = 0;

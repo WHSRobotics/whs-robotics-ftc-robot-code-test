@@ -133,7 +133,7 @@ task Hang()
 		}
 		else
 		{
-			motor[hangmanMot] = STOP;
+			motor[hangmanMot] = HANGMAN_DOWN;
 		}
 
 		//Winch & Anti-ratchet movement
