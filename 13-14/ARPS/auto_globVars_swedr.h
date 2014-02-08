@@ -1,5 +1,5 @@
-#ifndef AUTO_GLOBVARS_SWE.H;
-#define AUTO_GLOBVARS_SWE.H;
+#ifndef AUTO_GLOBVARS_SWEDR.H;
+#define AUTO_GLOBVARS_SWEDR.H;
 
 /**********************************
 ** WHS Robotics  |  FTC Team 542 **
@@ -38,9 +38,15 @@ const float ADJUST_B = 7.0; //y-intercept of linear equation to scale target ang
 const int TURN_THRESHOLD = 1; //stop turning when <1 degree left to turn
 
 ////Drive Train KONSTANTS////
-//moveStraight
+//Conversions
+const float SERVO_MAP_DEG = 255.0/180.0;
+const float SERVO_MAP = 255.0/PI;
 const float INCH_ENCODERVALUE = 114.591559; //number of encoder values in one inch forward for a 4 inch wheel
 											//(number of encoder values in one rotation[1440])/(wheel diameter[4]*pi[3.14...])
+//Measures
+const float HALF_WIDTH_X = 6.8125;
+const float HALF_LENGTH_Y = 7.125;
+
 const float PWR_ADJUST = 7.355;//3.9 //7.5
 
 ////Arm KONSTANTS////
