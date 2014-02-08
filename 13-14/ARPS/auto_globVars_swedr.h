@@ -22,6 +22,8 @@
 const float MILLISECOND = 1000.0; //number of milliseconds in one second
 const float DEFAULT_VAL = 42.0; //generic value for initialization that's greater than 0
 const float STOP = 0.0;
+const int INTAKE_R = -50;
+const int MAX = 100;
 
 ////Sensor Definitions////
 ///const tMUXSensor IRSensor = msensor_S2_3;

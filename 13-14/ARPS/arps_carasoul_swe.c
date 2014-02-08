@@ -1,9 +1,9 @@
-//#include "whateverItMayBe"
-
-
+#include "auto_globVars_swedr.h"
+#include "arps_functions_swedr.h"
 
 task main()
 {
+	intitializeRobotCarasoul;
 	waitForStart();
 	raiseArm = true;
 	wait1Msec(300);
@@ -19,8 +19,8 @@ task main()
 	{
 		crate = 3;
 	}
-	moveStraight(90.0, 30.0, 100)//---Move forward
-	gyroCenterPivot(45, 100)//---Move towards the ramp by having servos turn and then moving forward
+	//---Move forward
+	//---Move towards the ramp by having servos turn and then moving forward
 
 	if(crate == 2)							//this crate would have to be the closest one to us
 	{
@@ -40,4 +40,14 @@ task main()
 		gyroCenterPivot(90, 100)						//robot will turn 90 degrees to the right
 		dropTheBlock;												//drop the cube into the first crate
 	}
+	moveArm(50);
+	moveStraight(90.0,
+//Raise the arm
+//Have the servos and towards the crate
+//Move forward
+//Swivel around
+//Drop the cube into the crate
+//Then have the servos angled towards the opposite side of the ramp
+//Move forward
+
 }
