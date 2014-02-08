@@ -69,7 +69,7 @@ void stopDriveTrain()
 **  a specified power using encoders **
 *--------------------------------------
 * Parameters:
-* float turnRadius - specifies radius of path 
+* float turnRadius - specifies radius of path
 * float arcAngle - distance to move in degrees
 * int pwr - motor power for drive train
 ***************************************/
@@ -103,7 +103,7 @@ void moveStraight(float dirAngle, float distanceInches, int pwr)
 	//set angle
 	//run motors
 	//stop motors
-	
+
 	float targetDistance = distanceInches*INCH_ENCODERVALUE;
 	float leftPwr = pwr;
 	float rightPwr = pwr;
@@ -364,11 +364,15 @@ void gyroCurve(int turnDirection, int speedKonstant, int subPwr)
 
 
 //-------------------AUTO ARM------------------
-void scoreAutoArm()
+void dropTheBlock()
 {
-	servo[autoServo] = 160;
+	//servo[dropbox] = 160;
+	motor[intakeL] = INTAKE_R;
+	motor[intakeR] = INTAKE_R;
 	wait10Msec(50);
-	servo[autoServo] = 15;
+	//servo[dropbox] = 15;
+	motor[intakeL] = MAX;
+	motor[intakeR] = MAX;
 	wait10Msec(50);
 }
 
