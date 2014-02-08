@@ -10,39 +10,188 @@ turntable = dc motor
 ratchetDisable = servo
 */
 
-#include "JoystickDriver.c"
 
-const int HI_THRESH = 25;
-const int LOW_THRESH = 15;
-const float JOY_MAP = 0.78125;
-const float SERVO_MAP = 255.0/PI;
-const float ROT_ONLY_SCALE = 0.075;
-const float ROT_SCALE = 0.025;
-const float TANK_SPEED_SCALE = 1.0;
-const float SWERVE_SPEED_SCALE = 1.0;
-const float HALF_WIDTH_X = 6.8125;
-const float HALF_LENGTH_Y = 7.125;
+#include "all_joy_driver.h"
 
-bool intakeOn = false;
-bool intakeReversed = false;
 
-/*
+////////////////ANI CONTROLS////////////////
 void runIntake(float motPow)
 {
 	motor[intakeL] = motPow;
 	motor[intakeR] = motPow;
-}*/
+}
 
-////////----FUNCTIONS----////////
-void initializeRobot()
+
+
+/**********SCORING ARM********
+1 DC Motor
+ANI Controlled
+Btn 6 = raise arm
+Btn 8 = lower arm
+*****************************/
+task Arm()
 {
-	//Setting wheels to 90 degree position
-	servo[swiFL] = 127;
-	servo[swiBL] = 127;
-	servo[swiFR] = 127;
-	servo[swiBR] = 127;
-	servo[antiRatchet] = 90; //closed
-	return;
+	while(true)
+	{
+		getJoystickSettings(joystick);
+
+		if((ANIjoy2 && joy2Btn(6) && !joy2Btn(8)) || (!DTjoy1 && joy1Btn(6) && !joy1Btn(8)))
+		{
+			//raise arm
+			motor[armMot] = ARM_UP;
+			if(intakeOn) //if intake is on
+			{
+				intakeReversed = true; //intake reversed to keep cubes in
+			}
+		}
+		else if((ANIjoy2 && joy2Btn(8) && !joy2Btn(6)) || (!DTjoy1 && joy1Btn(8) && !joy1Btn(6)))
+		{
+			//lower arm
+			motor[armMot] = ARM_DOWN;
+			//-/writeDebugStreamLine("arm motor -50");
+			if(intakeReversed)
+			{
+				intakeReversed = false;
+			}
+		}
+		else
+		{
+			//don't run arm
+			motor[armMot] = STOP;
+			if(intakeReversed)
+			{
+				intakeReversed = false;
+			}
+		}
+	}
+}
+
+
+
+/***********INTAKE***********
+2 NXT motors
+ANI Controlled
+Btn 2: Intake Toggle
+Btn 5: Dropbox Open
+*****************************/
+task Intake()
+{
+	while(true)
+	{
+		getJoystickSettings(joystick);
+
+		if(ANIjoy2 && getTap(2,2) || !DTjoy1 && getTap(1,2))
+		{
+			intakeOn = !intakeOn;
+			/*//-/if(intakeOn)
+				writeDebugStreamLine("intake on");
+			else
+				writeDebugStreamLine("intake off");*/
+		}
+		if(ANIjoy2 && getTap(2,5) || !DTjoy1 && getTap(1,5))
+		{
+			boxOpen = !boxOpen;
+			/*//-/if(boxOpen)
+				writeDebugStreamLine("box open");
+			else
+				writeDebugStreamLine("box closed");*/
+		}
+
+		if(intakeOn)
+		{
+			if(intakeReversed)
+				runIntake(INTAKE_R);
+			else
+				runIntake(MAX);
+		}
+		else
+		{
+			runIntake(STOP);
+		}
+
+		if(boxOpen)
+		{
+			//servo[dropbox] = open;
+		}
+		else
+		{
+			//servo[dropbox] = close;
+		}
+	}
+}
+
+
+
+////////////////////DT CONTROLS////////////////////
+//////////FUNCTIONS//////////////
+int getActiveDTJoy(bool tank)
+{
+	bool j1_active = ((abs(joystick.joy1_x1) > IDLE_THRESH) || (abs(joystick.joy1_x2) > IDLE_THRESH) || (abs(joystick.joy1_y1) > IDLE_THRESH) || (abs(joystick.joy1_y2) > IDLE_THRESH));
+	bool j2_active = ((abs(joystick.joy2_x1) > IDLE_THRESH) || (abs(joystick.joy2_x2) > IDLE_THRESH) || (abs(joystick.joy2_y1) > IDLE_THRESH) || (abs(joystick.joy2_y2) > IDLE_THRESH));
+	if(tank)
+	{
+		/* Cases in order of priority:
+		1: 1 DT control and is not idle.  DT control is active.
+		2: 1 DT control and is idle.  ANI control is active.
+		3: 2 DT controls, 1 is idle.  !idle is active.
+		4: 2 DT controls, 2 are idle.  none are active.
+		5: 2 DT controls, 2 are not idle.  joy1 is active.
+		6: 0 DT controls.  none are active.
+		*/
+		if((DTjoy1 && j1_active) || (!ANIjoy2 && !j2_active) || (j1_active && j2_active))
+		{
+			return 1;
+		}
+		else if((DTjoy1 && !j1_active) || (!ANIjoy2 && j2_active))
+		{
+			return 2;
+		}
+		else if(DTjoy1 && !ANIjoy2)
+		{
+			if(j1_active)
+				return 1;
+			else if(j2_active)
+				return 2;
+			else
+				return 0;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	else //swerve drive active
+	{
+		/* Cases in order of priority:
+		1: 1 DT control and is not idle.  DT control is active.
+		2: 1 DT control and is idle.  none are active.
+		3: 2 DT controls, 1 is idle.  !idle is active.
+		4: 2 DT controls, 2 are idle.  none are active.
+		5: 2 DT controls, 2 are not idle.  joy1 is active.
+		6: 0 DT controls.  none are active.
+		*/
+		if((DTjoy1 && j1_active) || (j1_active && j2_active))
+		{
+			return 1;
+		}
+		else if(!ANIjoy2 && j2_active)
+		{
+			return 2;
+		}
+		else if(DTjoy1 && !ANIjoy2)
+		{
+			if(j1_active)
+				return 1;
+			else if(j2_active)
+				return 2;
+			else
+				return 0;
+		}
+		else
+		{
+			return 0;
+		}
+	}
 }
 
 float magnitudeCalc(float inputX, float inputY)
@@ -136,251 +285,143 @@ void swerveControl(float transYInput, float transXInput, float angularInput)
 	piMotor(sweBL, swiBL, velBRY, velBRX, -20);
 	piMotor(sweFR, swiFR, velFLY, velFLX, 0);
 	piMotor(sweBR, swiBR, velBLY, velBLX, 0);
-	writeDebugStreamLine("sweFL: %f, sweBL: %f, sweFR: %f, sweBR: %f", piMotorOnly(velFLY, velFLX), piMotorOnly(velBLY, velBLX), piMotorOnly(velFRY,velFRX), piMotorOnly(velBRY, velBLX));
+	//-/writeDebugStreamLine("sweFL: %f, sweBL: %f, sweFR: %f, sweBR: %f", piMotorOnly(velFLY, velFLX), piMotorOnly(velBLY, velBLX), piMotorOnly(velFRY,velFRX), piMotorOnly(velBRY, velBLX));
 }
 
-void driveSwitch()
+
+/*******DRIVE CONTROL********
+Btn 6: Tank Drive Active
+Btn 5: Swerve Drive Active
+*****************************/
+task DriveControl()
 {
-	bool toggle = true;
 	while(true)
 	{
 		getJoystickSettings(joystick);
-		if(joy1Btn(9))
+		if((joy1Btn(6) && DTjoy1 && !joy1Btn(5)) || (!ANIjoy2 && joy2Btn(6) && !joy2Btn(5)))
 		{
-			toggle = !toggle;
-			wait10Msec(25);
+			tankDrive = true; //tank drive active
+			//-/writeDebugStreamLine("tank drive on");
 		}
-		if(toggle)
+		else if((joy1Btn(5) && DTjoy1 && !joy1Btn(6)) || (joy2Btn(5) && !ANIjoy2 && !joy2Btn(6)))
 		{
-			swerveControl(joystick.joy1_y1, joystick.joy1_x1, joystick.joy1_x2);
+			tankDrive = false; //swerve drive active
+			//-/writeDebugStreamLine("tank drive off");
 		}
-		else
+
+		if(tankDrive) //tank drive active
 		{
-			assistedTankControl(joystick.joy1_y1, joystick.joy1_y2);
-		}
-	}
-}
-
-////////----TASKS----////////
-
-/**********DRIVE TRAIN********
-Controls 4 Servos and 4 Motors
-Joystick 1 and 2
-Btn 9 = toggle drive style
-*****************************/
-task Drivetrain()
-{
-	driveSwitch();
-}
-
-/**********SCORING ARM********
-Powered by 1 DC Motor
-Joystick 2
-Btn 6 = raise arm
-Btn 8 = lower arm
-*****************************/
-task Arm()
-{
-	bool armRaise = false;
-	bool armLower = false;
-
-	while(true)
-	{
-		getJoystickSettings(joystick);
-
-		armRaise = (joy2Btn(6) && !joy2Btn(8));
-		armLower = (joy2Btn(8) && !joy2Btn(6));
-
-		if(armRaise)
-		{
-			//raise arm
-			motor[armMot] = 90;
-			if(intakeOn) //if intake is on
+			if(getActiveDTJoy(true) == 1)
 			{
-				intakeReversed = true; //intake reversed to keep cubes in
+				assistedTankControl(joystick.joy1_y1, joystick.joy1_y2);
+				//-/writeDebugStreamLine("tank joy1");
 			}
-		}
-		else if(armLower)
-		{
-			//lower arm
-			motor[armMot] = -50;
-			if(intakeReversed)
-			{
-				intakeReversed = false;
-			}
-		}
-		else
-		{
-			//don't run arm
-			motor[armMot] = 0;
-			if(intakeReversed)
-			{
-				intakeReversed = false;
-			}
-		}
-	}
-}
-
-
-/************HANG*************
-FAILSAFE ACTIVE
-Hold down btn 4: Open servo
-Hold down btn 1: Activate hangman
-*****************************/
-task Hang()
-{
-	bool winchForward = false;
-	bool winchBackward = false;
-	bool hangmanOn = false;
-
-	while(true)
-	{
-		getJoystickSettings(joystick);
-		//Check conditions
-		winchForward = (joy1Btn(7) && joy2Btn(7));
-		winchBackward = (joy1Btn(4) && joy2Btn(4));
-		hangmanOn = (joy1Btn(1) && joy2Btn(1));
-
-		//Hangman movement
-		if(hangmanOn)
-		{
-			motor[hangmanMot] = 90;
-		}
-		else
-		{
-			motor[hangmanMot] = 0;
-		}
-		//Winch & Anti-ratchet movement
-		if(winchForward && !winchBackward)
-		{
-			motor[winchMot] = 100;
-		}
-		else if(winchBackward)
-		{
-			servo[antiRatchet] = 255; //open
-			wait10Msec(50);
-			motor[winchMot] = -100;
-		}
-		else
-		{
-			motor[winchMot] = 0;
-			wait10Msec(50);
-			servo[antiRatchet] = 90; //closed
-		}
-	}
-}
-
-
-/************FLAG*************
-FAILSAFE ACTIVE
-Btn 3 simultaneously pressed on
-both joysticks runs a
-DC Motor at +100 power.
-*****************************/
-task Flag()
-{
-	bool flagOn = false;
-	while(true)
-	{
-		getJoystickSettings(joystick);
-		//Check conditions
-		flagOn = (joy1Btn(3) && joy2Btn(3));
-
-		if(flagOn)
-		{
-			motor[flagMot] = 100;
-		}
-		else
-		{
-			motor[flagMot] = 0;
-		}
-	}
-}
-
-
-/***********INTAKE***********
-2 NXT motors
-Joystick 2
-Btn 2: Intake Toggle
-*****************************/
-/*task Intake()
-{
-	bool toggleNeeded = false;
-	while(true)
-	{
-		getJoystickSettings(joystick);
-		toggleNeeded = joy1Btn(2);
-
-		if(toggleNeeded)
-		{
-			intakeOn = !intakeOn;
-		}
-
-		if(intakeOn)
-		{
-			if(intakeReversed)
-				runIntake(-50);
 			else
-				runIntake(100);
+			{
+				assistedTankControl(joystick.joy2_y1, joystick.joy2_y2);
+				//-/writeDebugStreamLine("tank joy2");
+			}
 		}
-		else
+		else //swerve drive active
 		{
-			runIntake(0);
+			if(getActiveDTJoy(false) == 1)
+			{
+				swerveControl(joystick.joy1_y1, joystick.joy1_x1, joystick.joy1_x2);
+				//-/writeDebugStreamLine("swerve joy1");
+			}
+			else if(ANIjoy2)
+			{
+				assistedTankControl(joystick.joy2_y1, joystick.joy2_y2);
+				//-/writeDebugStreamLine("tank joy2");
+			}
+			else
+			{
+				swerveControl(joystick.joy2_y1, joystick.joy2_x1, joystick.joy2_x2);
+				//-/writeDebugStreamLine("swerve joy2");
+			}
 		}
+	}
+}
+
+
+
+/****************************
+//SWERVE DRIVE CODE HERE
+*****************************/
+
+
+//////////////UNUSED CODE////////////////
+//Turntable variables
+/*bool posMove = false; //check if positive turn can be made
+bool negMove = false; //check if negative turn can be made
+bool lowPowBtn = false;
+bool hiPowBtn = false;
+const float ENCODER2TT = 1.0/6.0; //ratio of turntable to motor encoder revolutions
+int currPow = 100;*/
+
+/*void runTurntable(int joy)
+{
+	getJoystickSettings(joystick);
+	posMove = (getTopHat(joy, 2) && nMotorEncoder[ttMot] <= 90*ENCODER2TT);
+	negMove = (getTopHat(joy, 6) && nMotorEncoder[ttMot] >= -90*ENCODER2TT);
+	lowPowBtn = getTopHat(joy, 4);
+	hiPowBtn = getTopHat(joy, 0);
+
+	if(hiPowBtn && !lowPowBtn)
+	{
+		currPow = 50;
+	}
+	else if(lowPowBtn)
+	{
+		currPow = 20;
+	}
+
+
+	if(posMove) //if significant movement detected and limited by angle
+	{
+		writeDebugStreamLine("turntable %f", currPow);
+		///motor[ttMot] = currPow; //set motor power proportional to joystick value
+	}
+	else if(negMove)
+	{
+		writeDebugStreamLine("turntable %f", -currPow);
+		///motor[ttMot] = -currPow;
+	}
+	else //if no significant movement or outside angle limits
+	{
+		///motor[ttMot] = 0; //do not move motor
+	}
+
+	///writeDebugStreamLine("%f", nMotorEncoder[ttMot]);
+}
+*/
+
+
+/*********TURNTABLE*********
+DC Motor
+ANI Controlled
+D-Pad L and R: Turntable Direction
+D-Pad U and D: High/Low Power
+*****************************/
+/*task Turntable()
+{
+	nMotorEncoder[ttMot] = 0; //reset motor encoder
+
+	while(true)
+	{
+		if(ANIjoy2)
+		{
+			runTurntable(2);
+		}
+		else if(!DTjoy1)
+		{
+			runTurntable(1);
+		}
+
+		///writeDebugStreamLine("%f", nMotorEncoder[ttMot]);
 	}
 }
 */
 
-/*********TURNTABLE*********
-D-Pad left and right on joy2
-run a DC motor accordingly
-*****************************/
-task Turntable()
-{
-	const float ENCODER2TT = 1.0/6.0; //ratio of turntable to motor encoder revolutions
-	//const float JOY2POW = 100.0/128.0; //convert joystick value to motor power
-	//const int JOY_THRESH = 10; //joystick threshold for dead zone
-	int currPow = 100;
-	nMotorEncoder[ttMot] = 0; //reset motor encoder
-	//Check conditions
-	bool posMove = false; //check if positive turn can be made
-	bool negMove = false; //check if negative turn can be made
-	bool lowPowBtn = false;
-	bool hiPowBtn = false;
 
-	while(true)
-	{
-		getJoystickSettings(joystick);
-		posMove = (joystick.joy2_TopHat == 2 && nMotorEncoder[ttMot] <= 90*ENCODER2TT);
-		negMove = (joystick.joy2_TopHat == 6 && nMotorEncoder[ttMot] >= -90*ENCODER2TT);
-		lowPowBtn = (joystick.joy2_TopHat == 4);
-		hiPowBtn = (joystick.joy2_TopHat == 0);
-
-		if(hiPowBtn && !lowPowBtn)
-		{
-			currPow = 50;
-		}
-		else if(lowPowBtn)
-		{
-			currPow = 20;
-		}
-
-
-		if(posMove) //if significant movement detected and limited by angle
-		{
-			motor[ttMot] = currPow; //set motor power proportional to joystick value
-		}
-		else if(negMove)
-		{
-			motor[ttMot] = -currPow;
-		}
-		else //if no significant movement or outside angle limits
-		{
-			motor[ttMot] = 0; //do not move motor
-		}
-
-		writeDebugStreamLine("%f", nMotorEncoder[ttMot]);
-	}
-}
-
-#endif;
+#endif
