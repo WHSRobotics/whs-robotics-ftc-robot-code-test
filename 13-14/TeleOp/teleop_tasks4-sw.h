@@ -126,12 +126,12 @@ task Intake()
 
 ////////////////////DT CONTROLS////////////////////
 //////////FUNCTIONS//////////////
-int getActiveDTJoy(bool tank)
+/*int getActiveDTJoy(bool tank)
 {
 	bool j1_active = ((abs(joystick.joy1_x1) > IDLE_THRESH) || (abs(joystick.joy1_x2) > IDLE_THRESH) || (abs(joystick.joy1_y1) > IDLE_THRESH) || (abs(joystick.joy1_y2) > IDLE_THRESH));
 	bool j2_active = ((abs(joystick.joy2_x1) > IDLE_THRESH) || (abs(joystick.joy2_x2) > IDLE_THRESH) || (abs(joystick.joy2_y1) > IDLE_THRESH) || (abs(joystick.joy2_y2) > IDLE_THRESH));
 	if(tank)
-	{
+	{*/
 		/* Cases in order of priority:
 		1: 1 DT control and is not idle.  DT control is active.
 		2: 1 DT control and is idle.  ANI control is active.
@@ -140,7 +140,7 @@ int getActiveDTJoy(bool tank)
 		5: 2 DT controls, 2 are not idle.  joy1 is active.
 		6: 0 DT controls.  none are active.
 		*/
-		if((DTjoy1 && j1_active) || (!ANIjoy2 && !j2_active) || (j1_active && j2_active))
+		/*if((DTjoy1 && j1_active) || (!ANIjoy2 && !j2_active) || (j1_active && j2_active))
 		{
 			return 1;
 		}
@@ -163,7 +163,7 @@ int getActiveDTJoy(bool tank)
 		}
 	}
 	else //swerve drive active
-	{
+	{*/
 		/* Cases in order of priority:
 		1: 1 DT control and is not idle.  DT control is active.
 		2: 1 DT control and is idle.  none are active.
@@ -172,7 +172,7 @@ int getActiveDTJoy(bool tank)
 		5: 2 DT controls, 2 are not idle.  joy1 is active.
 		6: 0 DT controls.  none are active.
 		*/
-		if((DTjoy1 && j1_active) || (j1_active && j2_active))
+		/*if((DTjoy1 && j1_active) || (j1_active && j2_active))
 		{
 			return 1;
 		}
@@ -194,7 +194,7 @@ int getActiveDTJoy(bool tank)
 			return 0;
 		}
 	}
-}
+}*/
 
 float magnitudeCalc(float inputX, float inputY)
 {
@@ -261,9 +261,9 @@ void assistedTankControl(float diffY1Input, float diffY2Input)
 	piMotor(sweBR, swiBR, scaledY2, velX, 0);
 }
 
-void simpleTankControl(int inputY1, int inputY2)
+void simpleTankControl(int inputY1, int inputY2, int THRESH_VALUE)
 {
-	if((abs(inputY1) > LOW_THRESH) || (abs(inputY2) > LOW_THRESH))
+	if((abs(inputY1) > THRESH_VALUE) || (abs(inputY2) > THRESH_VALUE))
 	{
 		motor[sweFR] = inputY2 * JOY_MAP;
 		motor[sweBR] = inputY2 * JOY_MAP;
@@ -338,7 +338,23 @@ void swerveControl(float transYInput, float transXInput, float angularInput)
 Btn 6: Tank Drive Active
 Btn 5: Swerve Drive Active
 *****************************/
-task DriveControl()
+task DriveControlSimple()
+{
+	while(true)
+	{
+		getJoystickSettings(joystick);
+		if(joystick.joy1_y1 > LOW_THRESH || joystick.joy1_y2> LOW_THRESH)
+		{
+			simpleTankControl(joystick.joy1_y1, joystick.joy1_y2, LOW_THRESH);
+		}
+		else
+		{
+			simpleTankControl(joystick.joy2_y1, joystick.joy2_y2, HI_THRESH);
+		}
+	}
+}
+
+/* task DriveControl()
 {
 	while(true)
 	{
@@ -386,8 +402,7 @@ task DriveControl()
 			}
 		}
 	}
-}
-
+}*/
 
 
 /****************************
