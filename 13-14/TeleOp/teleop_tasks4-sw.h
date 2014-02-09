@@ -261,6 +261,24 @@ void assistedTankControl(float diffY1Input, float diffY2Input)
 	piMotor(sweBR, swiBR, scaledY2, velX, 0);
 }
 
+void simpleTankControl(int inputY1, int inputY2)
+{
+	if((abs(inputY1) > LOW_THRESH) || (abs(inputY2) > LOW_THRESH))
+	{
+		motor[sweFR] = inputY2 * JOY_MAP;
+		motor[sweBR] = inputY2 * JOY_MAP;
+		motor[sweFL] = inputY1 * JOY_MAP;
+		motor[sweBL] = inputY1 * JOY_MAP;
+	}
+	else
+	{
+		motor[sweFR] = 0;
+		motor[sweBR] = 0;
+		motor[sweFL] = 0;
+		motor[sweBL] = 0;
+	}
+}
+
 void swerveControl(float transYInput, float transXInput, float angularInput)
 {
 	float angSclr;
