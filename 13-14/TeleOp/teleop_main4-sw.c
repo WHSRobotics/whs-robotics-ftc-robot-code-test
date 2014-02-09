@@ -35,7 +35,7 @@ void initializeRobot()
 	servo[swiFL] = 127;
 	servo[swiBL] = 127;
 	servo[swiFR] = 127;
-	servo[swiBR] = 127;
+	servo[swiBR] = 147;
 	//Setting servos to closed position
 	servo[antiRatchet] = AR_CLOSED;
 	servo[dropbox] = BOX_CLOSED;

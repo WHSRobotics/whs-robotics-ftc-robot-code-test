@@ -10,7 +10,8 @@ bool FSon = true;
 //Intake variables
 bool intakeOn = true;
 bool intakeReversed = false;
-bool boxOpen = false;
+//bool boxOpen = false;
+
 //Drive Control variables
 bool tankDrive = false;
 
@@ -37,14 +38,14 @@ const int TAP_THRESH = 1000; //1000 Msec timeout
 const int HI_THRESH = 25;
 const int LOW_THRESH = 15;
 const int IDLE_THRESH = 10;
+const float HALF_WIDTH_X = 6.8125;
+const float HALF_LENGTH_Y = 7.125;
 const float JOY_MAP = 0.78125;
 const float SERVO_MAP = 255.0/PI;
 const float OROT_SCALE_DIV = sqrt(2.0 * HALF_WIDTH_X * HALF_LENGTH_Y);
-const float ROT_SCALE = 25.0/OROT_SCALE_DIV;
+const float ROT_SCALE = 25.0/128/OROT_SCALE_DIV;
 const float TANK_SPEED_SCALE = 1.0;
 const float SWERVE_SPEED_SCALE = 0.585937;
-const float HALF_WIDTH_X = 6.8125;
-const float HALF_LENGTH_Y = 7.125;
 
 
 #endif;

@@ -145,12 +145,15 @@ task Hang()
 		else if(winchBackward)
 		{
 			//-/writeDebugStreamLine("winch backward");
-			motor[winchMot] = WINCH_R;
+
 			servo[antiRatchet] = AR_OPEN; //open
+			wait1Msec(800);
+			motor[winchMot] = WINCH_R;
 		}
 		else
 		{
 			motor[winchMot] = STOP;
+			wait1Msec(800);
 			servo[antiRatchet] = AR_CLOSED; //closed
 		}
 	}
