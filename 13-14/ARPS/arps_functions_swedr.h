@@ -20,7 +20,7 @@ float magnitudeCalc(float inputX, float inputY)
 {
 	return sqrt( pow(inputX, 2) + pow(inputY, 2) ) < 128.0
 	? sqrt( pow(inputX, 2) + pow(inputY, 2) )
-	: 128.0;
+: 128.0;
 }
 
 
@@ -65,23 +65,15 @@ void simpleMotor(tMotor motorName, TServoIndex servoName, int power, int angle, 
 ***************************************/
 void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX, int initServoPos)
 {
-	if((magnitudeCalc(inputY, inputX) > LOW_THRESH) && (magnitudeCalc(inputY, inputX) <= 128.0))
+	if(atan2(inputY, inputX) < 0)
 	{
-		if(atan2(inputY, inputX) < 0)
-		{
-			servo[servoName] = (atan2(inputY, inputX) + PI) * SERVO_MAP + initServoPos;
-			motor[motorName] = -magnitudeCalc(inputY, inputX) * JOY_MAP;
-		}
-		else
-		{
-			servo[servoName] = atan2(inputY, inputX) * SERVO_MAP + initServoPos;
-			motor[motorName] = magnitudeCalc(inputY, inputX)* JOY_MAP;
-		}
+		servo[servoName] = (atan2(inputY, inputX) + PI) * SERVO_MAP + initServoPos;
+		motor[motorName] = -magnitudeCalc(inputY, inputX) * JOY_MAP;
 	}
 	else
 	{
-		servo[servoName] = PI/2.0 * SERVO_MAP + initServoPos;
-		motor[motorName] = 0;
+		servo[servoName] = atan2(inputY, inputX) * SERVO_MAP + initServoPos;
+		motor[motorName] = magnitudeCalc(inputY, inputX)* JOY_MAP;
 	}
 }
 
@@ -141,8 +133,8 @@ void moveArc(float turnRadius, float arcAngle, float angVel)
 
 	while((nMotorRunState[sweFL] != runStateIdle)
 		&& (nMotorRunState[sweBL] != runStateIdle)
-		&& (nMotorRunState[sweFR] != runStateIdle)
-		&& (nMotorRunState[sweBR] != runStateIdle))
+	&& (nMotorRunState[sweFR] != runStateIdle)
+	&& (nMotorRunState[sweBR] != runStateIdle))
 	{
 	}
 
@@ -160,33 +152,37 @@ void moveArc(float turnRadius, float arcAngle, float angVel)
 * float distanceInches - distance to move in inches
 * int pwr - motor power for drive train
 ***************************************/
-void moveStraight(int dirAngle, float distanceInches, int power)
+void moveStraight(float distanceInches, int power)
 {
-	float targetDistance = distanceInches * INCH_ENCODERVALUE;
+	int targetDistance = distanceInches * INCH_ENCODERVALUE;
 
-	nMotorEncoder[sweFL] = 0;
-	nMotorEncoder[sweBL] = 0;
 	nMotorEncoder[sweFR] = 0;
-	nMotorEncoder[sweBR] = 0;
-
-	nMotorEncoderTarget[sweFL] = targetDistance;
-	nMotorEncoderTarget[sweBL] = targetDistance;
 	nMotorEncoderTarget[sweFR] = targetDistance;
-	nMotorEncoderTarget[sweBR] = targetDistance;
 
-	simpleMotor(sweFL, swiFL, power, dirAngle, 0);
-	simpleMotor(sweBL, swiBL, power, dirAngle, -20);
-	simpleMotor(sweFR, swiFR, power, dirAngle, 0);
-	simpleMotor(sweBR, swiBR, power, dirAngle, 0);
+	//nMotorEncoderTarget[sweFR] = targetDistance;
 
-	while((nMotorRunState[sweFL] != runStateIdle)
-		&& (nMotorRunState[sweBL] != runStateIdle)
-		&& (nMotorRunState[sweFR] != runStateIdle)
-		&& (nMotorRunState[sweBR] != runStateIdle))
+	//servo[swiFL] = dirAngle * SERVO_MAP_DEG + 30;
+	//servo[swiBL] = dirAngle * SERVO_MAP_DEG -20;
+	//servo[swiFR] = dirAngle * SERVO_MAP_DEG;
+	//servo[swiBR] = dirAngle * SERVO_MAP_DEG -40;
+
+	//wait1Msec(1000);
+
+	motor[sweFL] = power;
+	motor[sweBL] = power;
+	motor[sweBR] = power;
+	motor[sweFR] = power;
+
+	while(nMotorEncoder[sweFR] < targetDistance)
 	{
+		writeDebugStreamLine("%d", nMotorEncoder[sweFR]);
 	}
 
-	stopDriveTrain();
+	motor[sweFR] = 0;
+	motor[sweFL] = 0;
+	motor[sweBR] = 0;
+	motor[sweBL] = 0;
+	//stopDriveTrain();
 }
 
 
@@ -196,7 +192,7 @@ void moveStraight(int dirAngle, float distanceInches, int power)
 ***************************************/
 void hangArmMaintain()
 {
-	motor[hangArm] = 30;
+	motor[hangmanMot] = -30;
 }
 
 
@@ -219,7 +215,7 @@ void moveArm(int power)
 ***************************************/
 void resetBucket()
 {
-	servoTarget[intakeServo] = 80;
+	servoTarget[dropbox] = 255;
 }
 
 
@@ -231,7 +227,7 @@ void resetBucket()
 ***************************************/
 void resetGlobVars()
 {
-  currentValue = 0.0;
+	currentValue = 0.0;
 	angleChange = 0.0;
 	timeChange = 0.0;
 	gCurrTotalMove = 0.0;
@@ -283,7 +279,7 @@ float getCurrTotalMove(float currTotal)
 //Should add a parameter to determine which way to pivot (left or right)
 void gyroCenterPivot(int turnDirection, int speedKonstant)
 {
-  //Initialization
+	//Initialization
 	HTGYROstartCal(gyroSensor); //Calibrate gyro sensor
 	ClearTimer(T1);
 
@@ -297,15 +293,13 @@ void gyroCenterPivot(int turnDirection, int speedKonstant)
 		error = adjustedTarget - gCurrTotalMove;
 		turn = error * speedKonstant; //find pwr for DT motors
 
-	  //apply calculated turn pwr to DT motors
-		motor[leftDrive] = turn;
-		motor[rightDrive] = -turn;
+		//apply calculated turn pwr to DT motors
 
 		wait10Msec(1);
 	}
 
-  stopDriveTrain();
-  resetGlobVars();
+	stopDriveTrain();
+	resetGlobVars();
 }
 
 

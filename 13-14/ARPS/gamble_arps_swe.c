@@ -1,21 +1,21 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  HTMotor)
 #pragma config(Hubs,  S3, HTServo,  HTServo,  none,     none)
-#pragma config(Sensor, S1,     ,               sensorI2CMuxController)
-#pragma config(Sensor, S3,     ,               sensorI2CMuxController)
+#pragma config(Sensor, S2,     gyroSensor,     sensorI2CHiTechnicGyro)
+#pragma config(Sensor, S4,     IRSensor,       sensorHiTechnicIRSeeker1200)
 #pragma config(Motor,  motorA,          hangmanMot,    tmotorNXT, PIDControl, encoder)
-#pragma config(Motor,  motorB,          intakeL,       tmotorNXT, PIDControl, encoder)
-#pragma config(Motor,  motorC,          intakeR,       tmotorNXT, PIDControl, encoder)
-#pragma config(Motor,  mtr_S1_C1_1,     sweBL,         tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C1_2,     ttMot,         tmotorTetrix, openLoop, encoder)
-#pragma config(Motor,  mtr_S1_C2_1,     sweFL,         tmotorTetrix, openLoop)
+#pragma config(Motor,  motorB,          intakeL,       tmotorNXT, PIDControl, reversed, encoder)
+#pragma config(Motor,  motorC,          intakeR,       tmotorNXT, PIDControl, reversed, encoder)
+#pragma config(Motor,  mtr_S1_C1_1,     sweBL,         tmotorTetrix, openLoop, encoder)
+#pragma config(Motor,  mtr_S1_C1_2,     armL,          tmotorTetrix, openLoop, encoder)
+#pragma config(Motor,  mtr_S1_C2_1,     sweFL,         tmotorTetrix, openLoop, encoder)
 #pragma config(Motor,  mtr_S1_C2_2,     flagMot,       tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C3_1,     sweBR,         tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C3_2,     armMot,        tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C4_1,     sweFR,         tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C3_1,     sweBR,         tmotorTetrix, openLoop, encoder)
+#pragma config(Motor,  mtr_S1_C3_2,     armR,          tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C4_1,     sweFR,         tmotorTetrix, openLoop, encoder)
 #pragma config(Motor,  mtr_S1_C4_2,     winchMot,      tmotorTetrix, openLoop, reversed)
 #pragma config(Servo,  srvo_S3_C1_1,    swiFR,                tServoStandard)
 #pragma config(Servo,  srvo_S3_C1_2,    swiBR,                tServoStandard)
-#pragma config(Servo,  srvo_S3_C1_3,    servo3,               tServoNone)
+#pragma config(Servo,  srvo_S3_C1_3,    dropbox,              tServoStandard)
 #pragma config(Servo,  srvo_S3_C1_4,    servo4,               tServoNone)
 #pragma config(Servo,  srvo_S3_C1_5,    servo5,               tServoNone)
 #pragma config(Servo,  srvo_S3_C1_6,    servo6,               tServoNone)
@@ -30,6 +30,7 @@
 #include "arps_functions_swedr.h"
 #include "auto_globVars_swedr.h"
 
+int crate = 0;
 task main()
 {
 	waitForStart();
@@ -47,25 +48,44 @@ task main()
 	{
 		crate = 3;
 	}
-	moveStraight(215.0, 30.0, 100);//---Move forward
-	moveStraight(90.0, 20.0, 100);//---Move towards the ramp by having servos turn and then moving forward
+	moveStraight(8.0,100.0);
+	//---Turn Left
+	gyroCenterPivot(-34,100);
+	//---Move forward
+	moveStraight(27.0,100);
+	//---Turn Right
+	gyroCenterPivot(93,100);
+	//---Get on ramp
+	moveStraight(31.0,100);
+
 
 	if(crate == 2)							//this crate would have to be the closest one to us
 	{
-		moveStraight(90.0, 30.0, 100);			//motors would be going at 100 power
-		moveArc(0.0, 90.0, 256.0);
+		moveStraight(8.0, 100);			//motors would be going at 100 power
+		//motor[sweFL] = 100;
+		//motor[sweBL] = 100;
+		//motor[sweFR] = -100;
+		//motor[sweBR] = -100;
+		gyroCenterPivot(90.0, 100);
 		dropTheBlock();											//drop the cube into the second crate
 	}
 	else if(crate == 3)
 	{
-		moveStraight(90.0, 40.0, 100);			//motors would be going at 100 power
-		moveArc(0.0, 90.0, 256.0);					//robot will turn 90 degrees to the right
+		moveStraight(24.0, 100);			//motors would be going at 100 power
+		//motor[sweFL] = 100;
+		//motor[sweBL] = 100;
+		//motor[sweFR] = -100;
+		//motor[sweBR] = -100;				//robot will turn 90 degrees to the right
+		gyroCenterPivot(90.0, 100);
 		dropTheBlock();											//drop the cube into the third crate
 	}
 	else
 	{
-		moveStraight(90.0, 15.0, 100);			//Robot will go forward for 15 inches at 100 power.
-		moveArc(0.0, 90.0, 256.0);					//robot will turn 90 degrees to the right
+		//motor[sweFL] = 100;
+		//motor[sweBL] = 100;
+		//motor[sweFR] = -100;
+		//motor[sweBR] = -100;
+		gyroCenterPivot(90.0, 100);		//robot will turn 90 degrees to the right
 		dropTheBlock();												//drop the cube into the first crate
 	}
 }
