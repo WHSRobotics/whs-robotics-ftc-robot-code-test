@@ -39,10 +39,11 @@ const int TURN_THRESHOLD = 1; //stop turning when <1 degree left to turn
 
 ////Drive Train KONSTANTS////
 //Conversions
+const float JOY_MAP = 0.78125;
 const float SERVO_MAP_DEG = 255.0/180.0;
 const float SERVO_MAP = 255.0/PI;
-const float INCH_ENCODERVALUE = 114.591559; //number of encoder values in one inch forward for a 4 inch wheel
-											//(number of encoder values in one rotation[1440])/(wheel diameter[4]*pi[3.14...])
+const float INCH_ENCODERVALUE = 158.057322; //number of encoder values in one inch forward for a 2.9 inch wheel
+											//(number of encoder values in one rotation[1440])/(wheel diameter[2.9]*pi[3.14...])
 //Measures
 const float HALF_WIDTH_X = 6.8125;
 const float HALF_LENGTH_Y = 7.125;
