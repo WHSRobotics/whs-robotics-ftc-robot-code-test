@@ -343,7 +343,7 @@ task DriveControlSimple()
 	while(true)
 	{
 		getJoystickSettings(joystick);
-		if(joystick.joy1_y1 > LOW_THRESH || joystick.joy1_y2> LOW_THRESH)
+		if(abs(joystick.joy1_y1) > LOW_THRESH || abs(joystick.joy1_y2) > LOW_THRESH)
 		{
 			simpleTankControl(joystick.joy1_y1, joystick.joy1_y2, LOW_THRESH);
 		}
