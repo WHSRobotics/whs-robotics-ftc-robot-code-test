@@ -59,7 +59,7 @@ task main()
 	StartTask(Intake);
 	//StartTask(Turntable);
 	StartTask(JoyControl);
-	StartTask(DriveControl);
+	StartTask(DriveControlSimple);
 
 
 	while(true)
