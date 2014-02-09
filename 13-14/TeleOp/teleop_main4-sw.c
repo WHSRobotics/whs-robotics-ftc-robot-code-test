@@ -32,7 +32,7 @@
 void initializeRobot()
 {
 	//Setting wheels to 90 degree position
-	servo[swiFL] = 127;
+	servo[swiFL] = 97;
 	servo[swiBL] = 127;
 	servo[swiFR] = 127;
 	servo[swiBR] = 147;

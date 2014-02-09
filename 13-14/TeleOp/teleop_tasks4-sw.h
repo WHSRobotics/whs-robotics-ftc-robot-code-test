@@ -219,11 +219,11 @@ float piAng(float inputY, float inputX, float initServoPos)
 {
 	if(atan2(inputY, inputX) < 0)
 	{
-		servo[servoName] = 255.0 - (initServoPos + ((atan2(inputY, inputX)+PI) * SERVO_MAP));
+		return 255.0 - (initServoPos + ((atan2(inputY, inputX)+PI) * SERVO_MAP));
 	}
 	else
 	{
-		servo[servoName] = 255.0 - (initServoPos + (atan2(inputY, inputX) * SERVO_MAP));
+		return 255.0 - (initServoPos + (atan2(inputY, inputX) * SERVO_MAP));
 	}
 }
 
@@ -255,8 +255,8 @@ void assistedTankControl(float diffY1Input, float diffY2Input)
 	float scaledY2 = -diffY2Input * TANK_SPEED_SCALE;
 	float velX = HALF_LENGTH_Y * (scaledY1 - scaledY2)/(2.0*HALF_WIDTH_X);
 
-	piMotor(sweFL, swiFL, scaledY1, -velX, 0);
-	piMotor(sweBL, swiBL, scaledY1, velX, -20);
+	piMotor(sweFL, swiFL, scaledY1, -velX, -30);
+	piMotor(sweBL, swiBL, scaledY1, velX, 20);
 	piMotor(sweFR, swiFR, scaledY2, -velX, 0);
 	piMotor(sweBR, swiBR, scaledY2, velX, 0);
 }
