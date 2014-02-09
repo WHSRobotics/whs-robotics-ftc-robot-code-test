@@ -94,13 +94,17 @@ task Intake()
 			else
 				writeDebugStreamLine("intake off");*/
 		}
-		if(ANIjoy2 && getTap(2,5) || !DTjoy1 && getTap(1,5))
+		if(ANIjoy2 && joy2Btn(5) || !DTjoy1 && joy1Btn(5))
 		{
-			boxOpen = !boxOpen;
+			servo[dropbox] = BOX_OPEN;
 			/*//-/if(boxOpen)
 				writeDebugStreamLine("box open");
 			else
 				writeDebugStreamLine("box closed");*/
+		}
+		else
+		{
+			servo[dropbox] = BOX_CLOSED;
 		}
 
 		if(intakeOn)
@@ -115,14 +119,6 @@ task Intake()
 			runIntake(STOP);
 		}
 
-		if(boxOpen)
-		{
-			servo[dropbox] = BOX_OPEN;
-		}
-		else
-		{
-			servo[dropbox] = BOX_CLOSED;
-		}
 	}
 }
 
@@ -219,11 +215,11 @@ float piMag(float inputY, float inputX)
 	}
 }
 
-float piAng(float inputY, float inputX)
+float piAng(float inputY, float inputX, float initServoPos)
 {
 	if(atan2(inputY, inputX) < 0)
 	{
-		return (255.0 + initServoPos) - ((atan2(inputY, inputX) + PI) * SERVO_MAP));
+		return (255.0 + initServoPos) - ((atan2(inputY, inputX) + PI) * SERVO_MAP);
 	}
 	else
 	{
@@ -237,13 +233,13 @@ void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX
 	{
 		if(atan2(inputY, inputX) < 0)
 		{
-			servo[servoName] = (255.0 + initServoPos) - ((atan2(inputY, inputX) + PI) * SERVO_MAP));
-			motor[motorName] = -magnitudeCalc(inputY, inputX) * JOY_MAP;
+			servo[servoName] = 255.0 - (initServoPos + ((atan2(inputY, inputX)+PI) * SERVO_MAP));
+			motor[motorName] = magnitudeCalc(inputY, inputX) * JOY_MAP;
 		}
 		else
 		{
-			servo[servoName] = (255.0 + initServoPos) - (atan2(inputY, inputX) * SERVO_MAP);
-			motor[motorName] = magnitudeCalc(inputY, inputX)* JOY_MAP;
+			servo[servoName] = 255.0 - (initServoPos + (atan2(inputY, inputX) * SERVO_MAP));
+			motor[motorName] = -magnitudeCalc(inputY, inputX)* JOY_MAP;
 		}
 	}
 	else
@@ -273,40 +269,40 @@ void swerveControl(float transYInput, float transXInput, float angularInput)
 
 	if((magnitudeCalc(transXInput, transYInput) > LOW_THRESH) && (abs(angularInput) > LOW_THRESH))
 	{
-		angSclr = angularInput * ROT_SCALE;
+		angSclr = -angularInput * ROT_SCALE;
 		transXSclr = transXInput * SWERVE_SPEED_SCALE;
 		transYSclr = transYInput * SWERVE_SPEED_SCALE;
 	}
 	else
 	{
-		angSclr = abs(angularInput > LOW_THRESH)
-		? angularInput / OROT_SCALE_DIV
+		angSclr = abs(angularInput) > LOW_THRESH
+		? -angularInput / OROT_SCALE_DIV
 		: 0.0 ;
 		transXSclr = magnitudeCalc(transXInput, transYInput) > LOW_THRESH
 		? transXInput
 		: 0.0 ;
 		transYSclr = magnitudeCalc(transXInput, transYInput) > LOW_THRESH
-		? -transYInput
+		? transYInput
 		: 0.0;
 	}
-	float velFLX = transXSclr + (angSclr * HALF_LENGTH_Y);
-	float velFLY = transYSclr + (angSclr * HALF_WIDTH_X);
+	float velFLX = transXSclr - (angSclr * HALF_LENGTH_Y);
+	float velFLY = transYSclr - (angSclr * HALF_WIDTH_X);
 
-	float velBLX = transXSclr - (angSclr * HALF_LENGTH_Y);
-	float velBLY = transYSclr + (angSclr * HALF_WIDTH_X);
+	float velBLX = transXSclr + (angSclr * HALF_LENGTH_Y);
+	float velBLY = transYSclr - (angSclr * HALF_WIDTH_X);
 
-	float velFRX = transXSclr + (angSclr * HALF_LENGTH_Y);
-	float velFRY = transYSclr - (angSclr * HALF_WIDTH_X);
+	float velFRX = transXSclr - (angSclr * HALF_LENGTH_Y);
+	float velFRY = transYSclr + (angSclr * HALF_WIDTH_X);
 
-	float velBRX = transXSclr - (angSclr * HALF_LENGTH_Y);
-	float velBRY = transYSclr - (angSclr * HALF_WIDTH_X);
+	float velBRX = transXSclr + (angSclr * HALF_LENGTH_Y);
+	float velBRY = transYSclr + (angSclr * HALF_WIDTH_X);
 
-	piMotor(sweFL, swiFL, velFLY, velFLX, 0);
-	piMotor(sweBL, swiBL, velBRY, velBRX, -20);
+	piMotor(sweFL, swiFL, velFLY, velFLX, -30);
+	piMotor(sweBL, swiBL, velBLY, velBLX, 20);
 	piMotor(sweFR, swiFR, velFRY, velFRX, 0);
-	piMotor(sweBR, swiBR, velBLY, velBLX, 0);
+	piMotor(sweBR, swiBR, velBRY, velBRX, 0);
 	//-/writeDebugStreamLine("sweFL: %f, sweBL: %f, sweFR: %f, sweBR: %f", piMag(velFLY, velFLX), piMag(velBLY, velBLX), piMag(velFRY,velFRX), piMag(velBRY, velBLX));
-	//-/writeDebugStreamLine("swiFL: %f, swiBL: %f, swiFR: %f, swiBR: %f", piAng(velFLY, velFLX), piAng(velBLY, velBLX), piAng(velFRY,velFRX), piAng(velBRY, velBLX));
+	//-/writeDebugStreamLine("swiFL: %f, swiBL: %f, swiFR: %f, swiBR: %f", piAng(velFLY, velFLX, 0), piAng(velBLY, velBLX, 0), piAng(velFRY,velFRX, 0), piAng(velBRY, velBLX, 20));
 }
 
 
