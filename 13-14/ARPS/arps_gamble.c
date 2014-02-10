@@ -125,7 +125,7 @@ task main()
 	//---Check which crate for positioning
 	if(crate == 2)
 	{
-		moveStraight(8.0, 100);
+		moveStraight(9.0, 100);
 	}
 	else if(crate == 3)
 	{

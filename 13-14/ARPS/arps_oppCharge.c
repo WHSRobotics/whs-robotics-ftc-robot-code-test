@@ -63,7 +63,7 @@ task main()
 	waitForStart();
 	//------------OPP CHARGE BEGIN------------
 	//---Move forward onto ramp.
-	moveStraight(60.0, 100);
+	moveStraight(65.0, 100);
 	//---Stop
 	stopDriveTrain();
 }
