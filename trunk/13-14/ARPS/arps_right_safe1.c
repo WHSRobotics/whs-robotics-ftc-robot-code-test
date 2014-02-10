@@ -92,7 +92,7 @@ task main()
 	servoTarget[intakeServo] = 80;
 	//----------SAFE BEGIN------------
 			moveArm(100);
-		wait1Msec(600);
+		wait1Msec(700);
 		moveArm(0);
 	//---Move forward
 	moveStraight(6.0,100);

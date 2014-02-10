@@ -29,7 +29,7 @@
 ***********************************/
 ///////////////////INCLUDES///////////////////
 #include "JoystickDriver.c" //driver for receiving bluetooth msgs
-#include "arps_functions.h" //header file for ARP Functions
+#include "arps_functions1.h" //header file for ARP Functions
 
 //INITIALIZATION//
 void initializeRobot()
@@ -39,7 +39,7 @@ void initializeRobot()
 	//reset DT motors? idk
 	nMotorEncoder[leftDrive] = 0;
 	nMotorEncoder[rightDrive] = 0;
-
+	servo[autoServo] = 15;
 	//Clear Timers T1 and T2
 	ClearTimer(T1);
 
@@ -58,15 +58,12 @@ task main()
 	//---Move forward
 	motor[leftDrive] = 100;
 	motor[rightDrive] = 100;
-	wait1Msec(800);
-	//---Turn Right
-	motor[rightDrive] = -100;
 	wait1Msec(700);
-
+	//---Turn Right
+	gyroCenterPivot(48.0, 100);
 	//---Move forward
-	motor[rightDrive] = 100;
-	motor[leftDrive] = 100;
-	wait1Msec(1500);
+	moveStraight(27.0, 100);
+	scoreAutoArm();
 
 	stopDriveTrain();
 }
