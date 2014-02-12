@@ -32,19 +32,19 @@
 void initializeRobot()
 {
 	//Setting wheels to 90 degree position
-	servo[swiFL] = 97;
-	servo[swiBL] = 127;
-	servo[swiFR] = 127;
-	servo[swiBR] = 147;
+	servo[swiFL] = 15.25;//97;
+	servo[swiBL] = 15.25;//127;
+	servo[swiFR] = 15.25;//127;
+	servo[swiBR] = 15.25;//147;
 	//Setting servos to closed position
 	servo[antiRatchet] = AR_CLOSED;
 	servo[dropbox] = BOX_CLOSED;
 	//Servo responsiveness settings
-	muxUpdateInterval = 1;
-	servoChangeRate[swiFL] = 0;
-	servoChangeRate[swiFR] = 0;
-	servoChangeRate[swiBR] = 0;
-	servoChangeRate[swiBL] = 0;
+	//muxUpdateInterval = 1;
+	//servoChangeRate[swiFL] = 0;
+	//servoChangeRate[swiFR] = 0;
+	//servoChangeRate[swiBR] = 0;
+	//servoChangeRate[swiBL] = 0;
 	return;
 }
 
@@ -59,7 +59,7 @@ task main()
 	StartTask(Intake);
 	//StartTask(Turntable);
 	StartTask(JoyControl);
-	StartTask(DriveControlSimple);
+	StartTask(DriveControl);
 
 
 	while(true)
