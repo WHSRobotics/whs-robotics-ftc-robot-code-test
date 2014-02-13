@@ -1,5 +1,5 @@
-#ifndef TELEOP_TASKS4-SW.H;
-#define TELEOP_TASKS4-SW.H;
+#ifndef TELEOP_TASKS4-SW2.H;
+#define TELEOP_TASKS4-SW2.H;
 
 /*
 winch = dc motor
@@ -11,21 +11,8 @@ ratchetDisable = servo
 */
 
 
-#include "all_joy_driver.h"
+#include "all_joy_driver2.h"
 
-
-////////////////ANI CONTROLS////////////////
-void runIntake(float motPow)
-{
-	motor[intakeL] = motPow;
-	motor[intakeR] = motPow;
-}
-
-void runArm(float motPow)
-{
-	motor[armL] = motPow;
-	motor[armR] = motPow;
-}
 
 
 
@@ -86,14 +73,6 @@ task Intake()
 	{
 		getJoystickSettings(joystick);
 
-		if(ANIjoy2 && getTap(2,2) || !DTjoy1 && getTap(1,2))
-		{
-			intakeOn = !intakeOn;
-			/*//-/if(intakeOn)
-				writeDebugStreamLine("intake on");
-			else
-				writeDebugStreamLine("intake off");*/
-		}
 		if(ANIjoy2 && joy2Btn(5) || !DTjoy1 && joy1Btn(5))
 		{
 			servo[dropbox] = BOX_OPEN;

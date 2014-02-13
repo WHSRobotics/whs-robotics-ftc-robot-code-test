@@ -94,6 +94,22 @@ bool getTopHat(int joy, int btn)
 }
 
 
+
+////////////////ANI CONTROLS////////////////
+void runIntake(float motPow)
+{
+	motor[intakeL] = motPow;
+	motor[intakeR] = motPow;
+}
+
+void runArm(float motPow)
+{
+	motor[armL] = motPow;
+	motor[armR] = motPow;
+}
+
+
+
 //////////////GENERAL TASKS///////////////
 /************HANG*************
 FAILSAFE ACTIVE
@@ -129,10 +145,15 @@ task Hang()
 		if(hangmanOn)
 		{
 			//-/writeDebugStreamLine("hangman mot 90");
+			intakeOn = false;
+			runArm(ARM_DOWN);
+			wait1Msec(750);
 			motor[hangmanMot] = HANGMAN_UP;
 		}
 		else
 		{
+			wait1Msec(200);
+			intakeOn = true;
 			motor[hangmanMot] = HANGMAN_DOWN;
 		}
 

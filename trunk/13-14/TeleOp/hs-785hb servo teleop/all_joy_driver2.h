@@ -1,5 +1,5 @@
-#ifndef ALL_JOY_DRIVER.H;
-#define ALL_JOY_DRIVER.H;
+#ifndef ALL_JOY_DRIVER2.H;
+#define ALL_JOY_DRIVER2.H;
 
 /*
 winch = dc motor
@@ -12,7 +12,7 @@ ratchetDisable = servo
 
 
 #include "JoystickDriver.c"
-#include "teleop_globVars4-sw.h"
+#include "teleop_globVars4-sw2.h"
 
 
 /////////////GENERAL FUNCTIONS/////////////
@@ -94,6 +94,22 @@ bool getTopHat(int joy, int btn)
 }
 
 
+
+////////////////ANI CONTROLS////////////////
+void runIntake(float motPow)
+{
+	motor[intakeL] = motPow;
+	motor[intakeR] = motPow;
+}
+
+void runArm(float motPow)
+{
+	motor[armL] = motPow;
+	motor[armR] = motPow;
+}
+
+
+
 //////////////GENERAL TASKS///////////////
 /************HANG*************
 FAILSAFE ACTIVE
@@ -129,10 +145,15 @@ task Hang()
 		if(hangmanOn)
 		{
 			//-/writeDebugStreamLine("hangman mot 90");
+			intakeOn = false;
+			runArm(ARM_DOWN);
+			wait1Msec(750);
 			motor[hangmanMot] = HANGMAN_UP;
 		}
 		else
 		{
+			wait1Msec(200);
+			intakeOn = true;
 			motor[hangmanMot] = HANGMAN_DOWN;
 		}
 
