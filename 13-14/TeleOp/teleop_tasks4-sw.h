@@ -14,21 +14,6 @@ ratchetDisable = servo
 #include "all_joy_driver.h"
 
 
-////////////////ANI CONTROLS////////////////
-void runIntake(float motPow)
-{
-	motor[intakeL] = motPow;
-	motor[intakeR] = motPow;
-}
-
-void runArm(float motPow)
-{
-	motor[armL] = motPow;
-	motor[armR] = motPow;
-}
-
-
-
 /**********SCORING ARM********
 1 DC Motor
 ANI Controlled
@@ -77,7 +62,6 @@ task Arm()
 /***********INTAKE***********
 2 NXT motors
 ANI Controlled
-Btn 2: Intake Toggle
 Btn 5: Dropbox Open
 *****************************/
 task Intake()
@@ -86,14 +70,6 @@ task Intake()
 	{
 		getJoystickSettings(joystick);
 
-		if(ANIjoy2 && getTap(2,2) || !DTjoy1 && getTap(1,2))
-		{
-			intakeOn = !intakeOn;
-			/*//-/if(intakeOn)
-				writeDebugStreamLine("intake on");
-			else
-				writeDebugStreamLine("intake off");*/
-		}
 		if(ANIjoy2 && joy2Btn(5) || !DTjoy1 && joy1Btn(5))
 		{
 			servo[dropbox] = BOX_OPEN;
@@ -219,13 +195,11 @@ float piAng(float inputY, float inputX, float initServoPos)
 {
 	if(atan2(inputY, inputX) < 0)
 	{
-		return 15.25 - (initServoPos + ((atan2(inputY, inputX)+PI) * SERVO_MAP)); //255.0-fghfdh
-		//-/writeDebugStreamLine("piAng %f", 255.0 - (initServoPos + ((atan2(inputY, inputX)+PI) * SERVO_MAP)));
+		return 255.0 - (initServoPos + ((atan2(inputY, inputX)+PI) * SERVO_MAP));
 	}
 	else
 	{
-		return 15.25 - (initServoPos + (atan2(inputY, inputX) * SERVO_MAP)); //255.0-gdfdfhd
-		//-/writeDebugStreamLine("piAng %f", 255.0 - (initServoPos + (atan2(inputY, inputX) * SERVO_MAP)));
+		return 255.0 - (initServoPos + (atan2(inputY, inputX) * SERVO_MAP));
 	}
 }
 
@@ -235,21 +209,18 @@ void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX
 	{
 		if(atan2(inputY, inputX) < 0)
 		{
-			servo[servoName] = 15.25 - (initServoPos + ((atan2(inputY, inputX)+PI) * SERVO_MAP));
-			//-/writeDebugStreamLine("piMot %f", 255.0 - (initServoPos + ((atan2(inputY, inputX)+PI) * SERVO_MAP)));
+			servo[servoName] = 255.0 - (initServoPos + ((atan2(inputY, inputX)+PI) * SERVO_MAP));
 			motor[motorName] = magnitudeCalc(inputY, inputX) * JOY_MAP;
 		}
 		else
 		{
-			servo[servoName] = 15.25 - (initServoPos + (atan2(inputY, inputX) * SERVO_MAP));
-			//-/writeDebugStreamLine("piMot %f", 255.0 - (initServoPos + ((atan2(inputY, inputX)+PI) * SERVO_MAP)));
+			servo[servoName] = 255.0 - (initServoPos + (atan2(inputY, inputX) * SERVO_MAP));
 			motor[motorName] = -magnitudeCalc(inputY, inputX)* JOY_MAP;
 		}
 	}
 	else
 	{
 		servo[servoName] = PI/2.0 * SERVO_MAP + initServoPos;
-		//-/writeDebugStreamLine("piMot %f", PI/2.0 * SERVO_MAP + initServoPos);
 		motor[motorName] = 0;
 	}
 }
@@ -260,8 +231,8 @@ void assistedTankControl(float diffY1Input, float diffY2Input)
 	float scaledY2 = -diffY2Input * TANK_SPEED_SCALE;
 	float velX = HALF_LENGTH_Y * (scaledY1 - scaledY2)/(2.0*HALF_WIDTH_X);
 
-	piMotor(sweFL, swiFL, scaledY1, -velX, 0);//-30);
-	piMotor(sweBL, swiBL, scaledY1, velX, 0);//20);
+	piMotor(sweFL, swiFL, scaledY1, -velX, -30);
+	piMotor(sweBL, swiBL, scaledY1, velX, 20);
 	piMotor(sweFR, swiFR, scaledY2, -velX, 0);
 	piMotor(sweBR, swiBR, scaledY2, velX, 0);
 }
@@ -289,22 +260,18 @@ void swerveControl(float transYInput, float transXInput, float angularInput)
 	float angSclr;
 	float transXSclr;
 	float transYSclr;
-	float velFX = 0;
-	float velLY = 0;
-	float velBX = 0;
-	float velRY = 0;
 
 	if((magnitudeCalc(transXInput, transYInput) > LOW_THRESH) && (abs(angularInput) > LOW_THRESH))
 	{
 		angSclr = -angularInput * ROT_SCALE;
 		transXSclr = transXInput * SWERVE_SPEED_SCALE;
 		transYSclr = transYInput * SWERVE_SPEED_SCALE;
-		velFX = transXSclr - (angSclr * HALF_LENGTH_Y);
-		velLY = transYSclr - (angSclr * HALF_WIDTH_X);
-		velBX = transXSclr + (angSclr * HALF_LENGTH_Y);
-		velRY = transYSclr + (angSclr * HALF_WIDTH_X);
-		piMotor(sweFL, swiFL, velLY, velFX, 0);//-30);
-		piMotor(sweBL, swiBL, velLY, velBX, 0);//20);
+		float velFX = transXSclr - (angSclr * HALF_LENGTH_Y);
+		float velLY = transYSclr - (angSclr * HALF_WIDTH_X);
+		float velBX = transXSclr + (angSclr * HALF_LENGTH_Y);
+		float velRY = transYSclr + (angSclr * HALF_WIDTH_X);
+		piMotor(sweFL, swiFL, velLY, velFX, -30);
+		piMotor(sweBL, swiBL, velLY, velBX, 20);
 		piMotor(sweFR, swiFR, velRY, velFX, 0);
 		piMotor(sweBR, swiBR, velRY, velBX, 0);
 	}
@@ -319,27 +286,27 @@ void swerveControl(float transYInput, float transXInput, float angularInput)
 		transYSclr = magnitudeCalc(transXInput, transYInput) > LOW_THRESH
 		? transYInput
 		: 0.0;
-		velFX = transXSclr - (angSclr * HALF_LENGTH_Y);
-		velLY = transYSclr - (angSclr * HALF_WIDTH_X);
-		velBX = transXSclr + (angSclr * HALF_LENGTH_Y);
-		velRY = transYSclr + (angSclr * HALF_WIDTH_X);
+		float velFX = transXSclr - (angSclr * HALF_LENGTH_Y);
+		float velLY = transYSclr - (angSclr * HALF_WIDTH_X);
+		float velBX = transXSclr + (angSclr * HALF_LENGTH_Y);
+		float velRY = transYSclr + (angSclr * HALF_WIDTH_X);
 		if((piAng(velRY, velBX, 0) < 42) || (piAng(velRY, velBX, 0) > 213))
 		{
-			piMotor(sweFL, swiFL, 0, velLY + velFX, 0);//-30);
-			piMotor(sweBL, swiBL, 0, velLY + velBX, 0);//20);
+			piMotor(sweFL, swiFL, 0, velLY + velFX, -30);
+			piMotor(sweBL, swiBL, 0, velLY + velBX, 20);
 			piMotor(sweFR, swiFR, 0, velRY + velFX, 0);
 			piMotor(sweBR, swiBR, 0, velRY + velBX, 0);
 		}
 		else
 		{
-			piMotor(sweFL, swiFL, velLY, velFX, 0);//-30);
-			piMotor(sweBL, swiBL, velLY, velBX, 0);//20);
+			piMotor(sweFL, swiFL, velLY, velFX, -30);
+			piMotor(sweBL, swiBL, velLY, velBX, 20);
 			piMotor(sweFR, swiFR, velRY, velFX, 0);
 			piMotor(sweBR, swiBR, velRY, velBX, 0);
 		}
 	}
-	writeDebugStreamLine("mag sweFL: %f, sweBL: %f, sweFR: %f, sweBR: %f", piMag(velLY, velFX), piMag(velLY, velBX), piMag(velRY,velFX), piMag(velRY, velBX));
-	writeDebugStreamLine("ang swiFL: %f, swiBL: %f, swiFR: %f, swiBR: %f", piAng(velLY, velFX, 0), piAng(velLY, velBX, 0), piAng(velRY,velFX, 0), piAng(velRY, velBX, 20));
+	//-/writeDebugStreamLine("sweFL: %f, sweBL: %f, sweFR: %f, sweBR: %f", piMag(velFLY, velFLX), piMag(velBLY, velBLX), piMag(velFRY,velFRX), piMag(velBRY, velBLX));
+	//-/writeDebugStreamLine("swiFL: %f, swiBL: %f, swiFR: %f, swiBR: %f", piAng(velFLY, velFLX, 0), piAng(velBLY, velBLX, 0), piAng(velFRY,velFRX, 0), piAng(velBRY, velBLX, 20));
 }
 
 
@@ -354,11 +321,11 @@ task DriveControlSimple()
 		getJoystickSettings(joystick);
 		if(abs(joystick.joy1_y1) > LOW_THRESH || abs(joystick.joy1_y2) > LOW_THRESH)
 		{
-			simpleTankControl(-joystick.joy1_y1, -joystick.joy1_y2, LOW_THRESH);
+			simpleTankControl(joystick.joy1_y1, joystick.joy1_y2, LOW_THRESH);
 		}
 		else
 		{
-			simpleTankControl(-joystick.joy2_y1, -joystick.joy2_y2, HI_THRESH);
+			simpleTankControl(joystick.joy2_y1, joystick.joy2_y2, HI_THRESH);
 		}
 	}
 }
@@ -413,6 +380,10 @@ task DriveControl()
 	}
 }
 
+
+/****************************
+//SWERVE DRIVE CODE HERE
+*****************************/
 
 
 //////////////UNUSED CODE////////////////
