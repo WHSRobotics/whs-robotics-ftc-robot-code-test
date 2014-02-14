@@ -32,10 +32,10 @@
 void initializeRobot()
 {
 	//Setting wheels to 90 degree position
-	servo[swiFL] = 97;
-	servo[swiBL] = 127;
-	servo[swiFR] = 127;
-	servo[swiBR] = 147;
+	servo[swiFL] = PI/2.0* FL_SERVO_MAP;
+	servo[swiBL] = PI/2.0* BL_SERVO_MAP;
+	servo[swiFR] = PI/2.0* FR_SERVO_MAP;
+	servo[swiBR] = PI/2.0* BR_SERVO_MAP;
 	//Setting servos to closed position
 	servo[antiRatchet] = AR_CLOSED;
 	servo[dropbox] = BOX_CLOSED;

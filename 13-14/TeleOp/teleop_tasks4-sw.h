@@ -191,50 +191,50 @@ float piMag(float inputY, float inputX)
 	}
 }
 
-float piAng(float inputY, float inputX, float initServoPos)
+float piAng(float inputY, float inputX, float initServoPos, float specServoMap)
 {
 	if(atan2(inputY, inputX) < 0)
 	{
-		return 255.0 - (initServoPos + ((atan2(inputY, inputX)+PI) * SERVO_MAP));
+		return (specServoMap * PI) - (initServoPos + ((atan2(inputY, inputX)+PI) * specServoMap));
 	}
 	else
 	{
-		return 255.0 - (initServoPos + (atan2(inputY, inputX) * SERVO_MAP));
+		return (specServoMap * PI) - (initServoPos + (atan2(inputY, inputX) * specServoMap));
 	}
 }
 
-void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX, int initServoPos)
+void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX, int initServoPos, float specServoMap)
 {
 	if(magnitudeCalc(inputY, inputX) > LOW_THRESH)
 	{
 		if(atan2(inputY, inputX) < 0)
 		{
-			servo[servoName] = 255.0 - (initServoPos + ((atan2(inputY, inputX)+PI) * SERVO_MAP));
+			servo[servoName] = (specServoMap * PI) - (initServoPos + ((atan2(inputY, inputX)+PI) * specServoMap));
 			motor[motorName] = magnitudeCalc(inputY, inputX) * JOY_MAP;
 		}
 		else
 		{
-			servo[servoName] = 255.0 - (initServoPos + (atan2(inputY, inputX) * SERVO_MAP));
+			servo[servoName] = (specServoMap * PI) - (initServoPos + (atan2(inputY, inputX) * specServoMap));
 			motor[motorName] = -magnitudeCalc(inputY, inputX)* JOY_MAP;
 		}
 	}
 	else
 	{
-		servo[servoName] = PI/2.0 * SERVO_MAP + initServoPos;
+		servo[servoName] = PI/2.0 * specServoMap - initServoPos;
 		motor[motorName] = 0;
 	}
 }
 
 void assistedTankControl(float diffY1Input, float diffY2Input)
 {
-	float scaledY1 = -diffY1Input * TANK_SPEED_SCALE;
-	float scaledY2 = -diffY2Input * TANK_SPEED_SCALE;
+	float scaledY1 = diffY1Input * TANK_SPEED_SCALE;
+	float scaledY2 = diffY2Input * TANK_SPEED_SCALE;
 	float velX = HALF_LENGTH_Y * (scaledY1 - scaledY2)/(2.0*HALF_WIDTH_X);
 
-	piMotor(sweFL, swiFL, scaledY1, -velX, -30);
-	piMotor(sweBL, swiBL, scaledY1, velX, 20);
-	piMotor(sweFR, swiFR, scaledY2, -velX, 0);
-	piMotor(sweBR, swiBR, scaledY2, velX, 0);
+	piMotor(sweFL, swiFL, scaledY1, velX, 0, FL_SERVO_MAP);
+	piMotor(sweBL, swiBL, scaledY1, -velX, -30, BL_SERVO_MAP);
+	piMotor(sweFR, swiFR, scaledY2, velX, -30, FR_SERVO_MAP);
+	piMotor(sweBR, swiBR, scaledY2, -velX, -30, BR_SERVO_MAP);
 }
 
 void simpleTankControl(int inputY1, int inputY2, int THRESH_VALUE)
@@ -270,10 +270,18 @@ void swerveControl(float transYInput, float transXInput, float angularInput)
 		float velLY = transYSclr - (angSclr * HALF_WIDTH_X);
 		float velBX = transXSclr + (angSclr * HALF_LENGTH_Y);
 		float velRY = transYSclr + (angSclr * HALF_WIDTH_X);
-		piMotor(sweFL, swiFL, velLY, velFX, -30);
-		piMotor(sweBL, swiBL, velLY, velBX, 20);
-		piMotor(sweFR, swiFR, velRY, velFX, 0);
-		piMotor(sweBR, swiBR, velRY, velBX, 0);
+
+		writeDebugStreamLine(
+		"swiFL: %f, swiBL: %f, swiFR: %f, swiBR: %f",
+		piAng(velLY, velFX, 0, FL_SERVO_MAP),
+		piAng(velLY, velBX, 0, BL_SERVO_MAP),
+		piAng(velRY, velFX, 0, FR_SERVO_MAP),
+		piAng(velRY, velBX, 0, BR_SERVO_MAP));
+
+		piMotor(sweFL, swiFL, velLY, velFX, 0, FL_SERVO_MAP);
+		piMotor(sweBL, swiBL, velLY, velBX, -30, BL_SERVO_MAP);
+		piMotor(sweFR, swiFR, velRY, velFX, -30, FR_SERVO_MAP);
+		piMotor(sweBR, swiBR, velRY, velBX, -30, BR_SERVO_MAP);
 	}
 	else
 	{
@@ -290,19 +298,24 @@ void swerveControl(float transYInput, float transXInput, float angularInput)
 		float velLY = transYSclr - (angSclr * HALF_WIDTH_X);
 		float velBX = transXSclr + (angSclr * HALF_LENGTH_Y);
 		float velRY = transYSclr + (angSclr * HALF_WIDTH_X);
-		if((piAng(velRY, velBX, 0) < 42) || (piAng(velRY, velBX, 0) > 213))
+		writeDebugStreamLine("swiFL: %f, swiBL: %f, swiFR: %f, swiBR: %f",
+		piAng(velLY, velFX, 0, FL_SERVO_MAP),
+		piAng(velLY, velBX, 0, BL_SERVO_MAP),
+		piAng(velRY, velFX, 0, FR_SERVO_MAP),
+		piAng(velRY, velBX, 0, BR_SERVO_MAP));
+		if((piAng(velRY, velBX, 0, BR_SERVO_MAP) < (BR_SERVO_MAP * PI/6)) || (piAng(velRY, velBX, 0, BR_SERVO_MAP) > (BR_SERVO_MAP * 5 * PI/6)))
 		{
-			piMotor(sweFL, swiFL, 0, velLY + velFX, -30);
-			piMotor(sweBL, swiBL, 0, velLY + velBX, 20);
-			piMotor(sweFR, swiFR, 0, velRY + velFX, 0);
-			piMotor(sweBR, swiBR, 0, velRY + velBX, 0);
+			piMotor(sweFL, swiFL, 0, velFX, 0, FL_SERVO_MAP);
+			piMotor(sweBL, swiBL, 0, velBX, -30, BL_SERVO_MAP);
+			piMotor(sweFR, swiFR, 0, velFX, -30, FR_SERVO_MAP);
+			piMotor(sweBR, swiBR, 0, velBX, -30, BR_SERVO_MAP);
 		}
 		else
 		{
-			piMotor(sweFL, swiFL, velLY, velFX, -30);
-			piMotor(sweBL, swiBL, velLY, velBX, 20);
-			piMotor(sweFR, swiFR, velRY, velFX, 0);
-			piMotor(sweBR, swiBR, velRY, velBX, 0);
+			piMotor(sweFL, swiFL, velLY, velFX, 0, FL_SERVO_MAP);
+			piMotor(sweBL, swiBL, velLY, velBX, -30, BL_SERVO_MAP);
+			piMotor(sweFR, swiFR, velRY, velFX, -30, FR_SERVO_MAP);
+			piMotor(sweBR, swiBR, velRY, velBX, -30, BR_SERVO_MAP);
 		}
 	}
 	//-/writeDebugStreamLine("sweFL: %f, sweBL: %f, sweFR: %f, sweBR: %f", piMag(velFLY, velFLX), piMag(velBLY, velBLX), piMag(velFRY,velFRX), piMag(velBRY, velBLX));
