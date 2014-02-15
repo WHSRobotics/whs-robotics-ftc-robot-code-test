@@ -55,8 +55,7 @@ task main()
 	hangArmMaintain();
 	wait1Msec(50);
 	moveStraight(35.0, 20.0, 100);	     //have the motor go at 100 power
-	moveArm(90);
-	wait1Msec(300);
+	StartTask(RampArm);
 	dropTheBlock();
 	while(true){}
 //	dropTheBlock();
