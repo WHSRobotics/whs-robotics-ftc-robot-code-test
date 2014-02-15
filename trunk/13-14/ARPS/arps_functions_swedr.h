@@ -20,7 +20,7 @@ float magnitudeCalc(float inputX, float inputY)
 {
 	return sqrt( pow(inputX, 2) + pow(inputY, 2) ) < 128.0
 	? sqrt( pow(inputX, 2) + pow(inputY, 2) )
-: 128.0;
+	: 128.0;
 }
 
 
@@ -36,16 +36,16 @@ float magnitudeCalc(float inputX, float inputY)
 * int angle - specifies servo swivel direction
 * int initServoPos - allows calibration of servo swivel range
 ***************************************/
-void simpleMotor(tMotor motorName, TServoIndex servoName, int power, int angle, int initServoPos)
+void simpleMotor(tMotor motorName, TServoIndex servoName, int power, int angle, int initServoPos, float specServoMap)
 {
 	if(angle > 180)
 	{
-		servo[servoName] = (angle - 180) * SERVO_MAP_DEG + initServoPos;
+		servo[servoName] = specServoMap * (angle - 180) - initServoPos;
 		motor[motorName] = -power;
 	}
 	else
 	{
-		servo[servoName] = angle * SERVO_MAP_DEG + initServoPos;
+		servo[servoName] = specServoMap * angle - initServoPos;
 		motor[motorName] = power;
 	}
 }
@@ -63,17 +63,25 @@ void simpleMotor(tMotor motorName, TServoIndex servoName, int power, int angle, 
 * float inputX - specifies x component of velocity vector
 * int initServoPos - allows calibration of servo swivel range
 ***************************************/
-void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX, int initServoPos)
+void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX, int initServoPos, float specServoMap)
 {
-	if(atan2(inputY, inputX) < 0)
+	if(magnitudeCalc(inputY, inputX) > LOW_THRESH)
 	{
-		servo[servoName] = (atan2(inputY, inputX) + PI) * SERVO_MAP + initServoPos;
-		motor[motorName] = -magnitudeCalc(inputY, inputX) * JOY_MAP;
+		if(atan2(inputY, inputX) < 0)
+		{
+			servo[servoName] = (specServoMap * 180) - (initServoPos + ((atan2(inputY, inputX)+PI) * RAD_DEG * specServoMap));
+			motor[motorName] = magnitudeCalc(inputY, inputX) * JOY_MAP;
+		}
+		else
+		{
+			servo[servoName] = (specServoMap * 180) - (initServoPos + (atan2(inputY, inputX) * RAD_DEG * specServoMap));
+			motor[motorName] = -magnitudeCalc(inputY, inputX)* JOY_MAP;
+		}
 	}
 	else
 	{
-		servo[servoName] = atan2(inputY, inputX) * SERVO_MAP + initServoPos;
-		motor[motorName] = magnitudeCalc(inputY, inputX)* JOY_MAP;
+		servo[servoName] = 90.0 * specServoMap - initServoPos;
+		motor[motorName] = 0;
 	}
 }
 
@@ -109,27 +117,23 @@ void stopDriveTrain()
 void moveArc(float turnRadius, float arcAngle, float angVel)
 {
 	float angSclr = angVel / (2.0 * HALF_WIDTH_X);
-	float targetArcY1 = (turnRadius + HALF_WIDTH_X) * arcAngle * PI/180.0 * INCH_ENCODERVALUE;
-	float targetArcY2 = (turnRadius - HALF_WIDTH_X) * arcAngle * PI/180.0 * INCH_ENCODERVALUE;
+	float targetArcY1 = (turnRadius + HALF_WIDTH_X) * arcAngle / RAD_DEG * INCH_ENCODERVALUE;
+	float targetArcY2 = (turnRadius - HALF_WIDTH_X) * arcAngle / RAD_DEG * INCH_ENCODERVALUE;
 
 	float velX = angSclr * HALF_LENGTH_Y;
 	float velLY = angSclr * (turnRadius + HALF_WIDTH_X);
 	float velRY = angSclr * (turnRadius - HALF_WIDTH_X);
 
 	nMotorEncoder[sweFL] = 0;
-	nMotorEncoder[sweBL] = 0;
 	nMotorEncoder[sweFR] = 0;
-	nMotorEncoder[sweBR] = 0;
 
 	nMotorEncoderTarget[sweFL] = targetArcY1;
-	nMotorEncoderTarget[sweBL] = targetArcY1;
 	nMotorEncoderTarget[sweFR] = targetArcY2;
-	nMotorEncoderTarget[sweBR] = targetArcY2;
 
-	piMotor(sweFL, swiFL, velLY, -velX, 0);
-	piMotor(sweBL, swiBL, velLY, velX, -20);
-	piMotor(sweFR, swiFR, velRY, -velX, 0);
-	piMotor(sweBR, swiBR, velRY, velX, 0);
+	piMotor(sweFL, swiFL, velLY, velX, 0, FL_SERVO_MAP);
+	piMotor(sweBL, swiBL, velLY, -velX, -34, BL_SERVO_MAP);
+	piMotor(sweFR, swiFR, velRY, velX, -30, FR_SERVO_MAP);
+	piMotor(sweBR, swiBR, velRY, -velX, -30, BR_SERVO_MAP);
 
 	while((nMotorRunState[sweFL] != runStateIdle)
 		&& (nMotorRunState[sweBL] != runStateIdle)
@@ -156,10 +160,16 @@ void moveStraight(float distanceInches, int power)
 {
 	int targetDistance = distanceInches * INCH_ENCODERVALUE;
 
+	nMotorEncoder[sweFL] = 0;
 	nMotorEncoder[sweFR] = 0;
+
+	nMotorEncoderTarget[sweFL] = targetDistance;
 	nMotorEncoderTarget[sweFR] = targetDistance;
 
-	//nMotorEncoderTarget[sweFR] = targetDistance;
+	simpleMotor(sweFL, swiFL, power, dirAngle, 0, FL_SERVO_MAP);
+	simpleMotor(sweBL, swiBL, power, dirAngle, -34, BL_SERVO_MAP);
+	simpleMotor(sweFR, swiFR, power, dirAngle, -30, FR_SERVO_MAP);
+	simpleMotor(sweBR, swiBR, power, dirAngle, -30, BR_SERVO_MAP);
 
 	//servo[swiFL] = dirAngle * SERVO_MAP_DEG + 30;
 	//servo[swiBL] = dirAngle * SERVO_MAP_DEG -20;
