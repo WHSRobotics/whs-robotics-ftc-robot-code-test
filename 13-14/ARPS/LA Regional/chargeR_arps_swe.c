@@ -32,10 +32,10 @@
 
 void initializeRobot()
 {
-	//servo[swiFL] = 97;
-	//servo[swiBL] = 127;
-	//servo[swiFR] = 127;
-	//servo[swiBR] = 147;
+	servo[swiFL] = 97;
+	servo[swiBL] = 127;
+	servo[swiFR] = 127;
+	servo[swiBR] = 147;
 
 	muxUpdateInterval = 1;
 	servoChangeRate[swiFL] = 0;
@@ -50,10 +50,13 @@ task main()
 {
 	initializeRobot();
 	waitForStart();
-	hangArmMaintain();
-	moveStraight(45.0, 8.0, 100);	     //have the motor go at 100 power
-	StartTask(RampArm);
-//	dropTheBlock();
+	StartTask(hangArmMaintain);
+	moveStraight(40.0, 16.0, 75.0);	     //have the motor go at 100 power
+	moveArc(0.0, 170.0, 75.0);
+	StartTask(ScoreArm);
+	moveStraight(0.0, 38.0, 50.0);
+	moveStraight(90.0, 13.0, 75.0);
+	dropTheBlock();
 	while(true){}
 
 }

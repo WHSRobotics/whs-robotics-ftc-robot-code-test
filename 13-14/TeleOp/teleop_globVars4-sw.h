@@ -30,6 +30,7 @@ const int AR_OPEN = 40; //anti-ratchet open
 const int AR_CLOSED = 255; //anti-ratchet closed
 const int BOX_OPEN = 150;//175;
 const int BOX_CLOSED = 255;
+const float SERVO2TIME = 2.0; //20.0/10.0; convert servo val to Msec
 
 //THRESHOLDS
 const int TAP_THRESH = 1000; //1000 Msec timeout

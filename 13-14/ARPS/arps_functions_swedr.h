@@ -26,6 +26,34 @@ float magnitudeCalc(float inputX, float inputY)
 }
 
 
+void setServoAngle(float angle)
+{
+	if(angle > 180)
+	{
+		servo[swiFL] = FL_SERVO_MAP * (angle - 180);
+		servo[swiBL] = BL_SERVO_MAP * (angle - 180) + 34;
+		servo[swiFR] = FR_SERVO_MAP * (angle - 180) + 30;
+		servo[swiBR] = BR_SERVO_MAP * (angle - 180) + 30;
+	}
+	else
+	{
+		servo[swiFL] = FL_SERVO_MAP * angle;
+		servo[swiBL] = BL_SERVO_MAP * angle + 34;
+		servo[swiFR] = FR_SERVO_MAP * angle + 30;
+		servo[swiBR] = BR_SERVO_MAP * angle + 30;
+	}
+}
+
+
+void runDriveTrain(float power)
+{
+	motor[sweFL] = power;
+	motor[sweBL] = power;
+	motor[sweFR] = power;
+	motor[sweBR] = power;
+}
+
+
 /**************************************
 **  simpleMotor specifies movement   **
 **  explicity by parameters that     **
@@ -38,18 +66,25 @@ float magnitudeCalc(float inputX, float inputY)
 * int angle - specifies servo swivel direction
 * int initServoPos - allows calibration of servo swivel range
 ***************************************/
-void simpleMotor(tMotor motorName, TServoIndex servoName, int power, int angle, int initServoPos, float specServoMap)
+void simpleMotor(tMotor motorName, TServoIndex servoName, float power, float angle, int initServoPos, float specServoMap)
 {
+	float servoAng;
+	float motPow;
 	if(angle > 180)
 	{
-		servo[servoName] = specServoMap * (angle - 180) - initServoPos;
-		motor[motorName] = power;
+		servoAng = specServoMap * (angle - 180) - initServoPos;
+		motPow = power;
+		setServoAngle(servoAng);
 	}
 	else
 	{
-		servo[servoName] = specServoMap * angle - initServoPos;
-		motor[motorName] = -power;
+		servoAng = specServoMap * angle - initServoPos;
+		motPow = -power;
+		setServoAngle(servoAng);
 	}
+	wait1Msec(5000);
+	runDriveTrain(motPow);
+
 }
 
 
@@ -153,20 +188,24 @@ void moveArc(float turnRadius, float arcAngle, float angVel)
 * float distanceInches - distance to move in inches
 * int pwr - motor power for drive train
 ***************************************/
-void moveStraight(float dirAngle, float distanceInches, int power)
+void moveStraight(float dirAngle, float distanceInches, float power)
 {
 	int targetDistance = distanceInches * INCH_ENCODERVALUE;// * abs(power)/power;
 
 	nMotorEncoder[sweFL] = 0;
 	//nMotorEncoder[sweFR] = 0;
 
-	simpleMotor(sweFL, swiFL, power, dirAngle, 0, FL_SERVO_MAP);
+	/*simpleMotor(sweFL, swiFL, power, dirAngle, 0, FL_SERVO_MAP);
 	simpleMotor(sweBL, swiBL, power, dirAngle, -34, BL_SERVO_MAP);
 	simpleMotor(sweFR, swiFR, power, dirAngle, -30, FR_SERVO_MAP);
-	simpleMotor(sweBR, swiBR, power, dirAngle, -30, BR_SERVO_MAP);
+	simpleMotor(sweBR, swiBR, power, dirAngle, -30, BR_SERVO_MAP);*/
+	setServoAngle(dirAngle);
+	wait1Msec(1000);
+	runDriveTrain(-power);
 
 	while(abs(nMotorEncoder[sweFL]) <= targetDistance)/* || (nMotorEncoder[sweFL] <= targetDistance)*/
 	{
+		setServoAngle(dirAngle);
 		writeDebugStreamLine("FR: %f, FL: %f", nMotorEncoder[sweFR], nMotorEncoder[sweFL]);
 	}
 
@@ -178,7 +217,7 @@ void moveStraight(float dirAngle, float distanceInches, int power)
 ** handArmMaintain prevents the hang **
 ** arm from interfering with scoring **
 ***************************************/
-void hangArmMaintain()
+task hangArmMaintain()
 {
 	motor[hangmanMot] = -30;
 }
@@ -303,6 +342,12 @@ task RampArm()
 {
 	moveArm(90);
 	wait1Msec(300);
+	moveArm(0);
+}
+task ScoreArm()
+{
+	moveArm(90);
+	wait1Msec(750);
 	moveArm(0);
 }
 
