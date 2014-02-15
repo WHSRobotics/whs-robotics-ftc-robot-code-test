@@ -110,6 +110,28 @@ void runArm(float motPow)
 
 
 
+/////////////////DT CONTROLS//////////////////
+//-CONSISTENCY-Swivel Direction aligns all swivel servos to the same angle
+void swivelDirection(float angle)
+{
+	servo[swiFL] = angle;
+	servo[swiBL] = angle;
+	servo[swiFR] = angle;
+	servo[swiBR] = angle;
+}
+
+
+//-CONSISTENCY-Assigns same motor power to all motors
+void runPow(float motPow)
+{
+	motor[swiFL] = motPow;
+	motor[swiBL] = motPow;
+	motor[swiFR] = motPow;
+	motor[swiBR] = motPow;
+}
+
+
+
 //////////////GENERAL TASKS///////////////
 /************HANG*************
 FAILSAFE ACTIVE

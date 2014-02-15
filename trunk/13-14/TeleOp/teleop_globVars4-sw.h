@@ -9,11 +9,11 @@ bool ANIjoy2 = true;
 bool FSon = true;
 //Intake variables
 bool intakeOn = true;
-bool intakeReversed = false;
+//bool intakeReversed = false;
 //bool boxOpen = false;
 
 //Drive Control variables
-bool tankDrive = false;
+bool tankDrive = true;
 
 
 /////////////KONSTANTS/////////////
@@ -22,9 +22,9 @@ const int STOP = 0;
 const int MAX = 100; //intake forward, winch forward, flag on
 const int ARM_UP = 90;
 const int ARM_DOWN = -50;
-const int INTAKE_R = -50;
+//const int INTAKE_R = -50;
 const int HANGMAN_UP = 90;
-const int HANGMAN_DOWN = -30;
+const int HANGMAN_DOWN = -50;
 const int WINCH_R = -100;
 const int AR_OPEN = 40; //anti-ratchet open
 const int AR_CLOSED = 255; //anti-ratchet closed

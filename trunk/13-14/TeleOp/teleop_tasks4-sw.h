@@ -30,29 +30,29 @@ task Arm()
 		{
 			//raise arm
 			runArm(ARM_UP);
-			if(intakeOn) //if intake is on
+			/*if(intakeOn) //if intake is on
 			{
 				intakeReversed = true; //intake reversed to keep cubes in
-			}
+			}*/
 		}
 		else if((ANIjoy2 && joy2Btn(8) && !joy2Btn(6)) || (!DTjoy1 && joy1Btn(8) && !joy1Btn(6)))
 		{
 			//lower arm
 			runArm(ARM_DOWN);
 			//-/writeDebugStreamLine("arm motor -50");
-			if(intakeReversed)
+			/*if(intakeReversed)
 			{
 				intakeReversed = false;
-			}
+			}*/
 		}
 		else
 		{
 			//don't run arm
 			runArm(STOP);
-			if(intakeReversed)
+			/*if(intakeReversed)
 			{
 				intakeReversed = false;
-			}
+			}*/
 		}
 	}
 }
@@ -85,9 +85,9 @@ task Intake()
 
 		if(intakeOn)
 		{
-			if(intakeReversed)
+			/*if(intakeReversed)
 				runIntake(INTAKE_R);
-			else
+			else*/
 				runIntake(MAX);
 		}
 		else
@@ -172,12 +172,14 @@ int getActiveDTJoy(bool tank)
 	}
 }
 
+
 float magnitudeCalc(float inputX, float inputY)
 {
 	return sqrt( pow(inputX, 2) + pow(inputY, 2) ) < 128.0
 	? sqrt( pow(inputX, 2) + pow(inputY, 2) )
 	: 128.0;
 }
+
 
 float piMag(float inputY, float inputX)
 {
@@ -191,6 +193,7 @@ float piMag(float inputY, float inputX)
 	}
 }
 
+
 float piAng(float inputY, float inputX, float initServoPos, float specServoMap)
 {
 	if(atan2(inputY, inputX) < 0)
@@ -202,6 +205,7 @@ float piAng(float inputY, float inputX, float initServoPos, float specServoMap)
 		return (specServoMap * PI) - (initServoPos + (atan2(inputY, inputX) * specServoMap));
 	}
 }
+
 
 void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX, int initServoPos, float specServoMap)
 {
@@ -225,6 +229,7 @@ void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX
 	}
 }
 
+
 void assistedTankControl(float diffY1Input, float diffY2Input)
 {
 	float scaledY1 = diffY1Input * TANK_SPEED_SCALE;
@@ -237,6 +242,7 @@ void assistedTankControl(float diffY1Input, float diffY2Input)
 	piMotor(sweBR, swiBR, scaledY2, -velX, -30, BR_SERVO_MAP);
 }
 
+
 void simpleTankControl(int inputY1, int inputY2, int THRESH_VALUE)
 {
 	if((abs(inputY1) > THRESH_VALUE) || (abs(inputY2) > THRESH_VALUE))
@@ -248,12 +254,60 @@ void simpleTankControl(int inputY1, int inputY2, int THRESH_VALUE)
 	}
 	else
 	{
-		motor[sweFR] = 0;
-		motor[sweBR] = 0;
-		motor[sweFL] = 0;
-		motor[sweBL] = 0;
+		runPow(STOP);
 	}
 }
+
+
+void dpadSwerve(int joy)
+{
+	switch(joystick.joy1_TopHat)
+	{
+	 	case 0:
+			swivelDirection(PI/2.0);
+			runPow(MAX);
+			break;
+
+		case 1:
+			swivelDirection(PI/4.0);
+			break;
+
+		case 2:
+			swivelDirection(0.0);
+			runPow(MAX);
+			break;
+
+		case 3:
+			swivelDirection(0.75*PI);
+			runPow(-MAX);
+			break;
+
+		case 4:
+			swivelDirection(PI/2.0);
+			runPow(-MAX);
+			break;
+
+  	case 5:
+			swivelDirection(PI/4.0);
+			runPow(-MAX);
+			break;
+
+  	case 6:
+  		swivelDirection(0.0);
+  		runPow(-MAX);
+			break;
+
+  	case 7:
+			swivelDirection(0.75 * PI);
+			runPow(MAX);
+			break;
+
+		default:
+			swivelDirection(PI/2.0);
+			runPow(0);
+	}
+}
+
 
 void swerveControl(float transYInput, float transXInput, float angularInput)
 {
@@ -376,7 +430,14 @@ task DriveControl()
 		{
 			if(getActiveDTJoy(false) == 1)
 			{
-				swerveControl(joystick.joy1_y1, joystick.joy1_x1, joystick.joy1_x2);
+				if(joystick.joy1_TopHat == 1)
+				{
+					swerveControl(joystick.joy1_y1, joystick.joy1_x1, joystick.joy1_x2);
+				}
+				else
+				{
+
+				}
 				//-/writeDebugStreamLine("swerve joy1");
 			}
 			else if(ANIjoy2)
