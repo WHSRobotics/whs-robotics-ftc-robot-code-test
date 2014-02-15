@@ -48,16 +48,15 @@ const float TANK_SPEED_SCALE = 1.0;
 const float SWERVE_SPEED_SCALE = 0.585937;
 
 const int FL_POS1 = 0;
-const int FL_POS2 = 214;
+const int FL_POS2 = 230;//232;//214;
+const int FR_POS1 = 30;//24;
+const int FR_POS2 = 233;//210;
 
-const int FR_POS1 = 24;
-const int FR_POS2 = 255;
+const int BL_POS1 = 34;//30;
+const int BL_POS2 = 255;//240;
 
-const int BL_POS1 = 30;
-const int BL_POS2 = 255;
-
-const int BR_POS1 = 30;
-const int BR_POS2 = 228;
+const int BR_POS1 = 30;//10;//30;
+const int BR_POS2 = 251;//234;//228;
 
 const float FL_SERVO_MAP = (FL_POS2 - FL_POS1)/PI;
 const float FR_SERVO_MAP = (FR_POS2 - FR_POS1)/PI;
