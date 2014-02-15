@@ -11,6 +11,8 @@
 ** Functions                     **
 ***********************************/
 
+//--------------TASKS-----------------
+
 //-----------------BASE FUNCTIONS------------------
 /**************************************
 ** magnitudeCalc calculates distance **
@@ -41,12 +43,12 @@ void simpleMotor(tMotor motorName, TServoIndex servoName, int power, int angle, 
 	if(angle > 180)
 	{
 		servo[servoName] = specServoMap * (angle - 180) - initServoPos;
-		motor[motorName] = -power;
+		motor[motorName] = power;
 	}
 	else
 	{
 		servo[servoName] = specServoMap * angle - initServoPos;
-		motor[motorName] = power;
+		motor[motorName] = -power;
 	}
 }
 
@@ -117,8 +119,8 @@ void stopDriveTrain()
 void moveArc(float turnRadius, float arcAngle, float angVel)
 {
 	float angSclr = angVel / (2.0 * HALF_WIDTH_X);
-	float targetArcY1 = (turnRadius + HALF_WIDTH_X) * arcAngle / RAD_DEG * INCH_ENCODERVALUE * abs(angVel)/angVel;
-	float targetArcY2 = (turnRadius - HALF_WIDTH_X) * arcAngle / RAD_DEG * INCH_ENCODERVALUE * abs(angVel)/angVel;
+	float targetArcY1 = (turnRadius + HALF_WIDTH_X) * arcAngle / RAD_DEG * INCH_ENCODERVALUE;// * abs(angVel)/angVel;
+	float targetArcY2 = (turnRadius - HALF_WIDTH_X) * arcAngle / RAD_DEG * INCH_ENCODERVALUE;// * abs(angVel)/angVel;
 
 	float velX = angSclr * HALF_LENGTH_Y;
 	float velLY = angSclr * (turnRadius + HALF_WIDTH_X);
@@ -132,7 +134,7 @@ void moveArc(float turnRadius, float arcAngle, float angVel)
 	piMotor(sweFR, swiFR, velRY, velX, -30, FR_SERVO_MAP);
 	piMotor(sweBR, swiBR, velRY, -velX, -30, BR_SERVO_MAP);
 
-	while((nMotorEncoder[sweFR] != targetArcY2) || (nMotorEncoder[sweFL] != targetArcY1))
+	while((abs(nMotorEncoder[sweFR]) <= targetArcY2) || (abs(nMotorEncoder[sweFL]) <= targetArcY1))
 	{
 		writeDebugStreamLine("FR: %f, FL: %f", nMotorEncoder[sweFR], nMotorEncoder[sweFL]);
 	}
@@ -153,17 +155,17 @@ void moveArc(float turnRadius, float arcAngle, float angVel)
 ***************************************/
 void moveStraight(float dirAngle, float distanceInches, int power)
 {
-	int targetDistance = distanceInches * INCH_ENCODERVALUE * abs(power)/power;
+	int targetDistance = distanceInches * INCH_ENCODERVALUE;// * abs(power)/power;
 
 	nMotorEncoder[sweFL] = 0;
-	nMotorEncoder[sweFR] = 0;
+	//nMotorEncoder[sweFR] = 0;
 
 	simpleMotor(sweFL, swiFL, power, dirAngle, 0, FL_SERVO_MAP);
 	simpleMotor(sweBL, swiBL, power, dirAngle, -34, BL_SERVO_MAP);
 	simpleMotor(sweFR, swiFR, power, dirAngle, -30, FR_SERVO_MAP);
 	simpleMotor(sweBR, swiBR, power, dirAngle, -30, BR_SERVO_MAP);
 
-	while((nMotorEncoder[sweFR] != targetDistance) || (nMotorEncoder[sweFL] != targetDistance))
+	while(abs(nMotorEncoder[sweFL]) <= targetDistance)/* || (nMotorEncoder[sweFL] <= targetDistance)*/
 	{
 		writeDebugStreamLine("FR: %f, FL: %f", nMotorEncoder[sweFR], nMotorEncoder[sweFL]);
 	}
@@ -296,6 +298,12 @@ void dropTheBlock()
 	wait10Msec(60);
 	servo[dropbox] = BOX_CLOSED;
 	wait10Msec(60);
+}
+task RampArm()
+{
+	moveArm(90);
+	wait1Msec(300);
+	moveArm(0);
 }
 
 

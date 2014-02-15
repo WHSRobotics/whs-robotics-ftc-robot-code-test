@@ -51,10 +51,9 @@ task main()
 	initializeRobot();
 	waitForStart();
 	hangArmMaintain();
-	moveStraight(135.0, 20.0, 100);	     //have the motor go at 100 power
-	moveArm(90);
-	wait1Msec(300);
-	dropTheBlock();
+	moveStraight(45.0, 8.0, 100);	     //have the motor go at 100 power
+	StartTask(RampArm);
+//	dropTheBlock();
 	while(true){}
 
 }

@@ -74,9 +74,19 @@ const float PWR_ADJUST = 7.355;//3.9 //7.5
 const float MAJOR_MSEC_PERCENT = 0.05; //percent of Msec to run arm at full pwr
 const float MINOR_MSEC_PERCENT = 0.95; //percent of Msec to gradually ramp arm pwr
 
-////Box KONSTANTS////
-const int BOX_OPEN = 175;
+
+//Power KONSTANTS
+const int ARM_UP = 90;
+const int ARM_DOWN = -50;
+//const int INTAKE_R = -50;
+const int HANGMAN_UP = 100;
+const int HANGMAN_DOWN = -50;
+const int WINCH_R = -100;
+const int AR_OPEN = 40; //anti-ratchet open
+const int AR_CLOSED = 255; //anti-ratchet closed
+const int BOX_OPEN = 150;//175;
 const int BOX_CLOSED = 255;
+
 
 
 ///////////////GLOBAL VARIABLES////////////////
