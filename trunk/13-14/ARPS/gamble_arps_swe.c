@@ -34,7 +34,7 @@ int crate = 0;
 task main()
 {
 	waitForStart();
-																					//ARM NEEDS TO BE RAISED HIGH ENOUGH THAT IT WILL BE OVER THE CRATES BUT NOT HIT THE BAR
+	//ARM NEEDS TO BE RAISED HIGH ENOUGH THAT IT WILL BE OVER THE CRATES BUT NOT HIT THE BAR
 	wait1Msec(300);
 	if(SensorValue[IRSensor] <= 4 && SensorValue[IRSensor] != 0)
 	{
@@ -48,44 +48,23 @@ task main()
 	{
 		crate = 3;
 	}
-	moveStraight(8.0,100.0);
-	//---Turn Left
-	gyroCenterPivot(-34,100);
-	//---Move forward
-	moveStraight(27.0,100);
-	//---Turn Right
-	gyroCenterPivot(93,100);
-	//---Get on ramp
-	moveStraight(31.0,100);
+	//---Move forward a bit
+	//moveStraight(0,8.0,100.0);
+	//---Rotate perpendicular to ramp
+	//gyroCenterPivot(135.0,100.0);
+	//---Move back and left to be in front of ramp
+	//moveStraight(35.0, 20.0, -100.0);
+	//---Move up ramp to first crate, lift arm up
+	//StartTask(Arm);
+	//moveStraight(90.0, 30.0 ,-100.0);
 
-
-	if(crate == 2)							//this crate would have to be the closest one to us
+	/*if(crate == 2)							//this crate would have to be the closest one to us
 	{
-		moveStraight(8.0, 100);			//motors would be going at 100 power
-		//motor[sweFL] = 100;
-		//motor[sweBL] = 100;
-		//motor[sweFR] = -100;
-		//motor[sweBR] = -100;
-		gyroCenterPivot(90.0, 100);
-		dropTheBlock();											//drop the cube into the second crate
+		moveStraight(90.0, 8.0, -100.0);			//motors would be going at 100 power
 	}
 	else if(crate == 3)
 	{
-		moveStraight(24.0, 100);			//motors would be going at 100 power
-		//motor[sweFL] = 100;
-		//motor[sweBL] = 100;
-		//motor[sweFR] = -100;
-		//motor[sweBR] = -100;				//robot will turn 90 degrees to the right
-		gyroCenterPivot(90.0, 100);
-		dropTheBlock();											//drop the cube into the third crate
+		moveStraight(90.0, 24.0, -100.0);			//motors would be going at 100 power
 	}
-	else
-	{
-		//motor[sweFL] = 100;
-		//motor[sweBL] = 100;
-		//motor[sweFR] = -100;
-		//motor[sweBR] = -100;
-		gyroCenterPivot(90.0, 100);		//robot will turn 90 degrees to the right
-		dropTheBlock();												//drop the cube into the first crate
-	}
+	dropTheBlock();*/
 }
