@@ -137,7 +137,8 @@ void runPow(float motPow)
 FAILSAFE ACTIVE
 Hold down btn 7: Winch forward
 Hold down btn 4: Winch backward, Open servo
-Hold down btn 1: Activate hangman
+NOT FAILSAFE
+Tap btn 1: Activate hangman sequence
 *****************************/
 task Hang()
 {
@@ -153,15 +154,18 @@ task Hang()
 		{
 			winchForward = bothBtn(7);
 			winchBackward = bothBtn(4);
-			hangmanOn = bothBtn(1);
+			//hangmanOn = bothBtn(1);
 		}
 		else
 		{
 			winchForward = anyBtn(7);
 			winchBackward = anyBtn(4);
-			hangmanOn = anyBtn(1);
+			//hangmanOn = anyBtn(1);
 		}
-
+		if(ANIjoy2 && DTjoy1)
+			hangmanOn = getTap(2,1);
+		else
+			hangmanOn = getTap(2,1) || getTap(1,1);
 
 		//Hangman movement
 		if(hangmanOn)

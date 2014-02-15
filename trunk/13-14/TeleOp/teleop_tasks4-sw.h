@@ -430,13 +430,13 @@ task DriveControl()
 		{
 			if(getActiveDTJoy(false) == 1)
 			{
-				if(joystick.joy1_TopHat == 1)
+				if(joystick.joy1_TopHat == -1)
 				{
 					swerveControl(joystick.joy1_y1, joystick.joy1_x1, joystick.joy1_x2);
 				}
 				else
 				{
-
+					dpadSwerve(1);
 				}
 				//-/writeDebugStreamLine("swerve joy1");
 			}
@@ -447,7 +447,10 @@ task DriveControl()
 			}
 			else
 			{
-				swerveControl(joystick.joy2_y1, joystick.joy2_x1, joystick.joy2_x2);
+				if(joystick.joy2_TopHat == -1)
+					swerveControl(joystick.joy2_y1, joystick.joy2_x1, joystick.joy2_x2);
+				else
+					dpadSwerve(2);
 				//-/writeDebugStreamLine("swerve joy2");
 			}
 		}
