@@ -93,10 +93,10 @@ void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX
 ***************************************/
 void stopDriveTrain()
 {
-	servo[swiFL] = 127;
-	servo[swiBL] = 107;
-	servo[swiFR] = 127;
-	servo[swiBR] = 127;
+	servo[swiFL] = 90 * FL_SERVO_MAP;
+	servo[swiBL] = 90 * BL_SERVO_MAP + 34;
+	servo[swiFR] = 90 * FR_SERVO_MAP + 30;
+	servo[swiBR] = 90 * BR_SERVO_MAP + 30;
 	motor[sweFL] = STOP;
 	motor[sweBL] = STOP;
 	motor[sweFR] = STOP;
@@ -117,8 +117,8 @@ void stopDriveTrain()
 void moveArc(float turnRadius, float arcAngle, float angVel)
 {
 	float angSclr = angVel / (2.0 * HALF_WIDTH_X);
-	float targetArcY1 = (turnRadius + HALF_WIDTH_X) * arcAngle / RAD_DEG * INCH_ENCODERVALUE;
-	float targetArcY2 = (turnRadius - HALF_WIDTH_X) * arcAngle / RAD_DEG * INCH_ENCODERVALUE;
+	float targetArcY1 = (turnRadius + HALF_WIDTH_X) * arcAngle / RAD_DEG * INCH_ENCODERVALUE * abs(angVel)/angVel;
+	float targetArcY2 = (turnRadius - HALF_WIDTH_X) * arcAngle / RAD_DEG * INCH_ENCODERVALUE * abs(angVel)/angVel;
 
 	float velX = angSclr * HALF_LENGTH_Y;
 	float velLY = angSclr * (turnRadius + HALF_WIDTH_X);
@@ -127,19 +127,14 @@ void moveArc(float turnRadius, float arcAngle, float angVel)
 	nMotorEncoder[sweFL] = 0;
 	nMotorEncoder[sweFR] = 0;
 
-	nMotorEncoderTarget[sweFL] = targetArcY1;
-	nMotorEncoderTarget[sweFR] = targetArcY2;
-
 	piMotor(sweFL, swiFL, velLY, velX, 0, FL_SERVO_MAP);
 	piMotor(sweBL, swiBL, velLY, -velX, -34, BL_SERVO_MAP);
 	piMotor(sweFR, swiFR, velRY, velX, -30, FR_SERVO_MAP);
 	piMotor(sweBR, swiBR, velRY, -velX, -30, BR_SERVO_MAP);
 
-	while((nMotorRunState[sweFL] != runStateIdle)
-		&& (nMotorRunState[sweBL] != runStateIdle)
-	&& (nMotorRunState[sweFR] != runStateIdle)
-	&& (nMotorRunState[sweBR] != runStateIdle))
+	while((nMotorEncoder[sweFR] != targetArcY2) || (nMotorEncoder[sweFL] != targetArcY1))
 	{
+		writeDebugStreamLine("FR: %f, FL: %f", nMotorEncoder[sweFR], nMotorEncoder[sweFL]);
 	}
 
 	stopDriveTrain();
@@ -158,41 +153,22 @@ void moveArc(float turnRadius, float arcAngle, float angVel)
 ***************************************/
 void moveStraight(float distanceInches, int power)
 {
-	int targetDistance = distanceInches * INCH_ENCODERVALUE;
+	int targetDistance = distanceInches * INCH_ENCODERVALUE * abs(power)/power;
 
 	nMotorEncoder[sweFL] = 0;
 	nMotorEncoder[sweFR] = 0;
-
-	nMotorEncoderTarget[sweFL] = targetDistance;
-	nMotorEncoderTarget[sweFR] = targetDistance;
 
 	simpleMotor(sweFL, swiFL, power, dirAngle, 0, FL_SERVO_MAP);
 	simpleMotor(sweBL, swiBL, power, dirAngle, -34, BL_SERVO_MAP);
 	simpleMotor(sweFR, swiFR, power, dirAngle, -30, FR_SERVO_MAP);
 	simpleMotor(sweBR, swiBR, power, dirAngle, -30, BR_SERVO_MAP);
 
-	//servo[swiFL] = dirAngle * SERVO_MAP_DEG + 30;
-	//servo[swiBL] = dirAngle * SERVO_MAP_DEG -20;
-	//servo[swiFR] = dirAngle * SERVO_MAP_DEG;
-	//servo[swiBR] = dirAngle * SERVO_MAP_DEG -40;
-
-	//wait1Msec(1000);
-
-	motor[sweFL] = power;
-	motor[sweBL] = power;
-	motor[sweBR] = power;
-	motor[sweFR] = power;
-
-	while(nMotorEncoder[sweFR] < targetDistance)
+	while((nMotorEncoder[sweFR] != targetDistance) || (nMotorEncoder[sweFL] != targetDistance))
 	{
-		writeDebugStreamLine("%d", nMotorEncoder[sweFR]);
+		writeDebugStreamLine("FR: %f, FL: %f", nMotorEncoder[sweFR], nMotorEncoder[sweFL]);
 	}
 
-	motor[sweFR] = 0;
-	motor[sweFL] = 0;
-	motor[sweBR] = 0;
-	motor[sweBL] = 0;
-	//stopDriveTrain();
+	stopDriveTrain();
 }
 
 
