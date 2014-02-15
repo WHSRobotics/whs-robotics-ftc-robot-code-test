@@ -306,14 +306,10 @@ void gyroCenterPivot(int turnDirection, int speedKonstant)
 //-------------------AUTO ARM------------------
 void dropTheBlock()
 {
-	//servo[dropbox] = 160;
-	motor[intakeL] = INTAKE_R;
-	motor[intakeR] = INTAKE_R;
-	wait10Msec(50);
-	//servo[dropbox] = 15;
-	motor[intakeL] = MAX;
-	motor[intakeR] = MAX;
-	wait10Msec(50);
+	servo[dropbox] = BOX_OPEN;
+	wait10Msec(60);
+	servo[dropbox] = BOX_CLOSED;
+	wait10Msec(60);
 }
 
 
