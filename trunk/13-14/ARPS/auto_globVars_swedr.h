@@ -42,7 +42,6 @@ const int TURN_THRESHOLD = 1; //stop turning when <1 degree left to turn
 const float JOY_MAP = 0.78125;
 const float SERVO_MAP_DEG = 255.0/180.0;
 const float SERVO_MAP = 255.0/PI;
-<<<<<<< .mine
 const float RAD_DEG = 180.0/PI;
 
 const int FL_POS1 = 0;
@@ -64,10 +63,6 @@ const float BR_SERVO_MAP = (BR_POS2 - BR_POS1)/180.0;
 
 const float INCH_ENCODERVALUE = 158.057322; //number of encoder values in one inch forward for a 4 inch wheel
 											//(number of encoder values in one rotation[1440])/(wheel diameter[2.9]*pi[3.14...])
-=======
-const float INCH_ENCODERVALUE = 158.057322; //number of encoder values in one inch forward for a 2.9 inch wheel
-											//(number of encoder values in one rotation[1440])/(wheel diameter[2.9]*pi[3.14...])
->>>>>>> .r156
 //Measures
 const float HALF_WIDTH_X = 6.8125;
 const float HALF_LENGTH_Y = 7.125;
