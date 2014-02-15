@@ -1,7 +1,7 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  HTMotor)
 #pragma config(Hubs,  S3, HTServo,  HTServo,  none,     none)
 #pragma config(Sensor, S2,     gyroSensor,     sensorI2CHiTechnicGyro)
-#pragma config(Sensor, S4,     IRSensor,       sensorHiTechnicIRSeeker1200)
+#pragma config(Sensor, S4,     SMUX,           sensorI2CCustom)
 #pragma config(Motor,  motorA,          hangmanMot,    tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  motorB,          intakeL,       tmotorNXT, PIDControl, reversed, encoder)
 #pragma config(Motor,  motorC,          intakeR,       tmotorNXT, PIDControl, reversed, encoder)
@@ -31,6 +31,8 @@
 #include "auto_globVars_swedr.h"
 
 int crate = 0;
+tMUXSensor IRSensor = msensor_S4_2;
+
 task main()
 {
 	waitForStart();

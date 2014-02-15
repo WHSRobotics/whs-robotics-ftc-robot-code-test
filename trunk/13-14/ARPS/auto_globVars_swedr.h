@@ -43,6 +43,7 @@ const float JOY_MAP = 0.78125;
 const float SERVO_MAP_DEG = 255.0/180.0;
 const float SERVO_MAP = 255.0/PI;
 const float RAD_DEG = 180.0/PI;
+const float SERVO2TIME = 20.0; //convert servo value to Msec
 
 const int FL_POS1 = 0;
 const int FL_POS2 = 230;//232;//214;

@@ -56,6 +56,6 @@ task main()
 //	hangArmMaintain();
 //	wait1Msec(50);
 StartTask(RampArm);
-	moveStraight(55.0, 55.0, 50);	     //have the motor go at 100 power
+	moveStraight(55.0, 65.0, 75.0);	     //have the motor go at 100 power
 	while(true){}
 }

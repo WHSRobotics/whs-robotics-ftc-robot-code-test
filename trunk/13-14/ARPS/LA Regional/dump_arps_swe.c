@@ -60,7 +60,7 @@ task main()
 	initializeRobot();
 	waitForStart();
 	moveArm(90);
-	wait10Msec(30);
-	moveStraight(90.0, 5.0, 100);
+	wait10Msec(80);
+	moveStraight(90.0, 10.0, 50.0);
 	dropTheBlock();
 }
