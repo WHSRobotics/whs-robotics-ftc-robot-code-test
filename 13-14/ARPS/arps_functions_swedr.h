@@ -65,7 +65,7 @@ void simpleMotor(tMotor motorName, TServoIndex servoName, int power, int angle, 
 ***************************************/
 void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX, int initServoPos, float specServoMap)
 {
-	if(magnitudeCalc(inputY, inputX) > LOW_THRESH)
+	if(magnitudeCalc(inputY, inputX) > 15)
 	{
 		if(atan2(inputY, inputX) < 0)
 		{
@@ -158,10 +158,10 @@ void moveStraight(float distanceInches, int power)
 	nMotorEncoder[sweFL] = 0;
 	nMotorEncoder[sweFR] = 0;
 
-	simpleMotor(sweFL, swiFL, power, dirAngle, 0, FL_SERVO_MAP);
-	simpleMotor(sweBL, swiBL, power, dirAngle, -34, BL_SERVO_MAP);
-	simpleMotor(sweFR, swiFR, power, dirAngle, -30, FR_SERVO_MAP);
-	simpleMotor(sweBR, swiBR, power, dirAngle, -30, BR_SERVO_MAP);
+	simpleMotor(sweFL, swiFL, power, 90, 0, FL_SERVO_MAP);
+	simpleMotor(sweBL, swiBL, power, 90, -34, BL_SERVO_MAP);
+	simpleMotor(sweFR, swiFR, power, 90, -30, FR_SERVO_MAP);
+	simpleMotor(sweBR, swiBR, power, 90, -30, BR_SERVO_MAP);
 
 	while((nMotorEncoder[sweFR] != targetDistance) || (nMotorEncoder[sweFL] != targetDistance))
 	{
