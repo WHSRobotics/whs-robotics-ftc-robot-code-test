@@ -36,6 +36,7 @@ void initializeRobot()
 	servo[swiBL] = PI/2.0* BL_SERVO_MAP;
 	servo[swiFR] = PI/2.0* FR_SERVO_MAP;
 	servo[swiBR] = PI/2.0* BR_SERVO_MAP;
+	wait1Msec(1000);
 	//Setting servos to closed position
 	servo[antiRatchet] = AR_CLOSED;
 	servo[dropbox] = BOX_CLOSED;
@@ -54,13 +55,13 @@ task main()
 	waitForStart();
 
 	StartTask(Arm);
-	StartTask(Hang);
+	StartTask(Winch);
 	StartTask(Flag);
 	StartTask(Intake);
 	//StartTask(Turntable);
 	StartTask(JoyControl);
 	StartTask(DriveControl);
-
+	StartTask(Hangman);
 
 	while(true)
 	{

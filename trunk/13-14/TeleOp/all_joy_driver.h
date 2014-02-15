@@ -133,18 +133,15 @@ void runPow(float motPow)
 
 
 //////////////GENERAL TASKS///////////////
-/************HANG*************
+/************WINCH*************
 FAILSAFE ACTIVE
 Hold down btn 7: Winch forward
 Hold down btn 4: Winch backward, Open servo
-NOT FAILSAFE
-Tap btn 1: Activate hangman sequence
 *****************************/
-task Hang()
+task Winch()
 {
 	bool winchForward = false;
 	bool winchBackward = false;
-	bool hangmanOn = false;
 
 	while(true)
 	{
@@ -161,26 +158,6 @@ task Hang()
 			winchForward = anyBtn(7);
 			winchBackward = anyBtn(4);
 			//hangmanOn = anyBtn(1);
-		}
-		if(ANIjoy2 && DTjoy1)
-			hangmanOn = getTap(2,1);
-		else
-			hangmanOn = getTap(2,1) || getTap(1,1);
-
-		//Hangman movement
-		if(hangmanOn)
-		{
-			//-/writeDebugStreamLine("hangman mot 90");
-			intakeOn = false;
-			runArm(ARM_DOWN);
-			wait1Msec(750);
-			motor[hangmanMot] = HANGMAN_UP;
-		}
-		else
-		{
-			wait1Msec(200);
-			intakeOn = true;
-			motor[hangmanMot] = HANGMAN_DOWN;
 		}
 
 		//Winch & Anti-ratchet movement
@@ -202,6 +179,39 @@ task Hang()
 			motor[winchMot] = STOP;
 			wait1Msec(800);
 			servo[antiRatchet] = AR_CLOSED; //closed
+		}
+	}
+}
+
+
+/************HANG*************
+Tap btn 1: Activate hangman sequence
+*****************************/
+task Hangman()
+{
+	bool hangmanOn = false;
+
+	while(true)
+	{
+		getJoystickSettings(joystick);
+		//Check conditions
+		if((getTap(2,1) && ANIjoy2 && DTjoy1) || (getTap(2,1) || getTap(1,1)))
+			hangmanOn = true;
+
+		//Hangman movement
+		if(hangmanOn)
+		{
+			writeDebugStreamLine("hangman mot 90");
+			intakeOn = false;
+			motor[hangmanMot] = HANGMAN_UP;
+			while(!(getTap(2,1) && ANIjoy2 && DTjoy1) || !(getTap(2,1) || getTap(1,1))){}
+				hangmanOn = false;
+		}
+		else
+		{
+			wait1Msec(200);
+			intakeOn = true;
+			motor[hangmanMot] = HANGMAN_DOWN;
 		}
 	}
 }
