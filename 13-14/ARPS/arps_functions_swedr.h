@@ -219,7 +219,7 @@ void moveStraight(float dirAngle, float distanceInches, float power)
 ***************************************/
 task hangArmMaintain()
 {
-	motor[hangmanMot] = -30;
+	motor[hangmanMot] = -60;
 }
 
 
@@ -270,7 +270,7 @@ void resetGlobVars()
 **  getAngleChange gives an updated  **
 **  change in angle                  **
 ***************************************/
-float getAngleChange()
+/*float getAngleChange()
 {
 	currentValue = HTGYROreadRot(gyroSensor);//gyroReading - BIAS;
 	timeChange = time1[T1]/MILLISECOND; //change in time (sec)
@@ -279,18 +279,18 @@ float getAngleChange()
 
 	angleChange = currentValue * timeChange;
 	return angleChange;
-}
+}*/
 
 
 /*****************************************
 **  getCurrTotalMove gives a current    **
 **  running total of turn for the gyro  **
 ******************************************/
-float getCurrTotalMove(float currTotal)
-{
-	currTotal += getAngleChange();
-	return currTotal;
-}
+//float getCurrTotalMove(float currTotal)
+//{
+//	currTotal += getAngleChange();
+//	return currTotal;
+//}
 
 
 /***************************************
@@ -304,37 +304,37 @@ float getCurrTotalMove(float currTotal)
 * int speedKonstant - Speed to turn at
 ****************************************/
 //Should add a parameter to determine which way to pivot (left or right)
-void gyroCenterPivot(int turnDirection, int speedKonstant)
-{
-	//Initialization
-	HTGYROstartCal(gyroSensor); //Calibrate gyro sensor
-	ClearTimer(T1);
+//void gyroCenterPivot(int turnDirection, int speedKonstant)
+//{
+//	//Initialization
+//	HTGYROstartCal(gyroSensor); //Calibrate gyro sensor
+//	ClearTimer(T1);
 
-	adjustedTarget = ADJUST_M * turnDirection - ADJUST_B; //scale target angle linearly
-	float turn = 100.0;  //default pwr for drive train motors
+//	adjustedTarget = ADJUST_M * turnDirection - ADJUST_B; //scale target angle linearly
+//	float turn = 100.0;  //default pwr for drive train motors
 
-	while(abs(remainingTurn) > TURN_THRESHOLD) //while significantly turning
-	{
-		remainingTurn = adjustedTarget - gCurrTotalMove; //find # of degrees left to turn
-		gCurrTotalMove += getAngleChange();
-		error = adjustedTarget - gCurrTotalMove;
-		turn = error * speedKonstant; //find pwr for DT motors
+//	while(abs(remainingTurn) > TURN_THRESHOLD) //while significantly turning
+//	{
+//		remainingTurn = adjustedTarget - gCurrTotalMove; //find # of degrees left to turn
+//		gCurrTotalMove += getAngleChange();
+//		error = adjustedTarget - gCurrTotalMove;
+//		turn = error * speedKonstant; //find pwr for DT motors
 
-		//apply calculated turn pwr to DT motors
+//		//apply calculated turn pwr to DT motors
 
-		wait10Msec(1);
-	}
+//		wait10Msec(1);
+//	}
 
-	stopDriveTrain();
-	resetGlobVars();
-}
+//	stopDriveTrain();
+//	resetGlobVars();
+//}
 
 
 //-------------------AUTO ARM------------------
 void dropTheBlock()
 {
 	servo[dropbox] = BOX_OPEN;
-	wait10Msec(60);
+	wait10Msec(100);
 	servo[dropbox] = BOX_CLOSED;
 	wait10Msec(60);
 }
