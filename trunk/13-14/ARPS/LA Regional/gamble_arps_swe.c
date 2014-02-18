@@ -1,7 +1,7 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  HTMotor)
 #pragma config(Hubs,  S3, HTServo,  HTServo,  none,     none)
-#pragma config(Sensor, S2,     gyroSensor,     sensorI2CHiTechnicGyro)
-#pragma config(Sensor, S4,     SMUX,           sensorI2CCustom)
+#pragma config(Sensor, S2,     IRSensor,       sensorHiTechnicIRSeeker1200)
+#pragma config(Sensor, S4,     ,               sensorI2CCustom)
 #pragma config(Motor,  motorA,          hangmanMot,    tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  motorB,          intakeL,       tmotorNXT, PIDControl, reversed, encoder)
 #pragma config(Motor,  motorC,          intakeR,       tmotorNXT, PIDControl, reversed, encoder)
@@ -31,42 +31,86 @@
 #include "auto_globVars_swedr.h"
 
 int crate = 0;
-tMUXSensor IRSensor = msensor_S4_2;
+//tMUXSensor IRSensor = msensor_S4_2;
 
+bool boxOpen = false;
+task HoldBox()
+{
+	while(!boxOpen)
+	{
+		servo[dropbox] = 255;
+	}
+}
+
+
+task Hangman()
+{
+	while(true)
+	{
+		motor[hangmanMot] = HANGMAN_UP;
+	}
+}
+void initializeRobot()
+{
+	//initialize servo positions
+	servo[swiFL] = 97;
+	servo[swiBL] = 127;
+	servo[swiFR] = 127;
+	servo[swiBR] = 147;
+	wait1Msec(1000);
+
+	//update servo change rates to be quicker
+	muxUpdateInterval = 1;
+	servoChangeRate[swiFL] = 0;
+	servoChangeRate[swiFR] = 0;
+	servoChangeRate[swiBR] = 0;
+	servoChangeRate[swiBL] = 0;
+	StartTask(HoldBox);
+	return;
+}
+
+//////////////////MAIN/////////////////////
 task main()
 {
+	initializeRobot();
+
 	waitForStart();
+	StartTask(Hangman);
 	//ARM NEEDS TO BE RAISED HIGH ENOUGH THAT IT WILL BE OVER THE CRATES BUT NOT HIT THE BAR
 	wait1Msec(300);
-	if(SensorValue[IRSensor] <= 4 && SensorValue[IRSensor] != 0)
+	if(SensorValue[IRSensor] <= 3 && SensorValue[IRSensor] != 0)
 	{
 		crate = 1;
 	}
-	else if(SensorValue[IRSensor] == 5)
+	else if(SensorValue[IRSensor] == 4)
 	{
 		crate = 2;
 	}
-	else if(SensorValue[IRSensor] == 0)//added in SensorValue, it caused everything to go wrong
+	else if(SensorValue[IRSensor] > 4)
 	{
 		crate = 3;
 	}
-	//---Move forward a bit
-	//moveStraight(0,8.0,100.0);
+	//---Move up and left
+	moveStraight(90.0, 3.0,100.0);
+	moveStraight(25.0,27.0,100.0);
 	//---Rotate perpendicular to ramp
-	//gyroCenterPivot(135.0,100.0);
-	//---Move back and left to be in front of ramp
-	//moveStraight(35.0, 20.0, -100.0);
+	moveArc(0.0,180.0,100.0);//180 deg
+	moveArc(0.0,70.0,100.0);
 	//---Move up ramp to first crate, lift arm up
-	//StartTask(Arm);
-	//moveStraight(90.0, 30.0 ,-100.0);
+	StartTask(ScoreArm);
+	moveStraight(0.0, 27.0 ,100.0); //move to crate 1
 
-	/*if(crate == 2)							//this crate would have to be the closest one to us
-	{
-		moveStraight(90.0, 8.0, -100.0);			//motors would be going at 100 power
-	}
+/*	if(crate == 2)							//this crate would have to be the closest one to us
+	{*/
+		moveStraight(0.0, 15.0, 100.0);			//move to crate 2
+	/*}
 	else if(crate == 3)
 	{
-		moveStraight(90.0, 24.0, -100.0);			//motors would be going at 100 power
-	}
-	dropTheBlock();*/
+		moveStraight(0.0, 24.0, 100.0);			//move to crate 3
+	}*/
+	boxOpen = true;
+	StopTask(HoldBox);
+	//if crate == 1 or 4, just score in crate 1
+	dropTheBlock();
+	while(true){}
 }

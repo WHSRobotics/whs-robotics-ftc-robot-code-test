@@ -29,20 +29,28 @@
 #include "arps_functions_swedr.h"
 #include "auto_globVars_swedr.h"
 /////////DUMP AUTONOMOUS/////////
+bool boxOpen = false;
+task HoldBox()
+{
+	while(!boxOpen)
+	{
+		servo[dropbox] = 255;
+	}
+}
 
 void initializeRobot()
 {
-	//servo[swiFL] = 97;
-	//servo[swiBL] = 127;
-	//servo[swiFR] = 127;
-	//servo[swiBR] = 147;
+	servo[swiFL] = 97;
+	servo[swiBL] = 127;
+	servo[swiFR] = 127;
+	servo[swiBR] = 147;
 
 	muxUpdateInterval = 1;
 	servoChangeRate[swiFL] = 0;
 	servoChangeRate[swiFR] = 0;
 	servoChangeRate[swiBR] = 0;
 	servoChangeRate[swiBL] = 0;
-
+	servo[dropbox] = 255;
 	return;
 }
 
@@ -52,10 +60,14 @@ task main()
 	initializeRobot();
 
 	waitForStart();
-	hangArmMaintain();
-	wait1Msec(50);
-	moveStraight(35.0, 20.0, 100);	     //have the motor go at 100 power
-	StartTask(RampArm);
+	StartTask(hangArmMaintain);
+	moveStraight(140.0, 19.0, 75.0);	     //have the motor go at 100 power
+	moveArc(0.0, 90.0, -75.0); //170 degs
+	StartTask(ScoreArm);
+	moveStraight(180.0, 38.0, 75.0);
+	moveStraight(90.0, 12.0, 75.0);
+	boxOpen = true;
+	StopTask(HoldBox);
 	dropTheBlock();
 	while(true){}
 //	dropTheBlock();

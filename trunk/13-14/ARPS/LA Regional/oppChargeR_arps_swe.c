@@ -36,14 +36,13 @@ void initializeRobot()
 	servo[swiBL] = 127;
 	servo[swiFR] = 127;
 	servo[swiBR] = 147;
-	servo[antiRatchet] = AR_CLOSED;
 
 	muxUpdateInterval = 1;
 	servoChangeRate[swiFL] = 0;
 	servoChangeRate[swiFR] = 0;
 	servoChangeRate[swiBR] = 0;
 	servoChangeRate[swiBL] = 0;
-
+	servo[dropbox] = 255;
 	return;
 }
 
@@ -53,9 +52,8 @@ task main()
 	initializeRobot();
 
 	waitForStart();
-//	hangArmMaintain();
-//	wait1Msec(50);
-StartTask(RampArm);
-	moveStraight(55.0, 65.0, 75.0);	     //have the motor go at 100 power
+	StartTask(hangArmMaintain);
+	StartTask(RampArm);
+	moveStraight(125.0, 65.0, 50.0);
 	while(true){}
 }
