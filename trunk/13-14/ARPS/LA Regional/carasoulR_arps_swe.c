@@ -62,7 +62,7 @@ task main()
 	StartTask(hangArmMaintain);
 	StartTask(RampArm);
 	moveStraight(90.0, 12.0, 50.0);			//-Go forward
-	if(SensorValue[IRSensor] == 9)	 		//-Sensing the IR Beacon until it hits the range of (arbitrary number)
+	if(SensorValue[IRSensor] == 1)	 		//-Sensing the IR Beacon until it hits the range of (arbitrary number)
 	{
 		moveArm(50);
 		moveArc(0.0, 90.0, -50.0);				//-Turn 90 degrees left when it hits the number
@@ -73,7 +73,7 @@ task main()
 		moveStraight(90.0, 1.0, -50.0);
 		moveArc(0.0, 90.0, -50.0);				//-Move back turn 90 degrees right
 	}
-	else if(SensorValue[IRSensor] == 8)
+	else if(SensorValue[IRSensor] == 2)
 	{
 		moveStraight(90.0, 10.0, 50.0);
 		moveArm(50);
@@ -86,7 +86,7 @@ task main()
 		moveArc(0.0, 90.0, -50.0);				//-Move back turn 90 degrees right
 		moveStraight(90.0, 10.0, 50.0);
 	}
-	else if(SensorValue[IRSensor] == 6)
+	else if(SensorValue[IRSensor] ==4)
 	{
 		moveStraight(90.0, 22.0, 50.0);
 		moveArm(50);
@@ -100,7 +100,7 @@ task main()
 		moveArc(0.0, 90.0, -50.0);				//-Move back turn 90 degrees right
 		moveStraight(90.0, 22.0, 50.0);
 	}
-	else if(SensorValue[IRSensor] <= 4)
+	else if(SensorValue[IRSensor] >= 6)
 	{
 		moveStraight(90.0, 32.0, 50.0);
 		moveArm(50);
