@@ -29,6 +29,7 @@
 #include "arps_functions_swedr.h"
 #include "auto_globVars_swedr.h"
 /////////DUMP AUTONOMOUS/////////
+
 bool boxOpen = false;
 task HoldBox()
 {
