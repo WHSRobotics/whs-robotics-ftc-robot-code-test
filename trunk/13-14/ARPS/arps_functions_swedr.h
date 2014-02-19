@@ -350,7 +350,13 @@ task ScoreArm()
 	wait1Msec(750);
 	moveArm(0);
 }
-
+task AntiRat()
+{
+	while(true)
+	{
+		servo[antiRatchet] = AR_CLOSED;
+	}
+}
 
 
 #endif;
