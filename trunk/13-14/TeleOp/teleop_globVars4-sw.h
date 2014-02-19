@@ -1,6 +1,9 @@
 #ifndef TELEOP_GLOBVARS4-SW.H;
 #define TELEOP_GLOBVARS4-SW.H;
 
+#include "hitechnic-sensormux.h"
+#include "hitechnic-compass.h"
+
 ////////////GLOBAL VARS//////////////
 //////NOTE: getTap uses Timer T4
 //Control scheme variables
@@ -47,6 +50,11 @@ const float OROT_SCALE_DIV = sqrt(2.0 * HALF_WIDTH_X * HALF_LENGTH_Y);
 const float ROT_SCALE = 25.0/128/OROT_SCALE_DIV;
 const float TANK_SPEED_SCALE = 1.0;
 const float SWERVE_SPEED_SCALE = 0.585937;
+
+const tMUXSensor USSR; //
+const tMUXSensor gyro;
+const tMUXSensor accel;
+const tMUXSensor compass = msensor_S4_1;
 
 const int FL_POS1 = 0;
 const int FL_POS2 = 230;//232;//214;

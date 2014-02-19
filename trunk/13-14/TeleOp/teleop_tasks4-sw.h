@@ -261,7 +261,7 @@ void simpleTankControl(int inputY1, int inputY2, int THRESH_VALUE)
 float compassShift(float specServoMap)
 {
 	return angle = abs(joystick.joy1_x2) < LOW_THRESH
-	? HTMCreadHeading(msensor_S4_1) * PI/180.0 * specServoMap
+	? HTMCreadHeading(compass) * PI/180.0 * specServoMap
 	: 0.0 ;
 }
 
