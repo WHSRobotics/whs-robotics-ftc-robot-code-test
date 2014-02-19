@@ -12,8 +12,6 @@ ratchetDisable = servo
 
 
 #include "JoystickDriver.c"
-#include "hitechnic-sensormux.h"
-#include "hitechnic-compass.h"
 #include "teleop_globVars4-sw.h"
 
 
