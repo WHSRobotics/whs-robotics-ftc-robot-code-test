@@ -38,6 +38,14 @@ task HoldBox()
 	}
 }
 
+task AntiRat()
+{
+	while(true)
+	{
+		servo[antiRatchet] = AR_CLOSED;
+	}
+}
+
 void initializeRobot()
 {
 	servo[swiFL] = 97;
@@ -50,7 +58,8 @@ void initializeRobot()
 	servoChangeRate[swiFR] = 0;
 	servoChangeRate[swiBR] = 0;
 	servoChangeRate[swiBL] = 0;
-	servo[dropbox] = 255;
+	StartTask(HoldBox);//servo[dropbox] = 255;
+	StartTask(AntiRat);
 	return;
 }
 

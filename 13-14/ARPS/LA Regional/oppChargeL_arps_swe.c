@@ -1,6 +1,7 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  HTMotor)
 #pragma config(Hubs,  S3, HTServo,  HTServo,  none,     none)
-#pragma config(Sensor, S2,     gyroSensor,     sensorI2CHiTechnicGyro)
+#pragma config(Sensor, S2,     IRSensor,       sensorHiTechnicIRSeeker1200)
+#pragma config(Sensor, S4,     ,               sensorI2CCustom)
 #pragma config(Motor,  motorA,          hangmanMot,    tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  motorB,          intakeL,       tmotorNXT, PIDControl, reversed, encoder)
 #pragma config(Motor,  motorC,          intakeR,       tmotorNXT, PIDControl, reversed, encoder)
@@ -46,7 +47,6 @@ void initializeRobot()
 	servo[dropbox] = 255;
 	return;
 }
-
 
 task main()
 {
