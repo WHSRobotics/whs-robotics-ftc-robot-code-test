@@ -71,7 +71,7 @@ task main()
 		StopTask(HoldBox);
 		dropTheBlock();
 		moveStraight(90.0, 1.0, -50.0);
-		moveArc(0.0, 90.0, -50.0);				//-Move back turn 90 degrees right
+		moveArc(0.0, 90.0, 50.0);				//-Move back turn 90 degrees right
 	}
 	else if(SensorValue[IRSensor] == 8)
 	{
