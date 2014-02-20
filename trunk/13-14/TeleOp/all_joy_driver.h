@@ -235,11 +235,18 @@ task Flag()
 		else
 			flagOn = anyBtn(3);
 
+
+
 		if(flagOn)
 		{
 			writeDebugStreamLine("Flag 100");
 			motor[flagMot] = MAX;
 		}
+		else if(joy1Btn(1))
+		{
+			motor[flagMot] = -MAX;
+		}
+
 		else
 		{
 			motor[flagMot] = STOP;
