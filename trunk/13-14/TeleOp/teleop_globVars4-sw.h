@@ -1,9 +1,6 @@
 #ifndef TELEOP_GLOBVARS4-SW.H;
 #define TELEOP_GLOBVARS4-SW.H;
 
-#include "hitechnic-sensormux.h"
-#include "hitechnic-compass.h"
-
 ////////////GLOBAL VARS//////////////
 //////NOTE: getTap uses Timer T4
 //Control scheme variables
@@ -12,7 +9,7 @@ bool ANIjoy2 = true;
 bool FSon = true;
 //Intake variables
 bool intakeOn = true;
-//bool intakeReversed = false;
+bool intakeReversed = false;
 //bool boxOpen = false;
 
 //Drive Control variables
@@ -25,8 +22,8 @@ const int STOP = 0;
 const int MAX = 100; //intake forward, winch forward, flag on
 const int ARM_UP = 90;
 const int ARM_DOWN = -50;
-//const int INTAKE_R = -50;
-const int HANGMAN_UP = 100;
+const int INTAKE_R = -50;
+const int HANGMAN_UP = -100;
 const int HANGMAN_DOWN = 0;
 const int WINCH_R = -100;
 const int AR_OPEN = 40; //anti-ratchet open
@@ -50,11 +47,6 @@ const float OROT_SCALE_DIV = sqrt(2.0 * HALF_WIDTH_X * HALF_LENGTH_Y);
 const float ROT_SCALE = 25.0/128/OROT_SCALE_DIV;
 const float TANK_SPEED_SCALE = 1.0;
 const float SWERVE_SPEED_SCALE = 0.585937;
-
-const tMUXSensor USSR; //
-const tMUXSensor gyro;
-const tMUXSensor accel;
-const tMUXSensor compass = msensor_S4_1;
 
 const int FL_POS1 = 0;
 const int FL_POS2 = 230;//232;//214;

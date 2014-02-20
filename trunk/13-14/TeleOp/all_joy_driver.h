@@ -189,23 +189,21 @@ Tap btn 1: Activate hangman sequence
 *****************************/
 task Hangman()
 {
-	bool hangmanOn = false;
+	//bool hangmanOn = false;
 
 	while(true)
 	{
 		getJoystickSettings(joystick);
 		//Check conditions
-		if((getTap(2,1) && ANIjoy2 && DTjoy1) || (getTap(2,1) || getTap(1,1)))
-			hangmanOn = true;
+		/*if(joy2Btn(1))
+			hangmanOn = true;*/
 
 		//Hangman movement
-		if(hangmanOn)
+		if((joy2Btn(1) && ANIjoy2) || (joy1Btn(1) && !DTjoy1) || (!ANIjoy2 && DTjoy1 && (joy1Btn(1) || joy2Btn(1))))//hangmanOn)
 		{
-			writeDebugStreamLine("hangman mot 90");
+			//-/writeDebugStreamLine("hangman mot 90");
 			intakeOn = false;
 			motor[hangmanMot] = HANGMAN_UP;
-			while(!(getTap(2,1) && ANIjoy2 && DTjoy1) || !(getTap(2,1) || getTap(1,1))){}
-				hangmanOn = false;
 		}
 		else
 		{
@@ -235,18 +233,11 @@ task Flag()
 		else
 			flagOn = anyBtn(3);
 
-
-
 		if(flagOn)
 		{
 			writeDebugStreamLine("Flag 100");
 			motor[flagMot] = MAX;
 		}
-		else if(joy1Btn(1))
-		{
-			motor[flagMot] = -MAX;
-		}
-
 		else
 		{
 			motor[flagMot] = STOP;
