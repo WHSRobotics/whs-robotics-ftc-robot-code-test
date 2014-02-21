@@ -12,7 +12,7 @@ ratchetDisable = servo
 
 
 #include "all_joy_driver.h"
-
+#include "hitechnic-compass.h"
 
 /**********SCORING ARM********
 1 DC Motor
@@ -63,6 +63,7 @@ task Arm()
 2 NXT motors
 ANI Controlled
 Btn 5: Dropbox Open
+Btn 2: Toggle Intake
 *****************************/
 task Intake()
 {
@@ -82,12 +83,10 @@ task Intake()
 		{
 			servo[dropbox] = BOX_CLOSED;
 		}
-
 		if((joy2Btn(2) && ANIjoy2) || (joy1Btn(2) && !DTjoy1))
 		{
 			intakeOn = !intakeOn;
 		}
-
 		if(intakeOn)
 		{
 			if(intakeReversed)
@@ -263,7 +262,6 @@ void simpleTankControl(int inputY1, int inputY2, int THRESH_VALUE)
 	}
 }
 
-
 void dpadSwerve(int joy)
 {
 	switch(joystick.joy1_TopHat)
@@ -319,7 +317,7 @@ void swerveControl(float transYInput, float transXInput, float angularInput)
 	float angSclr;
 	float transXSclr;
 	float transYSclr;
-
+	writeDebugStreamLine("compassVal %d",HTMCreadHeading(compass));
 	if((magnitudeCalc(transXInput, transYInput) > LOW_THRESH) && (abs(angularInput) > LOW_THRESH))
 	{
 		angSclr = -angularInput * ROT_SCALE;
