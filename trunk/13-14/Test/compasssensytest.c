@@ -8,7 +8,6 @@ task main()
 {
 	HTMCstartCal(HTMC);
 	wait1Msec(5000);
-	PlayTone(440,30);
 	HTMCstopCal(HTMC);
 	while(true)
 	{
