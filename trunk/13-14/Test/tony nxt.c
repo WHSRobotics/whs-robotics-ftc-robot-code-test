@@ -6,17 +6,17 @@ task main()
 	{
 		if(nNxtButtonPressed == 2) //left arrow
 		{
-			motor[motorA] = -100;
+			motor[motorC] = -100;
 		}
 		else if(nNxtButtonPressed == 1)
 		{
-			motor[motorA] = 100;
+			motor[motorC] = 100;
 		}
 		else if(nNxtButtonPressed == 3)
 		{
-			motor[motorA] = 50;
+			motor[motorC] = 50;
 		}
-		motor[motorA] = 0;
+		motor[motorC] = 0;
 	}
 
 
