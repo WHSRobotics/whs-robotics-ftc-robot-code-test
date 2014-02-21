@@ -57,6 +57,15 @@ void initializeRobot()
 
 task main()
 {
+	//--Get IR reading
+	//if(SensorValue[IRSensor] == )//--if crate 1
+  //{
+	//	moveStraight(110.0,12.0,100.0); //+20 degs, 12 in, 100 pow
+  //}
+	//else if(SensorValue[IRSensor] == )//--if crate 2
+	//{
+	//	moveStraight(
+	//}
 	moveStraight(90.0, 12.0, 50.0);
 	if(SensorValue[IRSensor] == 1)
 	{

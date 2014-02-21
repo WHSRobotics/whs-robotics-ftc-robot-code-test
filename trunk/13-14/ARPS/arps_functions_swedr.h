@@ -12,6 +12,13 @@
 ***********************************/
 
 //--------------TASKS-----------------
+task Hangman()
+{
+	while(true)
+	{
+		motor[hangmanMot] = HANGMAN_DOWN;
+	}
+}
 
 //-----------------BASE FUNCTIONS------------------
 /**************************************
@@ -192,7 +199,8 @@ void moveStraight(float dirAngle, float distanceInches, float power)
 {
 	int targetDistance = distanceInches * INCH_ENCODERVALUE;// * abs(power)/power;
 
-	nMotorEncoder[sweFL] = 0;
+	nMotorEncoder[sweBL] = 0;
+	nMotorEncoder[sweBR] = 0;
 	//nMotorEncoder[sweFR] = 0;
 
 	/*simpleMotor(sweFL, swiFL, power, dirAngle, 0, FL_SERVO_MAP);
@@ -203,13 +211,14 @@ void moveStraight(float dirAngle, float distanceInches, float power)
 	wait1Msec(1000);
 	runDriveTrain(-power);
 
-	while(abs(nMotorEncoder[sweFL]) <= targetDistance)/* || (nMotorEncoder[sweFL] <= targetDistance)*/
+	while(abs(nMotorEncoder[sweBL]) <= targetDistance || abs(nMotorEncoder[sweBR]) <= targetDistance)/* || (nMotorEncoder[sweFL] <= targetDistance)*/
 	{
 		setServoAngle(dirAngle);
-		writeDebugStreamLine("FR: %f, FL: %f", nMotorEncoder[sweFR], nMotorEncoder[sweFL]);
+		writeDebugStreamLine("BL: %f, BR: %f", nMotorEncoder[sweBL], nMotorEncoder[sweBR]);
 	}
 
 	stopDriveTrain();
+	wait1Msec(200);
 }
 
 
@@ -331,10 +340,22 @@ void resetGlobVars()
 
 
 //-------------------AUTO ARM------------------
+task HoldBox()
+{
+	while(!boxOpen)
+	{
+		servo[dropbox] = 255;
+	}
+}
+
+
 void dropTheBlock()
 {
+	boxOpen = true;
+	StopTask(HoldBox);
+
 	servo[dropbox] = BOX_OPEN;
-	wait10Msec(100);
+	wait10Msec(90);
 	servo[dropbox] = BOX_CLOSED;
 	wait10Msec(60);
 }
@@ -347,7 +368,7 @@ task RampArm()
 task ScoreArm()
 {
 	moveArm(90);
-	wait1Msec(750);
+	wait1Msec(650);
 	moveArm(0);
 }
 task AntiRat()
