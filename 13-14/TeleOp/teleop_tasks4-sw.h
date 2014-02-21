@@ -246,7 +246,6 @@ void tankMotor(tMotor motorName, TServoIndex servoName, float inputY, float inpu
 }
 
 //edit this
-//add compass sensor field adjuster
 void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX, int initServoPos, float specServoMap)
 {
 	if(magnitudeCalc(inputY, inputX) > LOW_THRESH)
