@@ -11,7 +11,7 @@
 
 
 ///////////////////////////INCLUDES////////////////////////////
-//#include "hitechnic-sensormux.h"  //header file for SMUX
+#include "hitechnic-sensormux.h"  //header file for SMUX
 #include "hitechnic-irseeker-v2.h" //header file for IR seeker v2! :D
 #include "hitechnic-gyro.h" //driver for gyro
 //#include "hitechnic-touchmux.h"  //header file for TUX
@@ -93,6 +93,7 @@ const int BOX_CLOSED = 255;
 ///////////////GLOBAL VARIABLES////////////////
 //Concurrent variables
 int currIR = 0;
+bool boxOpen = false;
 
 //Gyro variables
 float currentValue = 0.0; //current value of adjusted gyro reading (w/o BIAS)
