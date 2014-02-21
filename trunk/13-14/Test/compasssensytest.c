@@ -6,10 +6,10 @@
 
 task main()
 {
-	//HTMCstartCal(HTMC);
-	//wait1Msec(5000);
-	//PlayTone(440,30);
-	//HTMCstopCal(HTMC);
+	HTMCstartCal(HTMC);
+	wait1Msec(5000);
+	PlayTone(440,30);
+	HTMCstopCal(HTMC);
 	while(true)
 	{
 		nxtDisplayString(3 ,"sensy: %d", HTMCreadHeading(HTMC));
