@@ -1,7 +1,6 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  HTMotor)
 #pragma config(Hubs,  S3, HTServo,  HTServo,  none,     none)
-#pragma config(Sensor, S2,     IRSensor,       sensorHiTechnicIRSeeker1200)
-#pragma config(Sensor, S4,     ,               sensorI2CCustom)
+#pragma config(Sensor, S2,     gyroSensor,     sensorI2CHiTechnicGyro)
 #pragma config(Motor,  motorA,          hangmanMot,    tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  motorB,          intakeL,       tmotorNXT, PIDControl, reversed, encoder)
 #pragma config(Motor,  motorC,          intakeR,       tmotorNXT, PIDControl, reversed, encoder)
@@ -43,18 +42,18 @@ void initializeRobot()
 	servoChangeRate[swiFR] = 0;
 	servoChangeRate[swiBR] = 0;
 	servoChangeRate[swiBL] = 0;
-	StartTask(HoldBox);//servo[dropbox] = 255;
-	StartTask(AntiRat);
+	servo[dropbox] = 255;
 	return;
 }
+
 
 task main()
 {
 	initializeRobot();
 
 	waitForStart();
-	StartTask(hangArmMaintain);
+	//StartTask(hangArmMaintain);
 	StartTask(RampArm);
-	moveStraight(55.0, 65.0, 75.0);	     //have the motor go at 100 power
+	moveStraight(130.0, 55.0, 75.0);
 	while(true){}
 }
