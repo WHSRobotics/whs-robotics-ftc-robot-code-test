@@ -13,6 +13,7 @@ ratchetDisable = servo
 
 #include "all_joy_driver.h"
 #include "hitechnic-compass.h"
+#include "auto-teleop_interVars-sw.h"
 
 /**********SCORING ARM********
 1 DC Motor
@@ -176,6 +177,17 @@ int getActiveDTJoy(bool tank)
 	}
 }
 
+float HTMC(float specServoMap, int x)
+{
+	int reading = abs(x) > LOW_THRESH
+	? HTMCreadRelativeHeading(compass) < 0
+		? HTMCreadRelativeHeading(compass) + 360
+		: HTMCreadRelativeHeading(compass)
+	: 0;
+	return reading * RAD_DEG_CONV * specServoMap;
+	writeDebugStreamLine("sensy: %f", reading);
+}
+
 
 float magnitudeCalc(float inputX, float inputY)
 {
@@ -211,6 +223,30 @@ float piAng(float inputY, float inputX, float initServoPos, float specServoMap)
 }
 
 
+void tankMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX, int initServoPos, float specServoMap)
+{
+	if(magnitudeCalc(inputY, inputX) > LOW_THRESH)
+	{
+		if(atan2(inputY, inputX) < 0)
+		{
+			servo[servoName] = (specServoMap * PI) - (initServoPos + ((atan2(inputY, inputX)+PI) * specServoMap));
+			motor[motorName] = magnitudeCalc(inputY, inputX) * JOY_MAP;
+		}
+		else
+		{
+			servo[servoName] = (specServoMap * PI) - (initServoPos + (atan2(inputY, inputX) * specServoMap));
+			motor[motorName] = -magnitudeCalc(inputY, inputX)* JOY_MAP;
+		}
+	}
+	else
+	{
+		servo[servoName] = PI/2.0 * specServoMap - initServoPos;
+		motor[motorName] = 0;
+	}
+}
+
+//edit this
+//add compass sensor field adjuster
 void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX, int initServoPos, float specServoMap)
 {
 	if(magnitudeCalc(inputY, inputX) > LOW_THRESH)
@@ -233,17 +269,16 @@ void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX
 	}
 }
 
-
 void assistedTankControl(float diffY1Input, float diffY2Input)
 {
 	float scaledY1 = diffY1Input * TANK_SPEED_SCALE;
 	float scaledY2 = diffY2Input * TANK_SPEED_SCALE;
 	float velX = HALF_LENGTH_Y * (scaledY1 - scaledY2)/(2.0*HALF_WIDTH_X);
 
-	piMotor(sweFL, swiFL, scaledY1, velX, 0, FL_SERVO_MAP);
-	piMotor(sweBL, swiBL, scaledY1, -velX, -34, BL_SERVO_MAP); //-30
-	piMotor(sweFR, swiFR, scaledY2, velX, -30, FR_SERVO_MAP); //-30
-	piMotor(sweBR, swiBR, scaledY2, -velX, -30, BR_SERVO_MAP); //-30
+	tankMotor(sweFL, swiFL, scaledY1, velX, 0, FL_SERVO_MAP);
+	tankMotor(sweBL, swiBL, scaledY1, -velX, -34, BL_SERVO_MAP); //-30
+	tankMotor(sweFR, swiFR, scaledY2, velX, -30, FR_SERVO_MAP); //-30
+	tankMotor(sweBR, swiBR, scaledY2, -velX, -30, BR_SERVO_MAP); //-30
 }
 
 
@@ -317,7 +352,6 @@ void swerveControl(float transYInput, float transXInput, float angularInput)
 	float angSclr;
 	float transXSclr;
 	float transYSclr;
-	writeDebugStreamLine("compassVal %d",HTMCreadHeading(compass));
 	if((magnitudeCalc(transXInput, transYInput) > LOW_THRESH) && (abs(angularInput) > LOW_THRESH))
 	{
 		angSclr = -angularInput * ROT_SCALE;
@@ -328,12 +362,12 @@ void swerveControl(float transYInput, float transXInput, float angularInput)
 		float velBX = transXSclr + (angSclr * HALF_LENGTH_Y);
 		float velRY = transYSclr + (angSclr * HALF_WIDTH_X);
 
-		writeDebugStreamLine(
+		/*writeDebugStreamLine(
 		"swiFL: %f, swiBL: %f, swiFR: %f, swiBR: %f",
 		piAng(velLY, velFX, 0, SERVO_MAP),
 		piAng(velLY, velBX, 0, SERVO_MAP),
 		piAng(velRY, velFX, 0, SERVO_MAP),
-		piAng(velRY, velBX, 0, SERVO_MAP));
+		piAng(velRY, velBX, 0, SERVO_MAP));*/
 
 		piMotor(sweFL, swiFL, velLY, velFX, 0, FL_SERVO_MAP);
 		piMotor(sweBL, swiBL, velLY, velBX, -34, BL_SERVO_MAP);
@@ -355,11 +389,13 @@ void swerveControl(float transYInput, float transXInput, float angularInput)
 		float velLY = transYSclr - (angSclr * HALF_WIDTH_X);
 		float velBX = transXSclr + (angSclr * HALF_LENGTH_Y);
 		float velRY = transYSclr + (angSclr * HALF_WIDTH_X);
-		writeDebugStreamLine("swiFL: %f, swiBL: %f, swiFR: %f, swiBR: %f",
+
+		/*writeDebugStreamLine("swiFL: %f, swiBL: %f, swiFR: %f, swiBR: %f",
 		piAng(velLY, velFX, 0, SERVO_MAP),
 		piAng(velLY, velBX, 0, SERVO_MAP),
 		piAng(velRY, velFX, 0, SERVO_MAP),
-		piAng(velRY, velBX, 0, SERVO_MAP));
+		piAng(velRY, velBX, 0, SERVO_MAP));*/
+
 		if((piAng(velRY, velBX, 0, BR_SERVO_MAP) < (BR_SERVO_MAP * PI/6)) || (piAng(velRY, velBX, 0, BR_SERVO_MAP) > (BR_SERVO_MAP * 5 * PI/6)))
 		{
 			piMotor(sweFL, swiFL, 0, velFX, 0, FL_SERVO_MAP);
@@ -375,8 +411,6 @@ void swerveControl(float transYInput, float transXInput, float angularInput)
 			piMotor(sweBR, swiBR, velRY, velBX, -30, BR_SERVO_MAP);
 		}
 	}
-	//-/writeDebugStreamLine("sweFL: %f, sweBL: %f, sweFR: %f, sweBR: %f", piMag(velFLY, velFLX), piMag(velBLY, velBLX), piMag(velFRY,velFRX), piMag(velBRY, velBLX));
-	//-/writeDebugStreamLine("swiFL: %f, swiBL: %f, swiFR: %f, swiBR: %f", piAng(velFLY, velFLX, 0), piAng(velBLY, velBLX, 0), piAng(velFRY,velFRX, 0), piAng(velBRY, velBLX, 20));
 }
 
 
