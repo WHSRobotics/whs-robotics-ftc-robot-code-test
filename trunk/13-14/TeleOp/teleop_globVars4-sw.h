@@ -47,6 +47,7 @@ const float OROT_SCALE_DIV = sqrt(2.0 * HALF_WIDTH_X * HALF_LENGTH_Y);
 const float ROT_SCALE = 25.0/128/OROT_SCALE_DIV;
 const float TANK_SPEED_SCALE = 1.0;
 const float SWERVE_SPEED_SCALE = 0.585937;
+const float RAD_DEG_CONV = PI/180;
 
 const int FL_POS1 = 0;
 const int FL_POS2 = 230;//232;//214;
