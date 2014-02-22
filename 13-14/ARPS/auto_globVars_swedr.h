@@ -77,7 +77,7 @@ const float MINOR_MSEC_PERCENT = 0.95; //percent of Msec to gradually ramp arm p
 
 
 //Power KONSTANTS
-const int ARM_UP = 90;
+const int ARM_UP = 50;
 const int ARM_DOWN = -50;
 //const int INTAKE_R = -50;
 const int HANGMAN_UP = 100;

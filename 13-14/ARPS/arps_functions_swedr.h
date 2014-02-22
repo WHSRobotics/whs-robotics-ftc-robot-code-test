@@ -96,38 +96,65 @@ void simpleMotor(tMotor motorName, TServoIndex servoName, float power, float ang
 
 
 /**************************************
-**  piMotor specifies movement       **
+**  piServo specifies movement       **
 **  implicitly by translation vector **
 **  components representing velocity **
 *--------------------------------------
 * Parameters:
-* tMotor motorName - specifies motor to control
 * TServoIndex servoName - specifies servo to control
 * float inputY - specifies y component of velocity vector
 * float inputX - specifies x component of velocity vector
 * int initServoPos - allows calibration of servo swivel range
 ***************************************/
-void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX, int initServoPos, float specServoMap)
+void piServo(TServoIndex servoName, float inputY, float inputX, int initServoPos, float specServoMap)
 {
 	if(magnitudeCalc(inputY, inputX) > 15)
 	{
 		if(atan2(inputY, inputX) < 0)
 		{
 			servo[servoName] = (specServoMap * 180) - (initServoPos + ((atan2(inputY, inputX)+PI) * RAD_DEG * specServoMap));
-			motor[motorName] = magnitudeCalc(inputY, inputX) * JOY_MAP;
 		}
 		else
 		{
 			servo[servoName] = (specServoMap * 180) - (initServoPos + (atan2(inputY, inputX) * RAD_DEG * specServoMap));
-			motor[motorName] = -magnitudeCalc(inputY, inputX)* JOY_MAP;
 		}
 	}
 	else
 	{
 		servo[servoName] = 90.0 * specServoMap - initServoPos;
-		motor[motorName] = 0;
 	}
 }
+
+
+/**************************************
+**  piMotor specifies movement       **
+**  implicitly by translation vector **
+**  components representing velocity **
+*--------------------------------------
+* Parameters:
+* tMotor motorName - specifies motor to control
+* float inputY - specifies y component of velocity vector
+* float inputX - specifies x component of velocity vector
+***************************************/
+void piMotor(tMotor motorName, float inputY, float inputX)
+{
+	if(magnitudeCalc(inputY, inputX) > 15)
+	{
+		if(atan2(inputY, inputX) < 0)
+		{
+			motor[motorName] = magnitudeCalc(inputY, inputX) * JOY_MAP;
+		}
+		else
+		{
+			motor[motorName] = -magnitudeCalc(inputY, inputX)* JOY_MAP;
+		}
+	}
+	else
+	{
+		motor[motorName] = STOP;
+	}
+}
+
 
 
 //-----------------MOVES AND STOPS------------------
@@ -168,17 +195,24 @@ void moveArc(float turnRadius, float arcAngle, float angVel)
 	float velLY = angSclr * (turnRadius + HALF_WIDTH_X);
 	float velRY = angSclr * (turnRadius - HALF_WIDTH_X);
 
-	nMotorEncoder[sweFL] = 0;
-	nMotorEncoder[sweFR] = 0;
+	nMotorEncoder[sweBL] = 0;
+	nMotorEncoder[sweBR] = 0;
 
-	piMotor(sweFL, swiFL, velLY, velX, 0, FL_SERVO_MAP);
-	piMotor(sweBL, swiBL, velLY, -velX, -34, BL_SERVO_MAP);
-	piMotor(sweFR, swiFR, velRY, velX, -30, FR_SERVO_MAP);
-	piMotor(sweBR, swiBR, velRY, -velX, -30, BR_SERVO_MAP);
+	piServo(swiFL, velLY, velX, 0, FL_SERVO_MAP);
+	piServo(swiBL, velLY, -velX, -34, BL_SERVO_MAP);
+	piServo(swiFR, velRY, velX, -30, FR_SERVO_MAP);
+	piServo(swiBR, velRY, -velX, -30, BR_SERVO_MAP);
 
-	while((abs(nMotorEncoder[sweFR]) <= targetArcY2) || (abs(nMotorEncoder[sweFL]) <= targetArcY1))
+	wait1Msec(500);
+
+	piMotor(sweFL, velLY, velX);
+	piMotor(sweBL, velLY, -velX);
+	piMotor(sweFR, velRY, velX);
+	piMotor(sweBR, velRY, -velX);
+
+	while((abs(nMotorEncoder[sweBR]) <= abs(targetArcY2)) || (abs(nMotorEncoder[sweBL]) <= abs(targetArcY1)))
 	{
-		writeDebugStreamLine("FR: %f, FL: %f", nMotorEncoder[sweFR], nMotorEncoder[sweFL]);
+		//writeDebugStreamLine("BR: %f, BL: %f", nMotorEncoder[sweBR], nMotorEncoder[sweBL]);
 	}
 
 	stopDriveTrain();
@@ -200,7 +234,7 @@ void moveStraight(float dirAngle, float distanceInches, float power)
 	int targetDistance = distanceInches * INCH_ENCODERVALUE;// * abs(power)/power;
 
 	nMotorEncoder[sweBL] = 0;
-	nMotorEncoder[sweBR] = 0;
+	//nMotorEncoder[sweBR] = 0;
 	//nMotorEncoder[sweFR] = 0;
 
 	/*simpleMotor(sweFL, swiFL, power, dirAngle, 0, FL_SERVO_MAP);
@@ -211,10 +245,10 @@ void moveStraight(float dirAngle, float distanceInches, float power)
 	wait1Msec(1000);
 	runDriveTrain(-power);
 
-	while(abs(nMotorEncoder[sweBL]) <= targetDistance || abs(nMotorEncoder[sweBR]) <= targetDistance)/* || (nMotorEncoder[sweFL] <= targetDistance)*/
+	while(abs(nMotorEncoder[sweBL]) <= targetDistance)// || abs(nMotorEncoder[sweBR]) <= targetDistance)/* || (nMotorEncoder[sweFL] <= targetDistance)*/
 	{
 		setServoAngle(dirAngle);
-		writeDebugStreamLine("BL: %f, BR: %f", nMotorEncoder[sweBL], nMotorEncoder[sweBR]);
+		//writeDebugStreamLine("BL: %f, BR: %f", nMotorEncoder[sweBL], nMotorEncoder[sweBR]);
 	}
 
 	stopDriveTrain();
