@@ -52,12 +52,12 @@ task main()
 	waitForStart();
 	//--Get IR reading
 
-	if(SensorValue[IRSensor] == 5)//CHANE
+	if(SensorValue[IRSensor] == 5  || SensorValue[IRSensor] == 6)//CHANE
 	{
 		writeDebugStreamLine("1,5@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		StartTask(ScoreArm);
-		moveStraight(145.0,11.0,100.0);//moveStraight(65.0,6.0,100.0); dump 25
-		if(SensorValue[IRSensor] == 5) //-- if crate 3
+		moveStraight(135.0,9.0,100.0);//moveStraight(65.0,6.0,100.0); dump 25
+		if(SensorValue[IRSensor] == 6) //-- if crate 3
 		{
 			writeDebugStreamLine("2,5@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 			//moveStraight(140.0,2.0,-50.0);
@@ -66,7 +66,7 @@ task main()
 		{
 			writeDebugStreamLine("2,6@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 			//StartTask(RampArm);
-			moveStraight(10.0,3.0,-50.0);//moveStraight(40.0,2.0,-50.0);
+			moveStraight(5.0,7.0,-50.0);//moveStraight(40.0,2.0,-50.0);
 		}
 	}
 

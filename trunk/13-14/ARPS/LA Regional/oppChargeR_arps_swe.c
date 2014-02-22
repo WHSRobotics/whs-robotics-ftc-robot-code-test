@@ -54,7 +54,7 @@ task main()
 
 	waitForStart();
 	//StartTask(hangArmMaintain);
-	StartTask(RampArm);
-	moveStraight(55.0, 60.0, 75.0);	     //have the motor go at 100 power
+	StartTask(RampArm);									 //- The arm is raised so that our robot can go on the ramp without problems
+	moveStraight(55.0, 60.0, 75.0);	     //- The robot moves 60 inches at 55 degrees
 	while(true){}
 }

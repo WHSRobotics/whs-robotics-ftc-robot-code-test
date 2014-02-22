@@ -53,7 +53,7 @@ task main()
 
 	waitForStart();
 	//StartTask(hangArmMaintain);
-	StartTask(RampArm);
-	moveStraight(130.0, 55.0, 75.0);
+	StartTask(RampArm);									//- The arm is raised so that our robot can go on the ramp without problems
+	moveStraight(130.0, 55.0, 75.0);		//- The robot moves for 55 inches at a 130 angle
 	while(true){}
 }
