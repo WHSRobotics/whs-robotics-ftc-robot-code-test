@@ -53,6 +53,6 @@ task main()
 	initializeRobot();
 	waitForStart();
 	moveStraight(65.0, 60.0, 75.0);		//- The robot will move straight, having the wheels angled at 62 degrees.
-	StartTask(RampArm);									//- While, the robot is moving, the arm will be slightly raised.
+	StartTask(RampArm);								//- While, the robot is moving, the arm will be slightly raised.
 	stopDriveTrain();
 }

@@ -57,7 +57,7 @@ task main()
 	{
 		writeDebugStreamLine("1,5@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		StartTask(ScoreArm);
-		moveStraight(35.0,11.0,100.0);//moveStraight(65.0,6.0,100.0); dump 25
+		moveStraight(37.0,12.0,100.0);//moveStraight(65.0,6.0,100.0); dump 25
 		if(SensorValue[IRSensor] == 5) //-- if crate 3
 		{
 			writeDebugStreamLine("2,5@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -67,7 +67,7 @@ task main()
 		{
 			writeDebugStreamLine("2,6@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 			//StartTask(RampArm);
-			moveStraight(10.0,3.0,-50.0);//moveStraight(40.0,2.0,-50.0);
+			moveStraight(10.0,6.0,-100.0);//moveStraight(40.0,2.0,-50.0);
 		}
 	}
 
