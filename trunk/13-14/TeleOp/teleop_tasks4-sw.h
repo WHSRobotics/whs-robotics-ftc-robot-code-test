@@ -177,17 +177,6 @@ int getActiveDTJoy(bool tank)
 	}
 }
 
-float HTMC(float specServoMap, int x)
-{
-	int reading = abs(x) > LOW_THRESH
-	? HTMCreadRelativeHeading(compass) < 0
-		? HTMCreadRelativeHeading(compass) + 360
-		: HTMCreadRelativeHeading(compass)
-	: 0;
-	return reading * RAD_DEG_CONV * specServoMap;
-	writeDebugStreamLine("sensy: %f", reading);
-}
-
 
 float magnitudeCalc(float inputX, float inputY)
 {
@@ -245,25 +234,37 @@ void tankMotor(tMotor motorName, TServoIndex servoName, float inputY, float inpu
 	}
 }
 
+
+float HTMC(float specServoMap, int x)
+{
+	int reading = abs(x) > LOW_THRESH
+	? HTMCreadRelativeHeading(compass) < 0
+		? HTMCreadRelativeHeading(compass) + 360
+		: HTMCreadRelativeHeading(compass)
+	: 0;
+	return reading * RAD_DEG_CONV * specServoMap;
+	writeDebugStreamLine("sensy: %f", reading);
+}
+
 //edit this
 void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX, int initServoPos, float specServoMap)
 {
 	if(magnitudeCalc(inputY, inputX) > LOW_THRESH)
 	{
-		if(atan2(inputY, inputX) < 0)
+		if(atan2(inputY, inputX) < HTMC(specServoMap, inputX))
 		{
-			servo[servoName] = (specServoMap * PI) - (initServoPos + ((atan2(inputY, inputX)+PI) * specServoMap));
+			servo[servoName] = (specServoMap * PI) - (initServoPos + HTMC(specServoMap, inputX) + ((atan2(inputY, inputX)+PI) * specServoMap));
 			motor[motorName] = magnitudeCalc(inputY, inputX) * JOY_MAP;
 		}
 		else
 		{
-			servo[servoName] = (specServoMap * PI) - (initServoPos + (atan2(inputY, inputX) * specServoMap));
+			servo[servoName] = (specServoMap * PI) - (initServoPos + HTMC(specServoMap, inputX) + (atan2(inputY, inputX) * specServoMap));
 			motor[motorName] = -magnitudeCalc(inputY, inputX)* JOY_MAP;
 		}
 	}
 	else
 	{
-		servo[servoName] = PI/2.0 * specServoMap - initServoPos;
+		servo[servoName] = PI/2.0 * specServoMap - initServoPos - HTMC(specServoMap, inputX);
 		motor[motorName] = 0;
 	}
 }
