@@ -23,14 +23,28 @@ Btn 8 = lower arm
 *****************************/
 task Arm()
 {
+	int armPow = ARM_MID;
 	while(true)
 	{
 		getJoystickSettings(joystick);
 
+		if((getTopHat(2,0) && ANIjoy2) || (getTopHat(1,0) && !DTjoy1))
+		{
+			armPow = ARM_MAX;
+		}
+		else if((getTopHat(2,2) && ANIjoy2) || (getTopHat(1,2) && !DTjoy1))
+		{
+			armPow = ARM_MID;
+		}
+		else if((getTopHat(2,4) && ANIjoy2) || (getTopHat(1,4) && !DTjoy1))
+		{
+			armPow = ARM_LOW;
+		}
+
 		if((ANIjoy2 && joy2Btn(6) && !joy2Btn(8)) || (!DTjoy1 && joy1Btn(6) && !joy1Btn(8)))
 		{
 			//raise arm
-			runArm(ARM_UP);
+			runArm(armPow);
 			/*if(intakeOn) //if intake is on
 			{
 				intakeReversed = true; //intake reversed to keep cubes in
@@ -85,10 +99,12 @@ task Intake()
 		{
 			servo[dropbox] = BOX_CLOSED;
 		}
+
 		if((getTap(2,2,T3) && ANIjoy2) || (getTap(1,2,T3) && !DTjoy1))
 		{
 			intakeOn = !intakeOn;
 		}
+
 		if(intakeOn)
 		{
 			/*if(intakeReversed)
