@@ -30,11 +30,11 @@
 
 void initializeRobot()
 {
-	//Compass offset setting
+	/*//Compass offset setting
 	HTMCstartCal(compass);
 	wait1Msec(5000);
 	HTMCstopCal(compass);
-	HTMCsetTarget(compass, (HTMCreadHeading(compass) - initAutoPos) % 360);
+	HTMCsetTarget(compass, (HTMCreadHeading(compass) - initAutoPos) % 360);*/
 	//Setting wheels to 90 degree position
 	servo[swiFL] = PI/2.0* FL_SERVO_MAP;
 	servo[swiBL] = PI/2.0* BL_SERVO_MAP;
