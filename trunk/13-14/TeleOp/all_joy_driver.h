@@ -190,6 +190,7 @@ Tap btn 1: Activate hangman sequence
 task Hangman()
 {
 	//bool hangmanOn = false;
+	bool intakeWasOn = false;
 
 	while(true)
 	{
@@ -202,13 +203,20 @@ task Hangman()
 		if((joy2Btn(1) && ANIjoy2) || (joy1Btn(1) && !DTjoy1) || (!ANIjoy2 && DTjoy1 && (joy1Btn(1) || joy2Btn(1))))//hangmanOn)
 		{
 			//-/writeDebugStreamLine("hangman mot 90");
+			intakeWasOn = intakeOn;
 			intakeOn = false;
 			motor[hangmanMot] = HANGMAN_UP;
 		}
 		else
 		{
 			wait1Msec(200);
-			intakeOn = true;
+			if(intakeWasOn)
+			{
+				intakeOn = true;
+				intakeWasOn = false;
+			}
+
+			//intakeOn = true;
 			motor[hangmanMot] = HANGMAN_DOWN;
 		}
 	}
