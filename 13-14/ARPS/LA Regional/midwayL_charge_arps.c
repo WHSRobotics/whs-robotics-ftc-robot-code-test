@@ -31,15 +31,6 @@
 #include "auto_globVars_swedr.h"
 /////////DUMP AUTONOMOUS/////////
 
-bool boxOpen = false;
-task HoldBox()
-{
-	while(!boxOpen)
-	{
-		servo[dropbox] = 255;
-	}
-}
-
 void initializeRobot()
 {
 	servo[swiFL] = 97;
@@ -59,7 +50,9 @@ void initializeRobot()
 
 task main()
 {
-	moveStraight(118.0, 50.0, 50.0);		//- The robot will move straight, having the wheels angled at 118 degrees.
+	initializeRobot();
+	waitForStart();
 	StartTask(RampArm);									//- While, the robot is moving, the arm will be slightly raised.
-	stopDriveTrain();
+	moveStraight(130.0, 60.0, 100.0);		//- The robot will move straight, having the wheels angled at 130 degrees.
+	while(true);
 }

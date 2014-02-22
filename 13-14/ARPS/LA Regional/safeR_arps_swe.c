@@ -37,16 +37,6 @@
 #include "auto_globVars_swedr.h"
 /////////DUMP AUTONOMOUS/////////
 
-bool boxOpen = false;
-
-task HoldBox()
-{
-	while(!boxOpen)
-	{
-		servo[dropbox] = 230;
-	}
-}
-
 task RatchetHang()
 {
 	while(true)
@@ -109,15 +99,13 @@ task main()
 	//--Move towards crate
 	moveStraight(90.0,18.0,100.0);
 	//--Score box
-	/*boxOpen = true;
+	boxOpen = true;
 	StopTask(HoldBox);
-	//--Position robot to move away from crate while scoring
-	setServoAngle(120.0);
 	dropTheBlock();
 	//--Move away from crate
-	drive(3.0,-100.0);
+	moveStraight(90.0, 16.0,-100.0);
 	//--Go onto ramp
-	//moveStraight(60.0,40.0,100.0);*/
+	moveStraight(60.0,40.0,100.0);
 
 	while(true){};
 }
