@@ -124,6 +124,14 @@ task Intake()
 
 ////////////////////DT CONTROLS////////////////////
 //////////FUNCTIONS//////////////
+
+/******GET ACTIVE DTJOY*******
+Outputs number of active joystick
+for the purpose of prioritization
+to drive-train controls
+----------PARAMETERS----------
+tank: if true, tank mode is enabled
+*****************************/
 int getActiveDTJoy(bool tank)
 {
 	bool j1_active = ((abs(joystick.joy1_x1) > IDLE_THRESH) || (abs(joystick.joy1_x2) > IDLE_THRESH) || (abs(joystick.joy1_y1) > IDLE_THRESH) || (abs(joystick.joy1_y2) > IDLE_THRESH));
@@ -195,6 +203,12 @@ int getActiveDTJoy(bool tank)
 }
 
 
+/*******MAGNITUDE CALC********
+calculates vector magnitude
+----------PARAMETERS----------
+inputY: Y component of vector
+inputX: X component of vector
+*****************************/
 float magnitudeCalc(float inputX, float inputY)
 {
 	return sqrt( pow(inputX, 2) + pow(inputY, 2) ) < 128.0
@@ -202,7 +216,12 @@ float magnitudeCalc(float inputX, float inputY)
 	: 128.0;
 }
 
-
+/***********PI MAG************
+Specialized motor power function
+----------PARAMETERS----------
+inputY: Y component of vector
+inputX: X component of vector
+*****************************/
 float piMag(float inputY, float inputX)
 {
 	if(atan2(inputY, inputX) < 0)
@@ -215,7 +234,14 @@ float piMag(float inputY, float inputX)
 	}
 }
 
-
+/***********PI ANG************
+Specialized servo angle function
+----------PARAMETERS----------
+inputY: Y component of vector
+inputX: X component of vector
+initServoPos: offset for servo
+specServoMap: servo range calibration
+*****************************/
 float piAng(float inputY, float inputX, float initServoPos, float specServoMap)
 {
 	if(atan2(inputY, inputX) < 0)
@@ -228,7 +254,16 @@ float piAng(float inputY, float inputX, float initServoPos, float specServoMap)
 	}
 }
 
-
+/********TANK MOTOR**********
+General module actuation function
+---------PARAMETERS----------
+motorName: name of motor operated
+servoName: name of servo operated
+inputY: vector component Y
+inputX: vector component X
+initServoPos: offset for servo
+specServoMap: servo range calibration
+*****************************/
 void tankMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX, int initServoPos, float specServoMap)
 {
 	if(magnitudeCalc(inputY, inputX) > LOW_THRESH)
@@ -251,6 +286,7 @@ void tankMotor(tMotor motorName, TServoIndex servoName, float inputY, float inpu
 	}
 }
 
+//MODIFIED CODE FOR COMPASS SENSOR CALIBRATION OF SWERVE CONTROL - INCOMPLETE//
 /*
 float HTMC(float specServoMap, int x)
 {
@@ -286,6 +322,13 @@ void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX
 	}
 }*/
 
+/****ASSISTED TANK CONTROL***
+Takes advantage of the swerve
+drive for assisted tank capability
+----------PARAMETERS---------
+diffY1Input: Left side Velocity
+diffY2Input: Right side Velocity
+*****************************/
 void assistedTankControl(float diffY1Input, float diffY2Input)
 {
 	float scaledY1 = diffY1Input * TANK_SPEED_SCALE;
@@ -298,7 +341,14 @@ void assistedTankControl(float diffY1Input, float diffY2Input)
 	tankMotor(sweBR, swiBR, scaledY2, -velX, -30, BR_SERVO_MAP); //-30
 }
 
-
+/****SIMPLE TANK CONTROL*****
+Tank control when modules
+have been bolted down
+----------PARAMETERS---------
+inputY1: Left side velocity
+inputY2: Right side velocity
+THRESH_VALUE: Power threshold
+*****************************/
 void simpleTankControl(int inputY1, int inputY2, int THRESH_VALUE)
 {
 	if((abs(inputY1) > THRESH_VALUE) || (abs(inputY2) > THRESH_VALUE))
@@ -314,6 +364,12 @@ void simpleTankControl(int inputY1, int inputY2, int THRESH_VALUE)
 	}
 }
 
+/*******D-PAD SWERVE+********
+Uses the D-Pad to control
+directional movement
+---------PARAMETERS----------
+joy: D-Pad int value
+*****************************/
 void dpadSwerve(int joy)
 {
 	switch(joystick.joy1_TopHat)
@@ -363,7 +419,15 @@ void dpadSwerve(int joy)
 	}
 }
 
-
+/*******SWERVE CONTROL********
+Compounds a translation vector
+and an angular vector for
+omnidirectional movement
+----------PARAMETERS----------
+transYInput: Y component of translation vector
+transXInput: X component of translation vector
+angularInput: angular velocity pseudovector value
+*****************************/
 void swerveControl(float transYInput, float transXInput, float angularInput)
 {
 	float angSclr;
@@ -431,9 +495,9 @@ void swerveControl(float transYInput, float transXInput, float angularInput)
 }
 
 
-/*******DRIVE CONTROL********
-Btn 6: Tank Drive Active
-Btn 5: Swerve Drive Active
+/****DRIVE CONTROL SIMPLE*****
+Tank Drive with prioritization
+for Joystick controllers 1 and 2
 *****************************/
 task DriveControlSimple()
 {
@@ -451,6 +515,10 @@ task DriveControlSimple()
 	}
 }
 
+/*******DRIVE CONTROL********
+Btn 6: Tank Drive Active
+Btn 5: Swerve Drive Active
+*****************************/
 task DriveControl()
 {
 	while(true)
