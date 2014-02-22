@@ -234,7 +234,7 @@ void tankMotor(tMotor motorName, TServoIndex servoName, float inputY, float inpu
 	}
 }
 
-
+/*
 float HTMC(float specServoMap, int x)
 {
 	int reading = abs(x) > LOW_THRESH
@@ -246,12 +246,12 @@ float HTMC(float specServoMap, int x)
 	writeDebugStreamLine("sensy: %f", reading);
 }
 
-//edit this
+
 void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX, int initServoPos, float specServoMap)
 {
 	if(magnitudeCalc(inputY, inputX) > LOW_THRESH)
 	{
-		if(atan2(inputY, inputX) < HTMC(specServoMap, inputX))
+		if(atan2(inputY, inputX) < (HTMC(specServoMap, inputX)/specServoMap))
 		{
 			servo[servoName] = (specServoMap * PI) - (initServoPos + HTMC(specServoMap, inputX) + ((atan2(inputY, inputX)+PI) * specServoMap));
 			motor[motorName] = magnitudeCalc(inputY, inputX) * JOY_MAP;
@@ -267,7 +267,7 @@ void piMotor(tMotor motorName, TServoIndex servoName, float inputY, float inputX
 		servo[servoName] = PI/2.0 * specServoMap - initServoPos - HTMC(specServoMap, inputX);
 		motor[motorName] = 0;
 	}
-}
+}*/
 
 void assistedTankControl(float diffY1Input, float diffY2Input)
 {
@@ -369,10 +369,10 @@ void swerveControl(float transYInput, float transXInput, float angularInput)
 		piAng(velRY, velFX, 0, SERVO_MAP),
 		piAng(velRY, velBX, 0, SERVO_MAP));*/
 
-		piMotor(sweFL, swiFL, velLY, velFX, 0, FL_SERVO_MAP);
-		piMotor(sweBL, swiBL, velLY, velBX, -34, BL_SERVO_MAP);
-		piMotor(sweFR, swiFR, velRY, velFX, -30, FR_SERVO_MAP);
-		piMotor(sweBR, swiBR, velRY, velBX, -30, BR_SERVO_MAP);
+		tankMotor(sweFL, swiFL, velLY, velFX, 0, FL_SERVO_MAP);
+		tankMotor(sweBL, swiBL, velLY, velBX, -34, BL_SERVO_MAP);
+		tankMotor(sweFR, swiFR, velRY, velFX, -30, FR_SERVO_MAP);
+		tankMotor(sweBR, swiBR, velRY, velBX, -30, BR_SERVO_MAP);
 	}
 	else
 	{
@@ -398,17 +398,17 @@ void swerveControl(float transYInput, float transXInput, float angularInput)
 
 		if((piAng(velRY, velBX, 0, BR_SERVO_MAP) < (BR_SERVO_MAP * PI/6)) || (piAng(velRY, velBX, 0, BR_SERVO_MAP) > (BR_SERVO_MAP * 5 * PI/6)))
 		{
-			piMotor(sweFL, swiFL, 0, velFX, 0, FL_SERVO_MAP);
-			piMotor(sweBL, swiBL, 0, velBX, -34, BL_SERVO_MAP);
-			piMotor(sweFR, swiFR, 0, velFX, -30, FR_SERVO_MAP);
-			piMotor(sweBR, swiBR, 0, velBX, -30, BR_SERVO_MAP);
+			tankMotor(sweFL, swiFL, 0, velFX, 0, FL_SERVO_MAP);
+			tankMotor(sweBL, swiBL, 0, velBX, -34, BL_SERVO_MAP);
+			tankMotor(sweFR, swiFR, 0, velFX, -30, FR_SERVO_MAP);
+			tankMotor(sweBR, swiBR, 0, velBX, -30, BR_SERVO_MAP);
 		}
 		else
 		{
-			piMotor(sweFL, swiFL, velLY, velFX, 0, FL_SERVO_MAP);
-			piMotor(sweBL, swiBL, velLY, velBX, -34, BL_SERVO_MAP);
-			piMotor(sweFR, swiFR, velRY, velFX, -30, FR_SERVO_MAP);
-			piMotor(sweBR, swiBR, velRY, velBX, -30, BR_SERVO_MAP);
+			tankMotor(sweFL, swiFL, velLY, velFX, 0, FL_SERVO_MAP);
+			tankMotor(sweBL, swiBL, velLY, velBX, -34, BL_SERVO_MAP);
+			tankMotor(sweFR, swiFR, velRY, velFX, -30, FR_SERVO_MAP);
+			tankMotor(sweBR, swiBR, velRY, velBX, -30, BR_SERVO_MAP);
 		}
 	}
 }
