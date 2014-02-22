@@ -22,14 +22,14 @@ bool anyBtn(int btn)
 }
 
 
-bool getTap(int joy, int btn)
+bool getTap(int joy, int btn, TTimers timer)
 {
 	if(joy1Btn(btn) && joy == 1)
 	{
-		ClearTimer(T4);
+		ClearTimer(timer);
 		//-/writeDebugStreamLine("joy1 pressed");
 
-		while(time1[T4] < TAP_THRESH)
+		while(time1[timer] < TAP_THRESH)
 		{
 			if(!joy1Btn(btn))
 			{
@@ -57,9 +57,9 @@ bool getTap(int joy, int btn)
 	}
 	else if(anyBtn(btn) && joy == 0) //any joystick
 	{
-		ClearTimer(T4);
+		ClearTimer(timer);
 		//-/writeDebugStreamLine("pressed");
-		while(time1[T4] < TAP_THRESH)
+		while(time1[timer] < TAP_THRESH)
 		{
 			if(!anyBtn(btn))
 			{
@@ -251,6 +251,7 @@ task Flag()
 Btn 9: Switch between control schemes
 Btn 10: Disable Failsafe
 Use for emergency situations
+Timer 4
 *****************************/
 task JoyControl()
 {
@@ -258,7 +259,7 @@ task JoyControl()
 	{
 		getJoystickSettings(joystick);
 
-		if(getTap(1,9))
+		if(getTap(1,9, T4))
 		{
 			DTjoy1 = !DTjoy1;
 			/*//-/PlayTone(300,1);
@@ -268,7 +269,7 @@ task JoyControl()
 				writeDebugStreamLine("Joy 1: ANI on");*/
 		}
 
-		if(getTap(2,9))
+		if(getTap(2,9, T4))
 		{
 			ANIjoy2 = !ANIjoy2;
 			/*//-/PlayTone(500,1);
@@ -278,7 +279,7 @@ task JoyControl()
 				writeDebugStreamLine("Joy 2: DT on");*/
 		}
 
-		if(getTap(0,10))
+		if(getTap(0,10, T4))
 		{
 			FSon = false;
 		}

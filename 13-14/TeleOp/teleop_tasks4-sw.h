@@ -31,29 +31,29 @@ task Arm()
 		{
 			//raise arm
 			runArm(ARM_UP);
-			if(intakeOn) //if intake is on
+			/*if(intakeOn) //if intake is on
 			{
 				intakeReversed = true; //intake reversed to keep cubes in
-			}
+			}*/
 		}
 		else if((ANIjoy2 && joy2Btn(8) && !joy2Btn(6)) || (!DTjoy1 && joy1Btn(8) && !joy1Btn(6)))
 		{
 			//lower arm
 			runArm(ARM_DOWN);
 			//-/writeDebugStreamLine("arm motor -50");
-			if(intakeReversed)
+			/*if(intakeReversed)
 			{
 				intakeReversed = false;
-			}
+			}*/
 		}
 		else
 		{
 			//don't run arm
 			runArm(STOP);
-			if(intakeReversed)
+			/*if(intakeReversed)
 			{
 				intakeReversed = false;
-			}
+			}*/
 		}
 	}
 }
@@ -65,6 +65,7 @@ task Arm()
 ANI Controlled
 Btn 5: Dropbox Open
 Btn 2: Toggle Intake
+Timer 3
 *****************************/
 task Intake()
 {
@@ -84,15 +85,15 @@ task Intake()
 		{
 			servo[dropbox] = BOX_CLOSED;
 		}
-		if((joy2Btn(2) && ANIjoy2) || (joy1Btn(2) && !DTjoy1))
+		if((getTap(2,2,T3) && ANIjoy2) || (getTap(1,2,T3) && !DTjoy1))
 		{
 			intakeOn = !intakeOn;
 		}
 		if(intakeOn)
 		{
-			if(intakeReversed)
+			/*if(intakeReversed)
 				runIntake(INTAKE_R);
-			else
+			else*/
 				runIntake(MAX);
 		}
 		else
