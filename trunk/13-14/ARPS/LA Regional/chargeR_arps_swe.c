@@ -30,23 +30,6 @@
 #include "auto_globVars_swedr.h"
 /////////DUMP AUTONOMOUS/////////
 
-bool boxOpen = false;
-task HoldBox()
-{
-	while(!boxOpen)
-	{
-		servo[dropbox] = 255;
-	}
-}
-
-task AntiRat()
-{
-	while(true)
-	{
-		servo[antiRatchet] = AR_CLOSED;
-	}
-}
-
 void initializeRobot()
 {
 	servo[swiFL] = 97;
@@ -68,7 +51,7 @@ task main()
 {
 	initializeRobot();
 	waitForStart();
-	StartTask(hangArmMaintain);
+	//StartTask(hangArmMaintain);
 	moveStraight(60.0, 12.0, 75.0);	     //have the motor go at 100 power
 	moveArc(0.0, 180.0, 75.0);
 	StartTask(ScoreArm);

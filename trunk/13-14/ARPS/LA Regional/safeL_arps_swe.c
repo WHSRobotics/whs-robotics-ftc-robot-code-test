@@ -37,16 +37,6 @@
 #include "auto_globVars_swedr.h"
 /////////DUMP AUTONOMOUS/////////
 
-bool boxOpen = false;
-
-task HoldBox()
-{
-	while(!boxOpen)
-	{
-		servo[dropbox] = 255;
-	}
-}
-
 //---------Function for initialization
 void initializeRobot()
 {
@@ -70,19 +60,19 @@ task main()
 {
 	initializeRobot();
 	waitForStart();
-	StartTask(hangArmMaintain);
+	//StartTask(hangArmMaintain);
 	//--Lift arm concurrently
 	StartTask(ScoreArm);
 	//--Move towards crate
-	moveStraight(63.0,36.0,100.0);
+	moveStraight(88.0,17.0,100.0);
 	//--Score box
 	boxOpen = true;
 	StopTask(HoldBox);
 	dropTheBlock();
 	//--Move away from crate
-	moveStraight(85.0,-18.0,100.0);
+	moveStraight(85.0, 16.0,-100.0);
 	//--Go onto ramp
-	moveStraight(136.0,40.0,100.0);
+	moveStraight(139.0,55.0,100.0);
 
 	while(true){};
 }
