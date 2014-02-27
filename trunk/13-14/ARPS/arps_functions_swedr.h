@@ -233,7 +233,7 @@ void moveStraight(float dirAngle, float distanceInches, float power)
 {
 	int targetDistance = distanceInches * INCH_ENCODERVALUE;// * abs(power)/power;
 
-	nMotorEncoder[sweBL] = 0;
+	nMotorEncoder[sweBR] = 0;
 	//nMotorEncoder[sweBR] = 0;
 	//nMotorEncoder[sweFR] = 0;
 
@@ -245,7 +245,7 @@ void moveStraight(float dirAngle, float distanceInches, float power)
 	wait1Msec(1000);
 	runDriveTrain(-power);
 
-	while(abs(nMotorEncoder[sweBL]) <= targetDistance)// || abs(nMotorEncoder[sweBR]) <= targetDistance)/* || (nMotorEncoder[sweFL] <= targetDistance)*/
+	while(abs(nMotorEncoder[sweBR]) <= targetDistance)// || abs(nMotorEncoder[sweBR]) <= targetDistance)/* || (nMotorEncoder[sweFL] <= targetDistance)*/
 	{
 		setServoAngle(dirAngle);
 		//writeDebugStreamLine("BL: %f, BR: %f", nMotorEncoder[sweBL], nMotorEncoder[sweBR]);
@@ -401,8 +401,8 @@ task RampArm()
 }
 task ScoreArm()
 {
-	moveArm(90);
-	wait1Msec(650);
+	moveArm(100);
+	wait1Msec(600);
 	moveArm(0);
 }
 task AntiRat()

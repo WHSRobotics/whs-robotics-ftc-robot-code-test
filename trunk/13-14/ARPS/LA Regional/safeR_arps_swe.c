@@ -97,15 +97,15 @@ task main()
 	//--Lift arm concurrently
 	StartTask(ScoreArm);
 	//--Move towards crate
-	moveStraight(90.0,18.0,100.0);
+	moveStraight(117.0,18.0,100.0);
 	//--Score box
 	boxOpen = true;
 	StopTask(HoldBox);
 	dropTheBlock();
 	//--Move away from crate
-	moveStraight(90.0, 16.0,-100.0);
+	moveStraight(80.0, 11.0,-100.0);
 	//--Go onto ramp
-	moveStraight(60.0,40.0,100.0);
+	moveStraight(45.0,55.0,100.0);
 
 	while(true){};
 }

@@ -62,9 +62,12 @@ task main()
 	waitForStart();
 	//StartTask(hangArmMaintain);
 	//--Lift arm concurrently
-	StartTask(ScoreArm);
+	//StartTask(ScoreArm);
+	moveArm(100);
+	wait1Msec(600);
+	moveArm(0);
 	//--Move towards crate
-	moveStraight(88.0,17.0,100.0);
+	moveStraight(75.0,17.0,100.0);
 	//--Score box
 	boxOpen = true;
 	StopTask(HoldBox);
@@ -72,7 +75,7 @@ task main()
 	//--Move away from crate
 	moveStraight(85.0, 16.0,-100.0);
 	//--Go onto ramp
-	moveStraight(139.0,55.0,100.0);
+	moveStraight(130.0,50.0,100.0);
 
 	while(true){};
 }
