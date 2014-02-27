@@ -50,10 +50,11 @@ task main()
 {
 	initializeRobot();
 	waitForStart();
+	//wait10Msec(600);
 	//--Get IR reading
 
 	StartTask(ScoreArm);
-	if(SensorValue[IRSensor] == 5)
+	/*if(SensorValue[IRSensor] == 5)
 	{
 		writeDebugStreamLine("1,5@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		moveStraight(35.0,13.0,80.0);//moveStraight(65.0,6.0,100.0); dump 25
@@ -69,7 +70,7 @@ task main()
 		}
 	}
 	else
-	{
+	{*/
 
 		moveStraight(10.0,15.0,80.0); //--move to the middle
 
@@ -89,25 +90,25 @@ task main()
 			}
 		case 5: //--crate 2: IR 5
 			{
-				moveStraight(40.0,8.0,50.0);
+				moveStraight(25.0,8.0,50.0);
 				break;
 			}
 		case 6: //--crate 3: IR 6
 			{
-				moveStraight(150.0,8.0,50.0);
+				moveStraight(160.0,8.0,50.0);
 				break;
 			}
 		case 7: //--crate 4: IR 7
 			{
-				moveStraight(150.0,13.0,50.0);
+				moveStraight(150.0,15.0,50.0);
 				break;
 			}
 		default: //--crate 3
 			{
-				moveStraight(150.0,8.0,50.0);
+				moveStraight(160.0,8.0,50.0);
 			}
 		}
-	}
+	//}
 	dropTheBlock();
 	while(true){}
 }

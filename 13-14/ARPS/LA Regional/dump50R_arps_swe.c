@@ -31,11 +31,13 @@
 
 void initializeRobot()
 {
+	//--wheel positions
 	servo[swiFL] = 97;
 	servo[swiBL] = 127;
 	servo[swiFR] = 127;
 	servo[swiBR] = 147;
 
+	//--fastest rates
 	muxUpdateInterval = 1;
 	servoChangeRate[swiFL] = 0;
 	servoChangeRate[swiFR] = 0;
@@ -52,22 +54,23 @@ task main()
 	waitForStart();
 	//--Get IR reading
 
-	if(SensorValue[IRSensor] == 5  || SensorValue[IRSensor] == 6)//CHANE
+	if(SensorValue[IRSensor] == 5  || SensorValue[IRSensor] == 6) //--if IR is on our side
 	{
-		writeDebugStreamLine("1,5@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-		StartTask(ScoreArm);
-		moveStraight(135.0,9.0,100.0);//moveStraight(65.0,6.0,100.0); dump 25
-		if(SensorValue[IRSensor] == 6) //-- if crate 3
+		//-/writeDebugStreamLine("1,5@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+		StartTask(ScoreArm); //--lift the arm up to score
+		moveStraight(135.0,9.0,100.0);	//--move towards crates	//moveStraight(65.0,6.0,100.0); dump 25
+		if(SensorValue[IRSensor] != 6) //-- if crate 4
 		{
-			writeDebugStreamLine("2,5@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-			//moveStraight(140.0,2.0,-50.0);
+			//-/writeDebugStreamLine("2,5@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+			moveStraight(5.0,7.0,-50.0);
 		}
-		else
-		{
-			writeDebugStreamLine("2,6@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-			//StartTask(RampArm);
-			moveStraight(5.0,7.0,-50.0);//moveStraight(40.0,2.0,-50.0);
-		}
+		//--if crate 3, stay in position
+	}
+	else //--what the heck, score anyway in
+	{
+		//-/writeDebugStreamLine("2,6@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+		StartTask(ScoreArm); //--lift the arm up to score
+		moveStraight(135.0,9.0,100.0); //--move towards the crates
 	}
 
 	dropTheBlock();
